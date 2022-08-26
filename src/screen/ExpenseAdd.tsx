@@ -1,36 +1,38 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 
-const Add = () => {
+const ExpenseAdd = () => {
   const navigate = useNavigate();
+  let params = useParams();
 
   const [title, setTitle] = useState("");
-  const [currency, setCurrency] = useState("");
+  const [amount, setAmount] = useState("");
 
-  const addSharecount = (sharecount: any) => {
-    return fetch("http://localhost:3000/sharecount", {
+  const addExpense = (expense: any) => {
+    return fetch("http://localhost:3000/expense", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(sharecount),
+      body: JSON.stringify(expense),
     }).then((data) => data.json());
   };
 
   const save = () => {
-    const newSharecount = {
+    const newExpense = {
       name: title,
-      currency: currency,
+      amount_total: parseInt(amount),
+      sharecount: parseInt(params.id!),
     };
-    addSharecount(newSharecount);
-    navigate("/");
+    addExpense(newExpense);
+    navigate(-1);
   };
 
   return (
     <div>
-      New Sharecount
+      New Expense
       <br />
       <div className="flex flex-col">
         <div className=" m-2">
@@ -47,11 +49,11 @@ const Add = () => {
         <div className=" m-2">
           <TextField
             size="small"
-            label="Currency"
+            label="Amount"
             variant="outlined"
-            value={currency}
+            value={amount}
             onChange={(e) => {
-              setCurrency(e.target.value);
+              setAmount(e.target.value);
             }}
           />
         </div>
@@ -68,4 +70,4 @@ const Add = () => {
   );
 };
 
-export default Add;
+export default ExpenseAdd;

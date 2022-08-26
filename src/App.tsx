@@ -1,14 +1,16 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-// Components
+import Home from "./screen/Home";
 import Header from "./components/Header";
 
-// Screen
-import Home from "./screen/Home";
-import Details from "./screen/Details";
-import Edit from "./screen/Edit";
-import Add from "./screen/Add";
+import SharecountEdit from "./screen/SharecountEdit";
+import SharecountAdd from "./screen/SharecountAdd";
+
+import ExpensesList from "./components/ExpensesList";
+import ExpensesDetails from "./components/ExpenseDetails";
+import ExpenseAdd from "./screen/ExpenseAdd";
+import ExpenseEdit from "./screen/ExpenseEdit";
 
 function App() {
   return (
@@ -18,9 +20,15 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/edit/:id" element={<Edit />} />
-          <Route path="/add" element={<Add />} />
-          <Route path="/details/:id" element={<Details />} />
+          <Route path="/sharecount/:id" element={<ExpensesList />} />
+          <Route path="/sharecount-edit/:id" element={<SharecountEdit />} />
+          <Route path="/sharecount-add" element={<SharecountAdd />} />
+          <Route
+            path="/sharecount/:id/expense/:id"
+            element={<ExpensesDetails />}
+          />
+          <Route path="/sharecount/:id/expense-edit/:id" element={<ExpenseEdit />} />
+          <Route path="/sharecount/:id/expense-add" element={<ExpenseAdd />} />
         </Routes>
       </Router>
     </div>
