@@ -1,27 +1,30 @@
 import { Link } from "react-router-dom";
 import moment from "moment";
-import Button from "@mui/material/Button";
+import { IconButton } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const Expense = (props: any) => {
   const expense = props.expense;
-  let date = moment(expense.date).format("DD/MM/YYYY");
+  const date = moment(expense.date).format("DD/MM/YYYY");
 
   return (
     <div>
-      <p>
-        <Link to={`/sharecount/${expense.sharecount_id}/expense/${expense.id}`}>
-          {expense.name}
-        </Link>
-      </p>
-      <p>{expense.amount_total}</p>
-      <p>{date}</p>
-      <Button
-        variant="outlined"
-        size="small"
-        onClick={() => props.onClick(expense.id)}
-      >
-        Delete
-      </Button>
+      <div className="flex items-center">
+        <div className="flex-1 text-center">
+          <Link
+            to={`/sharecount/${expense.sharecount_id}/expense/${expense.id}`}
+          >
+            {expense.name}
+          </Link>
+        </div>
+        <div className="flex-1 text-center">{expense.amount_total}</div>
+        <div className="flex-1 text-center">{date}</div>
+        <div className="flex-1 text-center">
+          <IconButton color="primary" onClick={() => props.onClick(expense.id)}>
+            <DeleteIcon />
+          </IconButton>
+        </div>
+      </div>
     </div>
   );
 };

@@ -1,17 +1,15 @@
 import React from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import Button from "@mui/material/Button";
+import { useParams } from "react-router-dom";
+import Header from "../components/Header";
 
 const Edit = () => {
-  const navigate = useNavigate();
-  let params = useParams();
+  const params = useParams();
+
+  const title = `Edit ${params.id}`;
+
   return (
     <div>
-      Edit {params.id}
-      <br />
-      <Button variant="outlined" size="small" onClick={() => navigate(-1)}>
-        Back
-      </Button>
+      <Header title={title}></Header>
     </div>
   );
 };

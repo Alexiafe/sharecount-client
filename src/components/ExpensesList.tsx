@@ -1,22 +1,27 @@
 import React, { useEffect, useState } from "react";
 import ExpenseItem from "./ExpenseItem";
 import { useNavigate, useParams } from "react-router-dom";
-import Button from "@mui/material/Button";
+import Header from "../components/Header";
+import { IconButton } from "@mui/material";
+import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 
 const ExpensesList = () => {
   const navigate = useNavigate();
-  let params = useParams();
+  const params = useParams();
+
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [expenses, setExpenses] = useState([]);
+  const [sharecount, setSharecount] = useState<any>(null);
+
+  const header = sharecount?.name;
 
   useEffect(() => {
-    fetch(`http://localhost:3000/expenses/${params.id}`)
+    fetch(`http://localhost:3000/sharecount/${params.id}`)
       .then((res) => res.json())
       .then(
         (result) => {
           setIsLoaded(true);
-          setExpenses(result);
+          setSharecount(result);
         },
         (error) => {
           setIsLoaded(true);
@@ -34,40 +39,49 @@ const ExpensesList = () => {
     })
       .then((data) => data.json())
       .then(() => {
-        setExpenses(
-          expenses.filter((expense: any) => {
+        setSharecount(
+          sharecount?.expenses.filter((expense: any) => {
             return expense.id !== expenseID;
           })
         );
       });
   };
 
-  const listExpenses = expenses.map((expense: any) => (
+  const listExpenses = sharecount?.expenses.map((expense: any) => (
     <li key={expense.id}>
       <ExpenseItem expense={expense} onClick={deleteExpense}></ExpenseItem>
     </li>
   ));
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return (
+      <div>
+        <Header title={header}></Header>
+        Error: {error.message}
+      </div>
+    );
   } else if (!isLoaded) {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        <Header title={header}></Header>
+        Loading...
+      </div>
+    );
   } else {
     return (
       <div>
+        <Header title={header} backButton="true"></Header>
         <div>
-          <ul>{listExpenses}</ul>
+          <ul className="m-2">{listExpenses}</ul>
         </div>
-        <Button
-          variant="outlined"
-          size="small"
-          onClick={() => navigate(`/sharecount/${params.id}/expense-add`)}
-        >
-          New Expense
-        </Button>
-        <Button variant="outlined" size="small" onClick={() => navigate(-1)}>
-          Back
-        </Button>
+        <div className="m-2">
+          <IconButton
+            color="primary"
+            onClick={() => navigate(`/sharecount/${params.id}/expense-add`)}
+          >
+            <AddCircleOutlineRoundedIcon fontSize="large" />
+          </IconButton>
+        </div>
       </div>
     );
   }

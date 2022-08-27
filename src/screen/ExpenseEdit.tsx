@@ -1,6 +1,11 @@
+import Header from "../components/Header";
+
 const ExpenseEdit = () => {
-    return <div>Edit Expense</div>;
-  };
-  
-  export default ExpenseEdit;
-  
+  return (
+    <div>
+      <Header title="Edit Expense"></Header>
+    </div>
+  );
+};
+
+export default ExpenseEdit;

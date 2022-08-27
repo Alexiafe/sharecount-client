@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
+import { Button, TextField } from "@mui/material";
+import Header from "../components/Header";
 
 const ExpenseAdd = () => {
   const navigate = useNavigate();
-  let params = useParams();
+  const params = useParams();
 
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
@@ -32,22 +32,30 @@ const ExpenseAdd = () => {
 
   return (
     <div>
-      New Expense
+      <Header title="New Expense"></Header>
       <br />
       <div className="flex flex-col">
-        <div className=" m-2">
+        <div className="m-2">
           <TextField
+            required
+            fullWidth
             size="small"
             label="Title"
             variant="outlined"
             value={title}
+            type="number"
             onChange={(e) => {
               setTitle(e.target.value);
+            }}
+            InputLabelProps={{
+              shrink: true,
             }}
           />
         </div>
         <div className=" m-2">
           <TextField
+            required
+            fullWidth
             size="small"
             label="Amount"
             variant="outlined"
@@ -55,15 +63,26 @@ const ExpenseAdd = () => {
             onChange={(e) => {
               setAmount(e.target.value);
             }}
+            InputLabelProps={{
+              shrink: true,
+            }}
           />
         </div>
-        <div className=" m-2">
-          <Button variant="outlined" size="small" onClick={() => navigate(-1)}>
-            Cancel
-          </Button>
-          <Button variant="outlined" size="small" onClick={() => save()}>
-            Save
-          </Button>
+        <div className="flex m-2">
+          <div>
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={() => navigate(-1)}
+            >
+              Cancel
+            </Button>
+          </div>
+          <div className="mx-2">
+            <Button variant="outlined" size="small" onClick={() => save()}>
+              Save
+            </Button>
+          </div>
         </div>
       </div>
     </div>

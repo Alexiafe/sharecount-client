@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
+import { Button, TextField } from "@mui/material";
+import Header from "../components/Header";
 
 const SharecountAdd = () => {
   const navigate = useNavigate();
@@ -30,11 +30,13 @@ const SharecountAdd = () => {
 
   return (
     <div>
-      New Sharecount
+      <Header title="New Sharecount"></Header>
       <br />
       <div className="flex flex-col">
         <div className=" m-2">
           <TextField
+            fullWidth
+            required
             size="small"
             label="Title"
             variant="outlined"
@@ -42,10 +44,15 @@ const SharecountAdd = () => {
             onChange={(e) => {
               setTitle(e.target.value);
             }}
+            InputLabelProps={{
+              shrink: true,
+            }}
           />
         </div>
         <div className=" m-2">
           <TextField
+            fullWidth
+            required
             size="small"
             label="Currency"
             variant="outlined"
@@ -53,15 +60,31 @@ const SharecountAdd = () => {
             onChange={(e) => {
               setCurrency(e.target.value);
             }}
+            InputLabelProps={{
+              shrink: true,
+            }}
           />
         </div>
-        <div className=" m-2">
-          <Button variant="outlined" size="small" onClick={() => navigate(-1)}>
-            Cancel
-          </Button>
-          <Button variant="outlined" size="small" onClick={() => save()}>
-            Save
-          </Button>
+        <div className="flex m-2">
+          <div>
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={() => navigate(-1)}
+            >
+              Cancel
+            </Button>
+          </div>
+          <div className="mx-2">
+            <Button
+              className="mx-2"
+              variant="outlined"
+              size="small"
+              onClick={() => save()}
+            >
+              Save
+            </Button>
+          </div>
         </div>
       </div>
     </div>

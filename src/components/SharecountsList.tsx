@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SharecountItem from "./SharecountItem";
-import Button from "@mui/material/Button";
+import { IconButton } from "@mui/material";
+import Header from "../components/Header";
+import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 
 function SharecountList() {
   const navigate = useNavigate();
@@ -52,20 +54,32 @@ function SharecountList() {
   ));
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return (
+      <div>
+        <Header title="Sharecount"></Header>
+        Error: {error.message}
+      </div>
+    );
   } else if (!isLoaded) {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        <Header title="Sharecount"></Header>
+        Loading...
+      </div>
+    );
   } else {
     return (
       <div>
-        <ul>{listSharecount}</ul>
-        <Button
-          variant="outlined"
-          size="small"
-          onClick={() => navigate("/sharecount-add")}
-        >
-          New Sharecount
-        </Button>
+        <Header title="Sharecount"></Header>
+        <ul className="m-2">{listSharecount}</ul>
+        <div className="m-2">
+          <IconButton
+            color="primary"
+            onClick={() => navigate("/sharecount-add")}
+          >
+            <AddCircleOutlineRoundedIcon fontSize="large" />
+          </IconButton>
+        </div>
       </div>
     );
   }
