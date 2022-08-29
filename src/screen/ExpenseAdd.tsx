@@ -33,8 +33,7 @@ const ExpenseAdd = () => {
   return (
     <div>
       <Header title="New Expense"></Header>
-      <br />
-      <div className="flex flex-col">
+      <div className="flex flex-col m-2">
         <div className="m-2">
           <TextField
             required
@@ -43,7 +42,6 @@ const ExpenseAdd = () => {
             label="Title"
             variant="outlined"
             value={title}
-            type="number"
             onChange={(e) => {
               setTitle(e.target.value);
             }}

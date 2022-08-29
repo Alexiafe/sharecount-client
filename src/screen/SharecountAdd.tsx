@@ -31,9 +31,8 @@ const SharecountAdd = () => {
   return (
     <div>
       <Header title="New Sharecount"></Header>
-      <br />
-      <div className="flex flex-col">
-        <div className=" m-2">
+      <div className="flex flex-col m-2">
+        <div className="m-2">
           <TextField
             fullWidth
             required

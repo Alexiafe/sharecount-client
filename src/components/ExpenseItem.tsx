@@ -10,7 +10,7 @@ const Expense = (props: any) => {
   return (
     <div>
       <div className="flex items-center">
-        <div className="flex-1 text-center">
+        <div className="flex-1">
           <Link
             to={`/sharecount/${expense.sharecount_id}/expense/${expense.id}`}
           >
@@ -19,7 +19,7 @@ const Expense = (props: any) => {
         </div>
         <div className="flex-1 text-center">{expense.amount_total}</div>
         <div className="flex-1 text-center">{date}</div>
-        <div className="flex-1 text-center">
+        <div className="flex-none text-center">
           <IconButton color="primary" onClick={() => props.onClick(expense.id)}>
             <DeleteIcon />
           </IconButton>

@@ -70,7 +70,7 @@ function SharecountList() {
   } else {
     return (
       <div>
-        <Header title="Sharecount"></Header>
+        <Header title="Sharecount" searchButton="true"></Header>
         <ul className="m-2">{listSharecount}</ul>
         <div className="m-2">
           <IconButton

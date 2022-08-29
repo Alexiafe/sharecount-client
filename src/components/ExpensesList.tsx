@@ -12,6 +12,7 @@ const ExpensesList = () => {
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [sharecount, setSharecount] = useState<any>(null);
+  const [expenses, setExpenses] = useState([]);
 
   const header = sharecount?.name;
 
@@ -22,6 +23,7 @@ const ExpensesList = () => {
         (result) => {
           setIsLoaded(true);
           setSharecount(result);
+          setExpenses(result.expenses);
         },
         (error) => {
           setIsLoaded(true);
@@ -39,15 +41,15 @@ const ExpensesList = () => {
     })
       .then((data) => data.json())
       .then(() => {
-        setSharecount(
-          sharecount?.expenses.filter((expense: any) => {
+        setExpenses(
+          expenses.filter((expense: any) => {
             return expense.id !== expenseID;
           })
         );
       });
   };
 
-  const listExpenses = sharecount?.expenses.map((expense: any) => (
+  const listExpenses = expenses.map((expense: any) => (
     <li key={expense.id}>
       <ExpenseItem expense={expense} onClick={deleteExpense}></ExpenseItem>
     </li>
@@ -70,7 +72,7 @@ const ExpensesList = () => {
   } else {
     return (
       <div>
-        <Header title={header} backButton="true"></Header>
+        <Header title={header} backButton="true" searchButton="true"></Header>
         <div>
           <ul className="m-2">{listExpenses}</ul>
         </div>
