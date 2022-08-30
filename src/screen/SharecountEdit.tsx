@@ -23,6 +23,8 @@ const SharecountEdit = () => {
         (result) => {
           setIsLoaded(true);
           setSharecount(result);
+          setName(result.name);
+          setCurrency(result.currency);
         },
         (error) => {
           setIsLoaded(true);
@@ -76,6 +78,7 @@ const SharecountEdit = () => {
               size="small"
               label="Name"
               variant="outlined"
+              value={name}
               onChange={(e) => {
                 setName(e.target.value);
               }}

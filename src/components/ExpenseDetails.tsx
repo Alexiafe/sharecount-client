@@ -45,7 +45,7 @@ const ExpensesDetails = () => {
   } else {
     return (
       <div>
-        <Header title={header} backButton="true"></Header>
+        <Header title={header} backButton="true" editButton="true"></Header>
         <div className="flex items-center m-2">
           <div className="flex-1 text-center">
             {expenseDetails?.amount_total}

@@ -8,6 +8,7 @@ function Header(props: any) {
   const title = props.title;
   const backButton = props.backButton;
   const searchButton = props.searchButton;
+  const editButton = props.editButton;
 
   const navigate = useNavigate();
 
@@ -37,10 +38,12 @@ function Header(props: any) {
             edge="start"
             color="inherit"
             aria-label="menu"
+            onClick={() => navigate(-1)}
           >
             <SearchIcon />
           </IconButton>
         )}
+        {editButton && "Edit"}
       </Toolbar>
     </AppBar>
   );

@@ -76,7 +76,7 @@ const ExpensesList = () => {
         <div>
           <ul className="m-2">{listExpenses}</ul>
         </div>
-        <div className="m-2">
+        <div className="absolute bottom-0 right-0">
           <IconButton
             color="primary"
             onClick={() => navigate(`/sharecount/${params.id}/expense-add`)}
