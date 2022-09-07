@@ -9,6 +9,8 @@ function Header(props: any) {
   const backButton = props.backButton;
   const searchButton = props.searchButton;
   const editButton = props.editButton;
+  const saveButton = props.saveButton;
+  const cancelButton = props.cancelButton;
 
   const navigate = useNavigate();
 
@@ -25,6 +27,7 @@ function Header(props: any) {
             <ArrowBackIosIcon />
           </IconButton>
         )}
+        {cancelButton && <div onClick={() => navigate(-1)}>Cancel</div>}
         <Typography
           className="text-center"
           variant="h6"
@@ -38,12 +41,13 @@ function Header(props: any) {
             edge="start"
             color="inherit"
             aria-label="menu"
-            onClick={() => navigate(-1)}
+            onClick={() => props.onClick()}
           >
             <SearchIcon />
           </IconButton>
         )}
-        {editButton && "Edit"}
+        {saveButton && <div onClick={() => props.onClick()}>Save</div>}
+        {editButton && <div onClick={() => props.onClick()}>Edit</div>}
       </Toolbar>
     </AppBar>
   );

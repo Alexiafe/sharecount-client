@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Header from "../components/Header";
-import { Button, TextField } from "@mui/material";
+import {
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  TextField,
+} from "@mui/material";
+import ClearIcon from "@mui/icons-material/Clear";
+import AddIcon from "@mui/icons-material/Add";
 
 const SharecountEdit = () => {
   const navigate = useNavigate();
@@ -14,6 +22,9 @@ const SharecountEdit = () => {
   const [name, setName] = useState("");
   const [currency, setCurrency] = useState("");
 
+  const [participant, setParticipant] = useState("");
+  const [participants, setParticipants] = useState<any[]>([]);
+
   const title = `Edit ${sharecount?.name}`;
 
   useEffect(() => {
@@ -25,6 +36,7 @@ const SharecountEdit = () => {
           setSharecount(result);
           setName(result.name);
           setCurrency(result.currency);
+          setParticipants(result.participants.map((p: any) => p.name));
         },
         (error) => {
           setIsLoaded(true);
@@ -34,7 +46,7 @@ const SharecountEdit = () => {
   }, [params.id]);
 
   const editSharecount = (sharecount: any) => {
-    return fetch(`http://localhost:3000/sharecount/${params.id}`, {
+    return fetch(`http://localhost:3000/sharecount2/${params.id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -43,14 +55,47 @@ const SharecountEdit = () => {
     }).then((data) => data.json());
   };
 
+  const addParticipants = () => {
+    let cloneParticipants = [...participants];
+    cloneParticipants.push(participant);
+    setParticipants(cloneParticipants);
+    setParticipant("");
+  };
+
+  const deleteParticipants = (participant: any) => {
+    setParticipants(
+      participants.filter((p: any) => {
+        return p !== participant;
+      })
+    );
+  };
+
   const save = () => {
     const newSharecount = {
       name: name,
       currency: currency,
+      participants: participants,
     };
     editSharecount(newSharecount);
     navigate(-1);
   };
+
+  const listParticipants = participants.map((participant: any) => (
+    <ListItem
+      key={participant}
+      secondaryAction={
+        <IconButton
+          edge="end"
+          aria-label="delete"
+          onClick={() => deleteParticipants(participant)}
+        >
+          <ClearIcon />
+        </IconButton>
+      }
+    >
+      <ListItemText primary={participant} />
+    </ListItem>
+  ));
 
   if (error) {
     return (
@@ -69,7 +114,13 @@ const SharecountEdit = () => {
   } else {
     return (
       <div>
-        <Header title={title} backButton="true"></Header>
+        <Header
+          title={title}
+          cancelButton="true"
+          saveButton="true"
+          onClick={save}
+        ></Header>
+        {participants}
         <div className="flex flex-col m-2">
           <div className="m-2">
             <TextField
@@ -104,20 +155,35 @@ const SharecountEdit = () => {
             />
           </div>
 
-          <div className="flex m-2">
-            <div>
-              <Button
-                variant="outlined"
+          <div>
+            Participants:
+            <List>{listParticipants}</List>
+            <div className="flex">
+              <TextField
+                fullWidth
+                required
                 size="small"
-                onClick={() => navigate(-1)}
-              >
-                Cancel
-              </Button>
-            </div>
-            <div className="mx-2">
-              <Button variant="outlined" size="small" onClick={() => save()}>
-                Save
-              </Button>
+                label="New participant"
+                variant="standard"
+                value={participant}
+                onChange={(e) => {
+                  setParticipant(e.target.value);
+                }}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <IconButton
+                      edge="end"
+                      aria-label="delete"
+                      onClick={() => addParticipants()}
+                    >
+                      <AddIcon />
+                    </IconButton>
+                  ),
+                }}
+              />
             </div>
           </div>
         </div>

@@ -28,6 +28,10 @@ const ExpensesDetails = () => {
       );
   }, [params.id]);
 
+  const edit = () => {
+    console.log("Go to edit expense screen");
+  };
+
   if (error) {
     return (
       <div>
@@ -45,12 +49,20 @@ const ExpensesDetails = () => {
   } else {
     return (
       <div>
-        <Header title={header} backButton="true" editButton="true"></Header>
-        <div className="flex items-center m-2">
-          <div className="flex-1 text-center">
+        <Header
+          title={header}
+          backButton="true"
+          editButton="true"
+          onClick={edit}
+        ></Header>
+        <div className="items-center m-2">
+          <div className="justify-center h-12 flex items-center">
             {expenseDetails?.amount_total}
           </div>
-          <div className="flex-1 text-center">{date}</div>
+          <div className="flex text-center">
+            <div className="flex-1 text-left">Paid by x</div>
+            <div className="flex-1 text-right">{date}</div>
+          </div>
         </div>
       </div>
     );

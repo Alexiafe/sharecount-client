@@ -1,16 +1,27 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, TextField } from "@mui/material";
+import {
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  TextField,
+} from "@mui/material";
 import Header from "../components/Header";
+import ClearIcon from "@mui/icons-material/Clear";
+import AddIcon from "@mui/icons-material/Add";
 
 const SharecountAdd = () => {
   const navigate = useNavigate();
 
-  const [title, setTitle] = useState("");
+  const [name, setName] = useState("");
   const [currency, setCurrency] = useState("");
 
+  const [participant, setParticipant] = useState("");
+  const [participants, setParticipants] = useState<any[]>([]);
+
   const addSharecount = (sharecount: any) => {
-    return fetch("http://localhost:3000/sharecount", {
+    return fetch("http://localhost:3000/sharecount2", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -19,29 +30,67 @@ const SharecountAdd = () => {
     }).then((data) => data.json());
   };
 
+  const addParticipants = () => {
+    let cloneParticipants = [...participants];
+    cloneParticipants.push(participant);
+    setParticipants(cloneParticipants);
+    setParticipant("");
+  };
+
+  const deleteParticipants = (participant: any) => {
+    setParticipants(
+      participants.filter((p: any) => {
+        return p !== participant;
+      })
+    );
+  };
+
   const save = () => {
     const newSharecount = {
-      name: title,
+      name: name,
       currency: currency,
+      participants: participants,
     };
     addSharecount(newSharecount);
     navigate("/");
   };
 
+  const listParticipants = participants.map((participant: any) => (
+    <ListItem
+      key={participant}
+      secondaryAction={
+        <IconButton
+          edge="end"
+          aria-label="delete"
+          onClick={() => deleteParticipants(participant)}
+        >
+          <ClearIcon />
+        </IconButton>
+      }
+    >
+      <ListItemText primary={participant} />
+    </ListItem>
+  ));
+
   return (
     <div>
-      <Header title="New Sharecount"></Header>
+      <Header
+        title="New Sharecount"
+        cancelButton="true"
+        saveButton="true"
+        onClick={save}
+      ></Header>
       <div className="flex flex-col m-2">
         <div className="m-2">
           <TextField
             fullWidth
             required
             size="small"
-            label="Title"
+            label="Name"
             variant="outlined"
-            value={title}
+            value={name}
             onChange={(e) => {
-              setTitle(e.target.value);
+              setName(e.target.value);
             }}
             InputLabelProps={{
               shrink: true,
@@ -64,25 +113,35 @@ const SharecountAdd = () => {
             }}
           />
         </div>
-        <div className="flex m-2">
-          <div>
-            <Button
-              variant="outlined"
+        <div>
+          Participants:
+          <List>{listParticipants}</List>
+          <div className="flex">
+            <TextField
+              fullWidth
+              required
               size="small"
-              onClick={() => navigate(-1)}
-            >
-              Cancel
-            </Button>
-          </div>
-          <div className="mx-2">
-            <Button
-              className="mx-2"
-              variant="outlined"
-              size="small"
-              onClick={() => save()}
-            >
-              Save
-            </Button>
+              label="New participant"
+              variant="standard"
+              value={participant}
+              onChange={(e) => {
+                setParticipant(e.target.value);
+              }}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              InputProps={{
+                endAdornment: (
+                  <IconButton
+                    edge="end"
+                    aria-label="delete"
+                    onClick={() => addParticipants()}
+                  >
+                    <AddIcon />
+                  </IconButton>
+                ),
+              }}
+            />
           </div>
         </div>
       </div>

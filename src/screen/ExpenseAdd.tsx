@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button, TextField } from "@mui/material";
+import {  TextField } from "@mui/material";
 import Header from "../components/Header";
 
 const ExpenseAdd = () => {
   const navigate = useNavigate();
   const params = useParams();
 
-  const [title, setTitle] = useState("");
+  const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
 
   const addExpense = (expense: any) => {
@@ -22,7 +22,7 @@ const ExpenseAdd = () => {
 
   const save = () => {
     const newExpense = {
-      name: title,
+      name: name,
       amount_total: parseInt(amount),
       sharecount: parseInt(params.id!),
     };
@@ -32,18 +32,23 @@ const ExpenseAdd = () => {
 
   return (
     <div>
-      <Header title="New Expense"></Header>
+      <Header
+        title="New Expense"
+        cancelButton="true"
+        saveButton="true"
+        onClick={save}
+      ></Header>
       <div className="flex flex-col m-2">
         <div className="m-2">
           <TextField
             required
             fullWidth
             size="small"
-            label="Title"
+            label="Name"
             variant="outlined"
-            value={title}
+            value={name}
             onChange={(e) => {
-              setTitle(e.target.value);
+              setName(e.target.value);
             }}
             InputLabelProps={{
               shrink: true,
@@ -65,22 +70,6 @@ const ExpenseAdd = () => {
               shrink: true,
             }}
           />
-        </div>
-        <div className="flex m-2">
-          <div>
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={() => navigate(-1)}
-            >
-              Cancel
-            </Button>
-          </div>
-          <div className="mx-2">
-            <Button variant="outlined" size="small" onClick={() => save()}>
-              Save
-            </Button>
-          </div>
         </div>
       </div>
     </div>

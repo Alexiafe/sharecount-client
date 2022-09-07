@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import ExpenseItem from "./ExpenseItem";
 import { useNavigate, useParams } from "react-router-dom";
 import Header from "../components/Header";
-import { IconButton } from "@mui/material";
+import { Box, Button, IconButton, Modal, Typography } from "@mui/material";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 
 const ExpensesList = () => {
@@ -14,7 +14,23 @@ const ExpensesList = () => {
   const [sharecount, setSharecount] = useState<any>(null);
   const [expenses, setExpenses] = useState([]);
 
+  const [open, setOpen] = useState(false);
+  const [expenseID, setExpenseID] = useState(null);
+  const [expenseName, setExpenseName] = useState("");
+
   const header = sharecount?.name;
+
+  const style = {
+    position: "absolute" as "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "80%",
+    bgcolor: "background.paper",
+    boxShadow: 24,
+    "text-align": "center",
+    p: 4,
+  };
 
   useEffect(() => {
     fetch(`http://localhost:3000/sharecount/${params.id}`)
@@ -31,6 +47,19 @@ const ExpensesList = () => {
         }
       );
   }, [params.id]);
+
+  const handleOpen = (expense: any) => {
+    setExpenseID(expense.id);
+    setExpenseName(expense.name);
+    setOpen(true);
+  };
+
+  const handleClose = () => setOpen(false);
+
+  const confirmDelete = () => {
+    deleteExpense(expenseID);
+    setOpen(false);
+  };
 
   const deleteExpense = (expenseID: any) => {
     return fetch(`http://localhost:3000/expense/${expenseID}`, {
@@ -49,9 +78,17 @@ const ExpensesList = () => {
       });
   };
 
+  const openSearchBar = () => {
+    console.log("Open search bar");
+  };
+
   const listExpenses = expenses.map((expense: any) => (
     <li key={expense.id}>
-      <ExpenseItem expense={expense} onClick={deleteExpense}></ExpenseItem>
+      <ExpenseItem
+        expense={expense}
+        sharecount={sharecount}
+        onClick={handleOpen}
+      ></ExpenseItem>
     </li>
   ));
 
@@ -72,9 +109,49 @@ const ExpensesList = () => {
   } else {
     return (
       <div>
-        <Header title={header} backButton="true" searchButton="true"></Header>
+        <Header
+          title={header}
+          backButton="true"
+          searchButton="true"
+          onClick={openSearchBar}
+        ></Header>
         <div>
           <ul className="m-2">{listExpenses}</ul>
+          <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx={style}>
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                {expenseName}
+              </Typography>
+              <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                Confirm delete?
+              </Typography>
+              <div className="flex m-2 justify-center">
+                <div>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={() => setOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+                <div className="mx-2">
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={() => confirmDelete()}
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </div>
+            </Box>
+          </Modal>
         </div>
         <div className="absolute bottom-0 right-0">
           <IconButton

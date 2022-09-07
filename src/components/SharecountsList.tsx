@@ -13,7 +13,8 @@ function SharecountList() {
   const [sharecounts, setSharecounts] = useState([]);
 
   const [open, setOpen] = useState(false);
-  const [sharecountID, setsharecountID] = useState(null);
+  const [sharecountID, setSharecountID] = useState(null);
+  const [sharecountName, setSharecountName] = useState("");
 
   const style = {
     position: "absolute" as "absolute",
@@ -22,8 +23,8 @@ function SharecountList() {
     transform: "translate(-50%, -50%)",
     width: "80%",
     bgcolor: "background.paper",
-    border: "2px solid #000",
     boxShadow: 24,
+    "text-align": "center",
     p: 4,
   };
 
@@ -42,10 +43,12 @@ function SharecountList() {
       );
   }, []);
 
-  const handleOpen = (id: any) => {
-    setsharecountID(id);
+  const handleOpen = (sharecount: any) => {
+    setSharecountID(sharecount.id);
+    setSharecountName(sharecount.name);
     setOpen(true);
   };
+  
   const handleClose = () => setOpen(false);
 
   const confirmDelete = () => {
@@ -70,11 +73,14 @@ function SharecountList() {
       });
   };
 
+  const openSearchBar = () => {
+    console.log('Open search bar')
+  };
+
   const listSharecount = sharecounts.map((sharecount: any) => (
     <li key={sharecount.id}>
       <SharecountItem
         sharecount={sharecount}
-        // onClick={deleteSharecount}
         onClick={handleOpen}
       ></SharecountItem>
     </li>
@@ -97,8 +103,8 @@ function SharecountList() {
   } else {
     return (
       <div>
-        <Header title="Sharecount" searchButton="true"></Header>
-        <ul className="m-2">{listSharecount}</ul>
+        <Header title="Sharecount" searchButton="true" onClick={openSearchBar}></Header>
+        <ul className="m-2 border-solid">{listSharecount}</ul>
         <Modal
           open={open}
           onClose={handleClose}
@@ -107,12 +113,12 @@ function SharecountList() {
         >
           <Box sx={style}>
             <Typography id="modal-modal-title" variant="h6" component="h2">
-              Sharecount name
+              {sharecountName}
             </Typography>
             <Typography id="modal-modal-description" sx={{ mt: 2 }}>
               Confirm delete?
             </Typography>
-            <div className="flex m-2">
+            <div className="flex m-2 justify-center">
               <div>
                 <Button
                   variant="outlined"
@@ -128,7 +134,7 @@ function SharecountList() {
                   size="small"
                   onClick={() => confirmDelete()}
                 >
-                  Save
+                  Delete
                 </Button>
               </div>
             </div>

@@ -13,7 +13,7 @@ const Sharecount = (props: ChildProps) => {
   const sharecount = props.sharecount;
 
   return (
-    <div className="flex items-center">
+    <div className="flex items-center border-b border-grey-500 pb-1">
       <div className="flex-1">
         <div className="flex flex-col">
           <Link to={`/sharecount/${sharecount.id}`}>{sharecount.name}</Link>
@@ -28,10 +28,7 @@ const Sharecount = (props: ChildProps) => {
         </Link>
       </div>
       <div className="flex-none text-center">
-        <IconButton
-          color="primary"
-          onClick={() => props.onClick(sharecount.id)}
-        >
+        <IconButton color="primary" onClick={() => props.onClick(sharecount)}>
           <DeleteIcon />
         </IconButton>
       </div>
