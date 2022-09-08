@@ -6,7 +6,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 const Expense = (props: any) => {
   const expense = props.expense;
   const sharecount = props.sharecount;
-  
   const propsDate = moment(expense.date);
   const date = moment(propsDate).isSame(moment(), "day") ? "Today" : propsDate.format("DD/MM/YYYY");
 
@@ -34,7 +33,6 @@ const Expense = (props: any) => {
           </div>
         </Link>
       </div>
-
       <div className="flex-none">
         <IconButton color="primary" onClick={() => props.onClick(expense)}>
           <DeleteIcon />

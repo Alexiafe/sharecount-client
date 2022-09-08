@@ -4,17 +4,17 @@ import SharecountItem from "./SharecountItem";
 import { Box, Button, IconButton, Modal, Typography } from "@mui/material";
 import Header from "../components/Header";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
+import { ISharecount } from "../interfaces/interfaces";
+import Loader from "./Loader";
 
-function SharecountList() {
+const SharecountList = () => {
   const navigate = useNavigate();
-
   const [error, setError] = useState<any>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [sharecounts, setSharecounts] = useState([]);
-
-  const [open, setOpen] = useState(false);
-  const [sharecountID, setSharecountID] = useState(null);
-  const [sharecountName, setSharecountName] = useState("");
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  const [sharecounts, setSharecounts] = useState<ISharecount[]>([]);
+  const [open, setOpen] = useState<boolean>(false);
+  const [sharecountID, setSharecountID] = useState<number>(0);
+  const [sharecountName, setSharecountName] = useState<string>("");
 
   const style = {
     position: "absolute" as "absolute",
@@ -24,7 +24,7 @@ function SharecountList() {
     width: "80%",
     bgcolor: "background.paper",
     boxShadow: 24,
-    "text-align": "center",
+    textAlign: "center",
     p: 4,
   };
 
@@ -43,12 +43,12 @@ function SharecountList() {
       );
   }, []);
 
-  const handleOpen = (sharecount: any) => {
+  const handleOpen = (sharecount: ISharecount) => {
     setSharecountID(sharecount.id);
     setSharecountName(sharecount.name);
     setOpen(true);
   };
-  
+
   const handleClose = () => setOpen(false);
 
   const confirmDelete = () => {
@@ -56,7 +56,7 @@ function SharecountList() {
     setOpen(false);
   };
 
-  const deleteSharecount = (sharecountID: any) => {
+  const deleteSharecount = (sharecountID: number) => {
     return fetch(`http://localhost:3000/sharecount/${sharecountID}`, {
       method: "DELETE",
       headers: {
@@ -66,21 +66,21 @@ function SharecountList() {
       .then((data) => data.json())
       .then(() => {
         setSharecounts(
-          sharecounts.filter((sharecount: any) => {
-            return sharecount.id !== sharecountID;
+          sharecounts.filter((s: ISharecount) => {
+            return s.id !== sharecountID;
           })
         );
       });
   };
 
   const openSearchBar = () => {
-    console.log('Open search bar')
+    console.log("Open search bar");
   };
 
-  const listSharecount = sharecounts.map((sharecount: any) => (
-    <li key={sharecount.id}>
+  const listSharecount = sharecounts.map((s: ISharecount) => (
+    <li key={s.id}>
       <SharecountItem
-        sharecount={sharecount}
+        sharecount={s}
         onClick={handleOpen}
       ></SharecountItem>
     </li>
@@ -90,20 +90,24 @@ function SharecountList() {
     return (
       <div>
         <Header title="Sharecount"></Header>
-        Error: {error.message}
+        Please try again later
       </div>
     );
   } else if (!isLoaded) {
     return (
       <div>
         <Header title="Sharecount"></Header>
-        Loading...
+        <Loader></Loader>
       </div>
     );
   } else {
     return (
       <div>
-        <Header title="Sharecount" searchButton="true" onClick={openSearchBar}></Header>
+        <Header
+          title="Sharecount"
+          searchButton="true"
+          onClick={openSearchBar}
+        ></Header>
         <ul className="m-2 border-solid">{listSharecount}</ul>
         <Modal
           open={open}
@@ -151,6 +155,6 @@ function SharecountList() {
       </div>
     );
   }
-}
+};
 
 export default SharecountList;

@@ -4,12 +4,7 @@ import { IconButton } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-export interface ChildProps {
-  sharecount: any;
-  onClick: (name: string | undefined) => void;
-}
-
-const Sharecount = (props: ChildProps) => {
+const Sharecount = (props: any) => {
   const sharecount = props.sharecount;
 
   return (

@@ -1,17 +1,16 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Header from "../components/Header";
-import {TextField } from "@mui/material";
+import { TextField } from "@mui/material";
+import { IExpense } from "../interfaces/interfaces";
 
 const ExpenseEdit = () => {
-
   const navigate = useNavigate();
   const params = useParams();
-
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
 
-  const editExpense = (expense: any) => {
+  const editExpenseServer = (expense: IExpense) => {
     return fetch("http://localhost:3000/expense", {
       method: "POST",
       headers: {
@@ -23,17 +22,24 @@ const ExpenseEdit = () => {
 
   const save = () => {
     const newExpense = {
+      id: 0,
       name: name,
       amount_total: parseInt(amount),
-      sharecount: parseInt(params.id!),
+      date: "",
+      sharecount_id: parseInt(params.id!),
     };
-    editExpense(newExpense);
+    editExpenseServer(newExpense);
     navigate(-1);
   };
 
   return (
     <div>
-      <Header title="Edit Expense" cancelButton="true" saveButton="true" onClick={save}></Header>
+      <Header
+        title="Edit Expense"
+        cancelButton="true"
+        saveButton="true"
+        onClick={save}
+      ></Header>
       <div className="flex flex-col m-2">
         <div className="m-2">
           <TextField

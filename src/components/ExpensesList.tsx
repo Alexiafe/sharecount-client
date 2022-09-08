@@ -4,20 +4,21 @@ import { useNavigate, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import { Box, Button, IconButton, Modal, Typography } from "@mui/material";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
+import { IExpense, ISharecount } from "../interfaces/interfaces";
+import Loader from "./Loader";
 
 const ExpensesList = () => {
   const navigate = useNavigate();
   const params = useParams();
-
   const [error, setError] = useState<any>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [sharecount, setSharecount] = useState<any>(null);
-  const [expenses, setExpenses] = useState([]);
-
-  const [open, setOpen] = useState(false);
-  const [expenseID, setExpenseID] = useState(null);
-  const [expenseName, setExpenseName] = useState("");
-
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  const [sharecount, setSharecount] = useState<ISharecount | undefined>(
+    undefined
+  );
+  const [expenses, setExpenses] = useState<IExpense[]>([]);
+  const [open, setOpen] = useState<boolean>(false);
+  const [expenseID, setExpenseID] = useState<number>(0);
+  const [expenseName, setExpenseName] = useState<string>("");
   const header = sharecount?.name;
 
   const style = {
@@ -28,7 +29,7 @@ const ExpensesList = () => {
     width: "80%",
     bgcolor: "background.paper",
     boxShadow: 24,
-    "text-align": "center",
+    textAlign: "center",
     p: 4,
   };
 
@@ -48,7 +49,7 @@ const ExpensesList = () => {
       );
   }, [params.id]);
 
-  const handleOpen = (expense: any) => {
+  const handleOpen = (expense: IExpense) => {
     setExpenseID(expense.id);
     setExpenseName(expense.name);
     setOpen(true);
@@ -61,7 +62,7 @@ const ExpensesList = () => {
     setOpen(false);
   };
 
-  const deleteExpense = (expenseID: any) => {
+  const deleteExpense = (expenseID: number) => {
     return fetch(`http://localhost:3000/expense/${expenseID}`, {
       method: "DELETE",
       headers: {
@@ -71,8 +72,8 @@ const ExpensesList = () => {
       .then((data) => data.json())
       .then(() => {
         setExpenses(
-          expenses.filter((expense: any) => {
-            return expense.id !== expenseID;
+          expenses.filter((e: IExpense) => {
+            return e.id !== expenseID;
           })
         );
       });
@@ -82,10 +83,10 @@ const ExpensesList = () => {
     console.log("Open search bar");
   };
 
-  const listExpenses = expenses.map((expense: any) => (
-    <li key={expense.id}>
+  const listExpenses = expenses.map((e: IExpense) => (
+    <li key={e.id}>
       <ExpenseItem
-        expense={expense}
+        expense={e}
         sharecount={sharecount}
         onClick={handleOpen}
       ></ExpenseItem>
@@ -96,14 +97,14 @@ const ExpensesList = () => {
     return (
       <div>
         <Header title={header}></Header>
-        Error: {error.message}
+        Please try again later
       </div>
     );
   } else if (!isLoaded) {
     return (
       <div>
         <Header title={header}></Header>
-        Loading...
+        <Loader></Loader>
       </div>
     );
   } else {

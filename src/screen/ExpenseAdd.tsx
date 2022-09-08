@@ -2,15 +2,15 @@ import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {  TextField } from "@mui/material";
 import Header from "../components/Header";
+import { IExpense } from "../interfaces/interfaces";
 
 const ExpenseAdd = () => {
   const navigate = useNavigate();
   const params = useParams();
+  const [name, setName] = useState<string>("");
+  const [amount, setAmount] = useState<string>("");
 
-  const [name, setName] = useState("");
-  const [amount, setAmount] = useState("");
-
-  const addExpense = (expense: any) => {
+  const addExpenseServer = (expense: IExpense) => {
     return fetch("http://localhost:3000/expense", {
       method: "POST",
       headers: {
@@ -22,11 +22,13 @@ const ExpenseAdd = () => {
 
   const save = () => {
     const newExpense = {
+      id: 0,
       name: name,
       amount_total: parseInt(amount),
-      sharecount: parseInt(params.id!),
+      date: '',
+      sharecount_id: parseInt(params.id!),
     };
-    addExpense(newExpense);
+    addExpenseServer(newExpense);
     navigate(-1);
   };
 

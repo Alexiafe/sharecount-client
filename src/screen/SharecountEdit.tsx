@@ -10,21 +10,22 @@ import {
 } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
 import AddIcon from "@mui/icons-material/Add";
+import { IParticipant, ISharecount } from "../interfaces/interfaces";
+import Loader from "../components/Loader";
 
 const SharecountEdit = () => {
   const navigate = useNavigate();
   const params = useParams();
-
   const [error, setError] = useState<any>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [sharecount, setSharecount] = useState<any>(null);
-
-  const [name, setName] = useState("");
-  const [currency, setCurrency] = useState("");
-
-  const [participant, setParticipant] = useState("");
-  const [participants, setParticipants] = useState<any[]>([]);
-
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  const [sharecount, setSharecount] = useState<ISharecount | undefined>(
+    undefined
+  );
+  const [name, setName] = useState<string>("");
+  const [currency, setCurrency] = useState<string>("");
+  const [participant, setParticipant] = useState<string>("");
+  const [participants, setParticipants] = useState<string[]>([]);
+  const [oldParticipants, setOldParticipants] = useState<string[]>([]);
   const title = `Edit ${sharecount?.name}`;
 
   useEffect(() => {
@@ -36,7 +37,10 @@ const SharecountEdit = () => {
           setSharecount(result);
           setName(result.name);
           setCurrency(result.currency);
-          setParticipants(result.participants.map((p: any) => p.name));
+          setParticipants(result.participants.map((p: IParticipant) => p.name));
+          setOldParticipants(
+            result.participants.map((p: IParticipant) => p.name)
+          );
         },
         (error) => {
           setIsLoaded(true);
@@ -45,13 +49,29 @@ const SharecountEdit = () => {
       );
   }, [params.id]);
 
-  const editSharecount = (sharecount: any) => {
-    return fetch(`http://localhost:3000/sharecount2/${params.id}`, {
-      method: "PUT",
+  const editSharecountServer = (sharecount: any) => {
+    return fetch(
+      `http://localhost:3000/sharecount-with-partcipants/${params.id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(sharecount),
+      }
+    ).then((data) => data.json());
+  };
+
+  const deleteParticipantsServer = (participants: string[]) => {
+    return fetch(`http://localhost:3000/participants`, {
+      method: "DELETE",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(sharecount),
+      body: JSON.stringify({
+        participants: participants,
+        sharecount: sharecount?.id,
+      }),
     }).then((data) => data.json());
   };
 
@@ -62,38 +82,50 @@ const SharecountEdit = () => {
     setParticipant("");
   };
 
-  const deleteParticipants = (participant: any) => {
+  const deleteParticipants = (participant: string) => {
     setParticipants(
-      participants.filter((p: any) => {
+      participants.filter((p: string) => {
         return p !== participant;
       })
     );
   };
 
   const save = () => {
+    const participantsToAdd = participants.filter(
+      (p: string) => !oldParticipants.includes(p)
+    );
+
+    const participantsToDelete = oldParticipants.filter(
+      (p: string) => !participants.includes(p)
+    );
+
     const newSharecount = {
+      id: 0,
       name: name,
       currency: currency,
-      participants: participants,
+      participants: participantsToAdd,
     };
-    editSharecount(newSharecount);
+
+    editSharecountServer(newSharecount);
+    if (participantsToDelete.length)
+      deleteParticipantsServer(participantsToDelete);
     navigate(-1);
   };
 
-  const listParticipants = participants.map((participant: any) => (
+  const listParticipants = participants.map((p: string) => (
     <ListItem
-      key={participant}
+      key={p}
       secondaryAction={
         <IconButton
           edge="end"
           aria-label="delete"
-          onClick={() => deleteParticipants(participant)}
+          onClick={() => deleteParticipants(p)}
         >
           <ClearIcon />
         </IconButton>
       }
     >
-      <ListItemText primary={participant} />
+      <ListItemText primary={p} />
     </ListItem>
   ));
 
@@ -101,14 +133,14 @@ const SharecountEdit = () => {
     return (
       <div>
         <Header title={title} backButton="true"></Header>
-        Error: {error.message}
+        Please try again later
       </div>
     );
   } else if (!isLoaded) {
     return (
       <div>
         <Header title={title}></Header>
-        Loading...
+        <Loader></Loader>
       </div>
     );
   } else {
@@ -120,7 +152,6 @@ const SharecountEdit = () => {
           saveButton="true"
           onClick={save}
         ></Header>
-        {participants}
         <div className="flex flex-col m-2">
           <div className="m-2">
             <TextField

@@ -13,15 +13,13 @@ import AddIcon from "@mui/icons-material/Add";
 
 const SharecountAdd = () => {
   const navigate = useNavigate();
+  const [name, setName] = useState<string>("");
+  const [currency, setCurrency] = useState<string>("");
+  const [participant, setParticipant] = useState<string>("");
+  const [participants, setParticipants] = useState<string[]>([]);
 
-  const [name, setName] = useState("");
-  const [currency, setCurrency] = useState("");
-
-  const [participant, setParticipant] = useState("");
-  const [participants, setParticipants] = useState<any[]>([]);
-
-  const addSharecount = (sharecount: any) => {
-    return fetch("http://localhost:3000/sharecount2", {
+  const addSharecountServer = (sharecount: any) => {
+    return fetch("http://localhost:3000/sharecount-with-partcipants", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -37,9 +35,9 @@ const SharecountAdd = () => {
     setParticipant("");
   };
 
-  const deleteParticipants = (participant: any) => {
+  const deleteParticipant = (participant: string) => {
     setParticipants(
-      participants.filter((p: any) => {
+      participants.filter((p: string) => {
         return p !== participant;
       })
     );
@@ -47,28 +45,29 @@ const SharecountAdd = () => {
 
   const save = () => {
     const newSharecount = {
+      id: 0,
       name: name,
       currency: currency,
       participants: participants,
     };
-    addSharecount(newSharecount);
+    addSharecountServer(newSharecount);
     navigate("/");
   };
 
-  const listParticipants = participants.map((participant: any) => (
+  const listParticipants = participants.map((p: string) => (
     <ListItem
-      key={participant}
+      key={p}
       secondaryAction={
         <IconButton
           edge="end"
           aria-label="delete"
-          onClick={() => deleteParticipants(participant)}
+          onClick={() => deleteParticipant(p)}
         >
           <ClearIcon />
         </IconButton>
       }
     >
-      <ListItemText primary={participant} />
+      <ListItemText primary={p} />
     </ListItem>
   ));
 
