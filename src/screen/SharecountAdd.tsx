@@ -45,7 +45,6 @@ const SharecountAdd = () => {
 
   const save = () => {
     const newSharecount = {
-      id: 0,
       name: name,
       currency: currency,
       participants: participants,

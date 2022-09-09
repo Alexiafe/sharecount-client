@@ -1,35 +1,44 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import {  TextField } from "@mui/material";
+import { TextField } from "@mui/material";
 import Header from "../components/Header";
-import { IExpense } from "../interfaces/interfaces";
+import moment from "moment";
+import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { LocalizationProvider } from "@mui/x-date-pickers";
 
 const ExpenseAdd = () => {
   const navigate = useNavigate();
   const params = useParams();
   const [name, setName] = useState<string>("");
   const [amount, setAmount] = useState<string>("");
+  const [date, setDate] = React.useState<moment.Moment | null>(moment());
 
-  const addExpenseServer = (expense: IExpense) => {
+  const handleDateChange = (newDate: moment.Moment | null) => {
+    setDate(newDate);
+  };
+
+  const addExpenseServer = (expense: any) => {
     return fetch("http://localhost:3000/expense", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(expense),
-    }).then((data) => data.json());
+    }).then((data) => {
+      data.json();
+      navigate(-1);
+    });
   };
 
   const save = () => {
     const newExpense = {
-      id: 0,
       name: name,
       amount_total: parseInt(amount),
-      date: '',
+      date: moment(date).format(),
       sharecount_id: parseInt(params.id!),
     };
     addExpenseServer(newExpense);
-    navigate(-1);
   };
 
   return (
@@ -72,6 +81,19 @@ const ExpenseAdd = () => {
               shrink: true,
             }}
           />
+        </div>
+        <div className="m-2">
+          <LocalizationProvider dateAdapter={AdapterMoment}>
+            <MobileDatePicker
+              label="Date"
+              inputFormat="DD/MM/YYYY"
+              value={date}
+              onChange={handleDateChange}
+              renderInput={(params) => (
+                <TextField required fullWidth size="small" {...params} />
+              )}
+            />
+          </LocalizationProvider>
         </div>
       </div>
     </div>

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
 import Header from "../components/Header";
 import Loader from "../components/Loader";
 import { IExpense } from "../interfaces/interfaces";
 
 const ExpensesDetails = () => {
+  const navigate = useNavigate();
   const params = useParams();
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
@@ -31,7 +32,9 @@ const ExpensesDetails = () => {
   }, [params.id]);
 
   const edit = () => {
-    console.log("Go to edit expense screen");
+    navigate(
+      `/sharecount/${expenseDetails?.sharecount_id}/expense-edit/${params.id}`
+    );
   };
 
   if (error) {

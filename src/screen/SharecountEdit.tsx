@@ -59,7 +59,10 @@ const SharecountEdit = () => {
         },
         body: JSON.stringify(sharecount),
       }
-    ).then((data) => data.json());
+    ).then((data) => {
+      navigate(-1);
+      data.json();
+    });
   };
 
   const deleteParticipantsServer = (participants: string[]) => {
@@ -100,7 +103,6 @@ const SharecountEdit = () => {
     );
 
     const newSharecount = {
-      id: 0,
       name: name,
       currency: currency,
       participants: participantsToAdd,
@@ -109,7 +111,6 @@ const SharecountEdit = () => {
     editSharecountServer(newSharecount);
     if (participantsToDelete.length)
       deleteParticipantsServer(participantsToDelete);
-    navigate(-1);
   };
 
   const listParticipants = participants.map((p: string) => (
