@@ -16,18 +16,24 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/sharecount/:id" element={<ExpensesList />} />
-          <Route path="/sharecount-edit/:id" element={<SharecountEdit />} />
+          <Route path="/sharecount/:sharecountID" element={<ExpensesList />} />
+          <Route
+            path="/sharecount-edit/:sharecountID"
+            element={<SharecountEdit />}
+          />
           <Route path="/sharecount-add" element={<SharecountAdd />} />
           <Route
-            path="/sharecount/:id/expense/:id"
+            path="/sharecount/:sharecountID/expense/:expenseID"
             element={<ExpensesDetails />}
           />
           <Route
-            path="/sharecount/:id/expense-edit/:id"
+            path="/sharecount/:sharecountID/expense-edit/:expenseID"
             element={<ExpenseEdit />}
           />
-          <Route path="/sharecount/:id/expense-add" element={<ExpenseAdd />} />
+          <Route
+            path="/sharecount/:sharecountID/expense-add"
+            element={<ExpenseAdd />}
+          />
         </Routes>
       </Router>
     </div>

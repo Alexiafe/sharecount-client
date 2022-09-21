@@ -6,6 +6,7 @@ import { Box, Button, IconButton, Modal, Typography } from "@mui/material";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import { IExpense, ISharecount } from "../interfaces/interfaces";
 import Loader from "./Loader";
+import { serverUrl } from "../constants/config";
 
 const ExpensesList = () => {
   const navigate = useNavigate();
@@ -34,7 +35,7 @@ const ExpensesList = () => {
   };
 
   useEffect(() => {
-    fetch(`http://localhost:3000/sharecount/${params.id}`)
+    fetch(`${serverUrl}/sharecount/${params.sharecountID}`)
       .then((res) => res.json())
       .then(
         (result) => {
@@ -47,7 +48,7 @@ const ExpensesList = () => {
           setError(error);
         }
       );
-  }, [params.id]);
+  }, [params.sharecountID]);
 
   const handleOpen = (expense: IExpense) => {
     setExpenseID(expense.id);
@@ -63,7 +64,7 @@ const ExpensesList = () => {
   };
 
   const deleteExpense = (expenseID: number) => {
-    return fetch(`http://localhost:3000/expense/${expenseID}`, {
+    return fetch(`${serverUrl}/expense/${expenseID}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -157,7 +158,7 @@ const ExpensesList = () => {
         <div className="absolute bottom-0 right-0">
           <IconButton
             color="primary"
-            onClick={() => navigate(`/sharecount/${params.id}/expense-add`)}
+            onClick={() => navigate(`/sharecount/${params.sharecountID}/expense-add`)}
           >
             <AddCircleOutlineRoundedIcon fontSize="large" />
           </IconButton>
