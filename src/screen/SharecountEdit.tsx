@@ -12,6 +12,7 @@ import ClearIcon from "@mui/icons-material/Clear";
 import AddIcon from "@mui/icons-material/Add";
 import { IParticipant, ISharecount } from "../interfaces/interfaces";
 import Loader from "../components/Loader";
+import { serverUrl } from "../constants/config";
 
 const SharecountEdit = () => {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ const SharecountEdit = () => {
   const title = `Edit ${sharecount?.name}`;
 
   useEffect(() => {
-    fetch(`http://localhost:3000/sharecount/${params.id}`)
+    fetch(`${serverUrl}/sharecount/${params.sharecountID}`)
       .then((res) => res.json())
       .then(
         (result) => {
@@ -47,26 +48,23 @@ const SharecountEdit = () => {
           setError(error);
         }
       );
-  }, [params.id]);
+  }, [params.sharecountID]);
 
   const editSharecountServer = (sharecount: any) => {
-    return fetch(
-      `http://localhost:3000/sharecount-with-partcipants/${params.id}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(sharecount),
-      }
-    ).then((data) => {
+    return fetch(`${serverUrl}/sharecount-with-partcipants/${params.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(sharecount),
+    }).then((data) => {
       navigate(-1);
       data.json();
     });
   };
 
   const deleteParticipantsServer = (participants: string[]) => {
-    return fetch(`http://localhost:3000/participants`, {
+    return fetch(`${serverUrl}/participants`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

@@ -7,7 +7,9 @@ const Expense = (props: any) => {
   const expense = props.expense;
   const sharecount = props.sharecount;
   const propsDate = moment(expense.date);
-  const date = moment(propsDate).isSame(moment(), "day") ? "Today" : propsDate.format("DD/MM/YYYY");
+  const date = moment(propsDate).isSame(moment(), "day")
+    ? "Today"
+    : propsDate.format("DD/MM/YYYY");
 
   return (
     <div className="flex items-center border-b border-grey-500 pb-1">

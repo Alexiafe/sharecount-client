@@ -6,6 +6,7 @@ import Header from "../components/Header";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import { ISharecount } from "../interfaces/interfaces";
 import Loader from "./Loader";
+import { serverUrl } from "../constants/config";
 
 const SharecountList = () => {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ const SharecountList = () => {
   };
 
   useEffect(() => {
-    fetch("http://localhost:3000/sharecounts")
+    fetch(`${serverUrl}/sharecounts`)
       .then((res) => res.json())
       .then(
         (result) => {
@@ -57,7 +58,7 @@ const SharecountList = () => {
   };
 
   const deleteSharecount = (sharecountID: number) => {
-    return fetch(`http://localhost:3000/sharecount/${sharecountID}`, {
+    return fetch(`${serverUrl}/sharecount/${sharecountID}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -79,10 +80,7 @@ const SharecountList = () => {
 
   const listSharecount = sharecounts.map((s: ISharecount) => (
     <li key={s.id}>
-      <SharecountItem
-        sharecount={s}
-        onClick={handleOpen}
-      ></SharecountItem>
+      <SharecountItem sharecount={s} onClick={handleOpen}></SharecountItem>
     </li>
   ));
 

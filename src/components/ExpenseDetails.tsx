@@ -4,6 +4,7 @@ import moment from "moment";
 import Header from "../components/Header";
 import Loader from "../components/Loader";
 import { IExpense } from "../interfaces/interfaces";
+import { serverUrl } from "../constants/config";
 
 const ExpensesDetails = () => {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ const ExpensesDetails = () => {
   const date = moment(expenseDetails?.date).format("DD/MM/YYYY");
 
   useEffect(() => {
-    fetch(`http://localhost:3000/expense/${params.id}`)
+    fetch(`${serverUrl}/expense/${params.expenseID}`)
       .then((res) => res.json())
       .then(
         (result) => {
@@ -29,11 +30,11 @@ const ExpensesDetails = () => {
           setError(error);
         }
       );
-  }, [params.id]);
+  }, [params.expenseID]);
 
   const edit = () => {
     navigate(
-      `/sharecount/${expenseDetails?.sharecount_id}/expense-edit/${params.id}`
+      `/sharecount/${expenseDetails?.sharecount_id}/expense-edit/${params.sharecountID}`
     );
   };
 
@@ -68,6 +69,7 @@ const ExpensesDetails = () => {
             <div className="flex-1 text-left">Paid by x</div>
             <div className="flex-1 text-right">{date}</div>
           </div>
+          <div className=" mt-2">From whom:</div>
         </div>
       </div>
     );

@@ -10,6 +10,7 @@ import {
 import Header from "../components/Header";
 import ClearIcon from "@mui/icons-material/Clear";
 import AddIcon from "@mui/icons-material/Add";
+import { serverUrl } from "../constants/config";
 
 const SharecountAdd = () => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const SharecountAdd = () => {
   const [participants, setParticipants] = useState<string[]>([]);
 
   const addSharecountServer = (sharecount: any) => {
-    return fetch("http://localhost:3000/sharecount-with-partcipants", {
+    return fetch(`${serverUrl}/sharecount-with-partcipants`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
