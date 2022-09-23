@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Header from "../components/Header";
-import { TextField } from "@mui/material";
-import { IExpense } from "../interfaces/interfaces";
+import { Checkbox, MenuItem, TextField } from "@mui/material";
+import { IExpense, IParticipant } from "../interfaces/interfaces";
 import moment from "moment";
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import Loader from "../components/Loader";
+import { serverUrl } from "../constants/config";
 
 const ExpenseEdit = () => {
   const navigate = useNavigate();
@@ -17,10 +18,13 @@ const ExpenseEdit = () => {
   const [expense, setExpense] = useState<IExpense | undefined>(undefined);
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
-  const [date, setDate] = React.useState<moment.Moment | null>(moment());
+  const [date, setDate] = useState<moment.Moment | null>(moment());
+
+  const [participants, setParticipants] = useState<IParticipant[]>([]);
+  const [ownerID, setOwnerID] = useState<number>(0);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/expense/${params.id}`)
+    fetch(`${serverUrl}/expense/${params.expenseID}`)
       .then((res) => res.json())
       .then(
         (result) => {
@@ -29,20 +33,37 @@ const ExpenseEdit = () => {
           setName(result.name);
           setAmount(result.amount_total);
           setDate(result.date);
+          setOwnerID(result.owner.id);
         },
         (error) => {
           setIsLoaded(true);
           setError(error);
         }
       );
-  }, [params.id]);
+    fetch(`${serverUrl}/sharecount/${params.sharecountID}`)
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          setIsLoaded(true);
+          setParticipants(result.participants);
+        },
+        (error) => {
+          setIsLoaded(true);
+          setError(error);
+        }
+      );
+  }, [params.expenseID, params.sharecountID]);
 
   const handleDateChange = (newDate: moment.Moment | null) => {
     setDate(newDate);
   };
 
+  const handleOwnerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setOwnerID(parseInt(event.target.value));
+  };
+
   const editExpenseServer = (expense: any) => {
-    return fetch(`http://localhost:3000/expense/${params.id}`, {
+    return fetch(`${serverUrl}/expense/${params.expenseID}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -59,9 +80,17 @@ const ExpenseEdit = () => {
       name: name,
       amount_total: parseInt(amount),
       date: moment(date).format(),
+      owner_id: ownerID,
     };
     editExpenseServer(newExpense);
   };
+
+  const listParticipants = participants.map((p: IParticipant) => (
+    <li key={p.id}>
+      <Checkbox />
+      {p.name}
+    </li>
+  ));
 
   if (error) {
     return (
@@ -131,6 +160,25 @@ const ExpenseEdit = () => {
                 )}
               />
             </LocalizationProvider>
+          </div>
+          <div className="m-2">
+            <TextField
+              fullWidth
+              select
+              label="Paid by:"
+              value={ownerID || 0}
+              onChange={handleOwnerChange}
+            >
+              {participants.map((p) => (
+                <MenuItem key={p.id} value={p.id}>
+                  {p.name}
+                </MenuItem>
+              ))}
+            </TextField>
+          </div>
+          <div className="m-2">
+            From whom:
+            <ul className="mt-2">{listParticipants}</ul>
           </div>
         </div>
       </div>

@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
 import Header from "../components/Header";
 import Loader from "../components/Loader";
-import { IExpense } from "../interfaces/interfaces";
+import { IExpense, IParticipant } from "../interfaces/interfaces";
 import { serverUrl } from "../constants/config";
 
 const ExpensesDetails = () => {
@@ -14,6 +14,8 @@ const ExpensesDetails = () => {
   const [expenseDetails, setExpenseDetails] = useState<IExpense | undefined>(
     undefined
   );
+  const [owner, setOwner] = useState<IParticipant | undefined>(undefined);
+  const [participants, setParticipants] = useState<IParticipant[]>([]);
   const header = expenseDetails?.name;
   const date = moment(expenseDetails?.date).format("DD/MM/YYYY");
 
@@ -24,6 +26,19 @@ const ExpensesDetails = () => {
         (result) => {
           setIsLoaded(true);
           setExpenseDetails(result);
+          setOwner(result.owner);
+        },
+        (error) => {
+          setIsLoaded(true);
+          setError(error);
+        }
+      );
+    fetch(`${serverUrl}/sharecount/${params.sharecountID}`)
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          setIsLoaded(true);
+          setParticipants(result.participants);
         },
         (error) => {
           setIsLoaded(true);
@@ -37,6 +52,10 @@ const ExpensesDetails = () => {
       `/sharecount/${expenseDetails?.sharecount_id}/expense-edit/${params.sharecountID}`
     );
   };
+
+  const listParticipants = participants.map((p: IParticipant) => (
+    <li key={p.id}>{p.name}</li>
+  ));
 
   if (error) {
     return (
@@ -66,10 +85,12 @@ const ExpensesDetails = () => {
             {expenseDetails?.amount_total}
           </div>
           <div className="flex text-center">
-            <div className="flex-1 text-left">Paid by x</div>
+            <div className="flex-1 text-left">Paid by {owner?.name}</div>
             <div className="flex-1 text-right">{date}</div>
           </div>
-          <div className=" mt-2">From whom:</div>
+          <div className=" mt-2">
+            For whom:<ul className="mt-2">{listParticipants}</ul>
+          </div>
         </div>
       </div>
     );

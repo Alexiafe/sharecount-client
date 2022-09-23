@@ -51,7 +51,7 @@ const SharecountEdit = () => {
   }, [params.sharecountID]);
 
   const editSharecountServer = (sharecount: any) => {
-    return fetch(`${serverUrl}/sharecount-with-partcipants/${params.id}`, {
+    return fetch(`${serverUrl}/sharecount-with-partcipants/${params.sharecountID}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
