@@ -23,3 +23,13 @@ export interface IExpense {
   created_at?: Date;
   updated_at?: Date;
 }
+
+export interface IExpenseInfo {
+  id: number;
+  amount: number;
+  expense_id: number;
+  participant_id: number;
+  participant: IParticipant;
+  created_at?: Date;
+  updated_at?: Date;
+}

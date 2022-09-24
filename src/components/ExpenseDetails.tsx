@@ -3,7 +3,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
 import Header from "../components/Header";
 import Loader from "../components/Loader";
-import { IExpense, IParticipant } from "../interfaces/interfaces";
+import {
+  IExpense,
+  IExpenseInfo,
+  IParticipant,
+  ISharecount,
+} from "../interfaces/interfaces";
 import { serverUrl } from "../constants/config";
 
 const ExpensesDetails = () => {
@@ -16,6 +21,10 @@ const ExpensesDetails = () => {
   );
   const [owner, setOwner] = useState<IParticipant | undefined>(undefined);
   const [participants, setParticipants] = useState<IParticipant[]>([]);
+  const [expenseInfo, setExpenseInfo] = useState<IExpenseInfo[]>([]);
+  const [sharecount, setSharecount] = useState<ISharecount | undefined>(
+    undefined
+  );
   const header = expenseDetails?.name;
   const date = moment(expenseDetails?.date).format("DD/MM/YYYY");
 
@@ -27,6 +36,7 @@ const ExpensesDetails = () => {
           setIsLoaded(true);
           setExpenseDetails(result);
           setOwner(result.owner);
+          setExpenseInfo(result.expense_info);
         },
         (error) => {
           setIsLoaded(true);
@@ -38,6 +48,7 @@ const ExpensesDetails = () => {
       .then(
         (result) => {
           setIsLoaded(true);
+          setSharecount(result);
           setParticipants(result.participants);
         },
         (error) => {
@@ -45,7 +56,7 @@ const ExpensesDetails = () => {
           setError(error);
         }
       );
-  }, [params.expenseID]);
+  }, [params.expenseID, params.sharecountID]);
 
   const edit = () => {
     navigate(
@@ -53,8 +64,15 @@ const ExpensesDetails = () => {
     );
   };
 
-  const listParticipants = participants.map((p: IParticipant) => (
-    <li key={p.id}>{p.name}</li>
+  const listExpenseParticipants = expenseInfo.map((e: IExpenseInfo) => (
+    <li key={e.id}>
+      <div className="flex border-b border-grey-500 pb-1">
+        <div className="flex-1">{e.participant.name}</div>
+        <div className="flex-none">
+          {e.amount} {sharecount?.currency}
+        </div>
+      </div>
+    </li>
   ));
 
   if (error) {
@@ -81,15 +99,17 @@ const ExpensesDetails = () => {
           onClick={edit}
         ></Header>
         <div className="items-center m-2">
-          <div className="justify-center h-12 flex items-center">
-            {expenseDetails?.amount_total}
-          </div>
-          <div className="flex text-center">
-            <div className="flex-1 text-left">Paid by {owner?.name}</div>
-            <div className="flex-1 text-right">{date}</div>
+          <div className="border-b border-grey-500 pb-1">
+            <div className="justify-center h-12 flex items-center">
+              {expenseDetails?.amount_total} {sharecount?.currency}
+            </div>
+            <div className="flex text-center">
+              <div className="flex-1 text-left">Paid by {owner?.name}</div>
+              <div className="flex-1 text-right">{date}</div>
+            </div>
           </div>
           <div className=" mt-2">
-            For whom:<ul className="mt-2">{listParticipants}</ul>
+            For whom:<ul className="mt-2">{listExpenseParticipants}</ul>
           </div>
         </div>
       </div>
