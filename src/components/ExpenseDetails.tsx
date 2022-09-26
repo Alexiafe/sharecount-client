@@ -60,7 +60,7 @@ const ExpensesDetails = () => {
 
   const edit = () => {
     navigate(
-      `/sharecount/${expenseDetails?.sharecount_id}/expense-edit/${params.sharecountID}`
+      `/sharecount/${expenseDetails?.sharecount_id}/expense-edit/${params.expenseID}`
     );
   };
 

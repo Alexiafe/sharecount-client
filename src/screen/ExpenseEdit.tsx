@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import { Checkbox, MenuItem, TextField } from "@mui/material";
-import { IExpense, IParticipant } from "../interfaces/interfaces";
+import { IExpense, IExpenseInfo, IParticipant } from "../interfaces/interfaces";
 import moment from "moment";
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
@@ -23,29 +23,40 @@ const ExpenseEdit = () => {
   const [participants, setParticipants] = useState<IParticipant[]>([]);
   const [ownerID, setOwnerID] = useState<number>(0);
 
+  const [partcipantsToAddIDs, setParticipantsToAddIDs] = useState<number[]>([]);
+
   useEffect(() => {
     fetch(`${serverUrl}/expense/${params.expenseID}`)
       .then((res) => res.json())
       .then(
-        (result) => {
+        (result1) => {
           setIsLoaded(true);
-          setExpense(result);
-          setName(result.name);
-          setAmount(result.amount_total);
-          setDate(result.date);
-          setOwnerID(result.owner.id);
-        },
-        (error) => {
-          setIsLoaded(true);
-          setError(error);
-        }
-      );
-    fetch(`${serverUrl}/sharecount/${params.sharecountID}`)
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          setIsLoaded(true);
-          setParticipants(result.participants);
+          setExpense(result1);
+          setName(result1.name);
+          setAmount(result1.amount_total);
+          setDate(result1.date);
+          setOwnerID(result1.owner.id);
+          fetch(`${serverUrl}/sharecount/${params.sharecountID}`)
+            .then((res) => res.json())
+            .then(
+              (result2) => {
+                setIsLoaded(true);
+                setParticipants(
+                  result2.participants.map((p: IParticipant) => ({
+                    ...p,
+                    checked: result1?.expense_info?.some(
+                      (e: IExpenseInfo) => e.participant.id === p.id
+                    )
+                      ? true
+                      : false,
+                  }))
+                );
+              },
+              (error) => {
+                setIsLoaded(true);
+                setError(error);
+              }
+            );
         },
         (error) => {
           setIsLoaded(true);
@@ -62,7 +73,27 @@ const ExpenseEdit = () => {
     setOwnerID(parseInt(event.target.value));
   };
 
-  const editExpenseServer = (expense: any) => {
+  const handleCheckChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      setParticipantsToAddIDs([
+        ...partcipantsToAddIDs,
+        parseInt(event.target.value),
+      ]);
+    } else {
+      setParticipantsToAddIDs(
+        partcipantsToAddIDs.filter((p) => p !== parseInt(event.target.value))
+      );
+    }
+
+    let index = participants.findIndex(
+      (p) => p.id === parseInt(event.target.value)
+    );
+    let newP = [...participants];
+    newP[index].checked = event.target.checked;
+    setParticipants(newP);
+  };
+
+  const editExpenseServer = (expense: IExpense) => {
     return fetch(`${serverUrl}/expense/${params.expenseID}`, {
       method: "PUT",
       headers: {
@@ -75,19 +106,48 @@ const ExpenseEdit = () => {
     });
   };
 
+  const deleteParticipantsServer = (expense_infos: IParticipant[]) => {
+    return fetch(`${serverUrl}/expenses_info`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ids: expense_infos.map((e) => e.id),
+      }),
+    }).then((data) => data.json());
+  };
+
   const save = () => {
-    const newExpense = {
+    console.log(amount);
+    console.log(participants.filter((p) => p.checked).length);
+    let newExpense: any = {
       name: name,
       amount_total: parseInt(amount),
       date: moment(date).format(),
       owner_id: ownerID,
+      expense_info: partcipantsToAddIDs.map((p: number) => {
+        return {
+          amount:
+            parseInt(amount) / participants.filter((p) => p.checked).length,
+          participant_id: p,
+        };
+      }),
     };
+
+    let partcipantsToRemove: IParticipant[] = participants.filter(
+      (p) => !p.checked
+    );
+
+    if (partcipantsToRemove.length)
+      deleteParticipantsServer(partcipantsToRemove);
+
     editExpenseServer(newExpense);
   };
 
   const listParticipants = participants.map((p: IParticipant) => (
     <li key={p.id}>
-      <Checkbox />
+      <Checkbox value={p.id} checked={p.checked} onChange={handleCheckChange} />{" "}
       {p.name}
     </li>
   ));

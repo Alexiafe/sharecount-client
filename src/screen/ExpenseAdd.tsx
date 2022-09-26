@@ -1,20 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  Checkbox,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  TextField,
-} from "@mui/material";
+import { Checkbox, MenuItem, TextField } from "@mui/material";
 import Header from "../components/Header";
 import moment from "moment";
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { LocalizationProvider } from "@mui/x-date-pickers";
-import { IParticipant } from "../interfaces/interfaces";
+import { IExpense, IParticipant } from "../interfaces/interfaces";
 import { serverUrl } from "../constants/config";
 import Loader from "../components/Loader";
 
@@ -35,7 +27,12 @@ const ExpenseAdd = () => {
       .then(
         (result) => {
           setIsLoaded(true);
-          setParticipants(result.participants);
+          setParticipants(
+            result.participants.map((p: IParticipant) => ({
+              ...p,
+              checked: false,
+            }))
+          );
         },
         (error) => {
           setIsLoaded(true);
@@ -50,6 +47,15 @@ const ExpenseAdd = () => {
 
   const handleOwnerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setOwnerID(parseInt(event.target.value));
+  };
+
+  const handleCheckChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let index = participants.findIndex(
+      (p) => p.id === parseInt(event.target.value)
+    );
+    let newP = [...participants];
+    newP[index].checked = event.target.checked;
+    setParticipants(newP);
   };
 
   const addExpenseServer = (expense: any) => {
@@ -72,13 +78,22 @@ const ExpenseAdd = () => {
       date: moment(date).format(),
       sharecount_id: parseInt(params.sharecountID!),
       owner_id: ownerID,
+      expense_info: participants
+        .filter((p) => p.checked)
+        .map((p) => {
+          return {
+            amount:
+              parseInt(amount) / participants.filter((p) => p.checked).length,
+            participant_id: p.id,
+          };
+        }),
     };
     addExpenseServer(newExpense);
   };
 
   const listParticipants = participants.map((p: IParticipant) => (
     <li key={p.id}>
-      <Checkbox />
+      <Checkbox value={p.id} checked={p.checked} onChange={handleCheckChange} />
       {p.name}
     </li>
   ));
