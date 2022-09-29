@@ -1,5 +1,5 @@
 // Interfaces
-import { IExpense, IParticipant } from "../interfaces/interfaces";
+import { IParticipant } from "../interfaces/interfaces";
 
 // Components
 import Header from "../components/Header";
