@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import moment from "moment";
+// Interfaces & configs
+import { IExpense, IExpenseInfo, ISharecount } from "../interfaces/interfaces";
+import { serverUrl } from "../constants/config";
+
+// Components
 import Header from "../components/Header";
 import Loader from "../components/Loader";
-import {
-  IExpense,
-  IExpenseInfo,
-  IParticipant,
-  ISharecount,
-} from "../interfaces/interfaces";
-import { serverUrl } from "../constants/config";
+
+// React
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+
+// Other
+import moment from "moment";
 
 const ExpensesDetails = () => {
   const navigate = useNavigate();
@@ -19,8 +21,6 @@ const ExpensesDetails = () => {
   const [expenseDetails, setExpenseDetails] = useState<IExpense | undefined>(
     undefined
   );
-  const [owner, setOwner] = useState<IParticipant | undefined>(undefined);
-  const [participants, setParticipants] = useState<IParticipant[]>([]);
   const [expenseInfo, setExpenseInfo] = useState<IExpenseInfo[]>([]);
   const [sharecount, setSharecount] = useState<ISharecount | undefined>(
     undefined
@@ -35,7 +35,6 @@ const ExpensesDetails = () => {
         (result) => {
           setIsLoaded(true);
           setExpenseDetails(result);
-          setOwner(result.owner);
           setExpenseInfo(result.expense_info);
         },
         (error) => {
@@ -49,7 +48,6 @@ const ExpensesDetails = () => {
         (result) => {
           setIsLoaded(true);
           setSharecount(result);
-          setParticipants(result.participants);
         },
         (error) => {
           setIsLoaded(true);
@@ -94,8 +92,8 @@ const ExpensesDetails = () => {
       <div>
         <Header
           title={header}
-          backButton="true"
-          editButton="true"
+          backButton={true}
+          editButton={true}
           onClick={edit}
         ></Header>
         <div className="items-center m-2">
@@ -104,7 +102,9 @@ const ExpensesDetails = () => {
               {expenseDetails?.amount_total} {sharecount?.currency}
             </div>
             <div className="flex text-center">
-              <div className="flex-1 text-left">Paid by {owner?.name}</div>
+              <div className="flex-1 text-left">
+                Paid by {expenseDetails?.owner?.name}
+              </div>
               <div className="flex-1 text-right">{date}</div>
             </div>
           </div>

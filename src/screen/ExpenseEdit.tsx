@@ -1,14 +1,23 @@
+// Interfaces & configs
+import { IExpense, IExpenseInfo, IParticipant } from "../interfaces/interfaces";
+import { serverUrl } from "../constants/config";
+
+// Components
+import Loader from "../components/Loader";
+import Header from "../components/Header";
+
+// React
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Header from "../components/Header";
+
+// MUI
 import { Checkbox, MenuItem, TextField } from "@mui/material";
-import { IExpense, IExpenseInfo, IParticipant } from "../interfaces/interfaces";
-import moment from "moment";
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { LocalizationProvider } from "@mui/x-date-pickers";
-import Loader from "../components/Loader";
-import { serverUrl } from "../constants/config";
+
+// Other
+import moment from "moment";
 
 const ExpenseEdit = () => {
   const navigate = useNavigate();
@@ -155,7 +164,7 @@ const ExpenseEdit = () => {
   if (error) {
     return (
       <div>
-        <Header title="Edit Expense" backButton="true"></Header>
+        <Header title="Edit Expense" backButton={true}></Header>
         Please try again later
       </div>
     );
@@ -171,8 +180,8 @@ const ExpenseEdit = () => {
       <div>
         <Header
           title="Edit Expense"
-          cancelButton="true"
-          saveButton="true"
+          cancelButton={true}
+          saveButton={true}
           onClick={save}
         ></Header>
         <div className="flex flex-col m-2">

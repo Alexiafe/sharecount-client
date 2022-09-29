@@ -1,5 +1,14 @@
-import React, { useState } from "react";
+// Interfaces & configs
+import { serverUrl } from "../constants/config";
+
+// Components
+import Header from "../components/Header";
+
+// React
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+// MUI
 import {
   IconButton,
   List,
@@ -7,14 +16,12 @@ import {
   ListItemText,
   TextField,
 } from "@mui/material";
-import Header from "../components/Header";
 import ClearIcon from "@mui/icons-material/Clear";
 import AddIcon from "@mui/icons-material/Add";
-import { serverUrl } from "../constants/config";
 
 const SharecountAdd = () => {
   const navigate = useNavigate();
-  const [name, setName] = useState<string>("");
+  const [sharecountName, setSharecountName] = useState<string>("");
   const [currency, setCurrency] = useState<string>("");
   const [participant, setParticipant] = useState<string>("");
   const [participants, setParticipants] = useState<string[]>([]);
@@ -46,7 +53,7 @@ const SharecountAdd = () => {
 
   const save = () => {
     const newSharecount = {
-      name: name,
+      name: sharecountName,
       currency: currency,
       participants: participants,
     };
@@ -75,8 +82,8 @@ const SharecountAdd = () => {
     <div>
       <Header
         title="New Sharecount"
-        cancelButton="true"
-        saveButton="true"
+        cancelButton={true}
+        saveButton={true}
         onClick={save}
       ></Header>
       <div className="flex flex-col m-2">
@@ -87,9 +94,9 @@ const SharecountAdd = () => {
             size="small"
             label="Name"
             variant="outlined"
-            value={name}
+            value={sharecountName}
             onChange={(e) => {
-              setName(e.target.value);
+              setSharecountName(e.target.value);
             }}
             InputLabelProps={{
               shrink: true,

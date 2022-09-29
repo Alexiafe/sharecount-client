@@ -1,9 +1,23 @@
+// Interfaces & configs
+import { IExpense, ISharecount } from "../interfaces/interfaces";
+
+// React
 import { Link } from "react-router-dom";
-import moment from "moment";
+
+// MUI
 import { IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-const Expense = (props: any) => {
+// Other
+import moment from "moment";
+
+interface IPropsExpense {
+  expense: IExpense;
+  sharecount: ISharecount | undefined;
+  onClick: (expense: IExpense) => void;
+}
+
+const Expense = (props: IPropsExpense) => {
   const expense = props.expense;
   const sharecount = props.sharecount;
   const propsDate = moment(expense.date);
@@ -27,10 +41,10 @@ const Expense = (props: any) => {
 
             <div className="flex-none text-xs text-right">
               <p>
-                {expense.amount_total} {sharecount.currency}
+                {expense.amount_total} {sharecount?.currency}
               </p>
               <p>{date}</p>
-              <p>Impact: + x {sharecount.currency}</p>
+              <p>Impact: + TODO {sharecount?.currency}</p>
             </div>
           </div>
         </Link>

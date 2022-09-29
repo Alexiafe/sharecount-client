@@ -1,13 +1,22 @@
-import React from "react";
+// React
 import { useNavigate } from "react-router-dom";
+
+// MUI
 import { IconButton, AppBar, Toolbar, Typography } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import SearchIcon from "@mui/icons-material/Search";
 
-function Header(props: any) {
+interface IPropsHeader {
+  title?: string;
+  backButton?: boolean;
+  editButton?: boolean;
+  saveButton?: boolean;
+  cancelButton?: boolean;
+  onClick?: () => void;
+}
+
+function Header(props: IPropsHeader) {
   const title = props.title;
   const backButton = props.backButton;
-  const searchButton = props.searchButton;
   const editButton = props.editButton;
   const saveButton = props.saveButton;
   const cancelButton = props.cancelButton;
@@ -34,20 +43,10 @@ function Header(props: any) {
           component="div"
           sx={{ flexGrow: 1 }}
         >
-          {title}
+          <div className="text-xl">{title}</div>
         </Typography>
-        {searchButton && (
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            onClick={() => props.onClick()}
-          >
-            <SearchIcon />
-          </IconButton>
-        )}
-        {saveButton && <div onClick={() => props.onClick()}>Save</div>}
-        {editButton && <div onClick={() => props.onClick()}>Edit</div>}
+        {saveButton && <div onClick={() => props.onClick?.()}>Save</div>}
+        {editButton && <div onClick={() => props.onClick?.()}>Edit</div>}
       </Toolbar>
     </AppBar>
   );

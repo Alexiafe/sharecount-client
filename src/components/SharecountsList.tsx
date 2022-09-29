@@ -1,19 +1,26 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import SharecountItem from "./SharecountItem";
-import { Box, Button, IconButton, Modal, Typography } from "@mui/material";
-import Header from "../components/Header";
-import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
+// Interfaces & configs
 import { ISharecount } from "../interfaces/interfaces";
-import Loader from "./Loader";
 import { serverUrl } from "../constants/config";
+
+// Components
+import Loader from "./Loader";
+import SharecountItem from "./SharecountItem";
+import Header from "../components/Header";
+
+// React
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+// MUI
+import { Box, Button, IconButton, Modal, Typography } from "@mui/material";
+import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 
 const SharecountList = () => {
   const navigate = useNavigate();
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [sharecounts, setSharecounts] = useState<ISharecount[]>([]);
-  const [open, setOpen] = useState<boolean>(false);
+  const [displayModal, setDisplayModal] = useState<boolean>(false);
   const [sharecountID, setSharecountID] = useState<number>(0);
   const [sharecountName, setSharecountName] = useState<string>("");
 
@@ -44,17 +51,17 @@ const SharecountList = () => {
       );
   }, []);
 
-  const handleOpen = (sharecount: ISharecount) => {
+  const handleDisplayModal = (sharecount: ISharecount) => {
     setSharecountID(sharecount.id);
     setSharecountName(sharecount.name);
-    setOpen(true);
+    setDisplayModal(true);
   };
 
-  const handleClose = () => setOpen(false);
+  const handleCloseModal = () => setDisplayModal(false);
 
   const confirmDelete = () => {
     deleteSharecount(sharecountID);
-    setOpen(false);
+    setDisplayModal(false);
   };
 
   const deleteSharecount = (sharecountID: number) => {
@@ -74,16 +81,6 @@ const SharecountList = () => {
       });
   };
 
-  const openSearchBar = () => {
-    console.log("Open search bar");
-  };
-
-  const listSharecount = sharecounts.map((s: ISharecount) => (
-    <li key={s.id}>
-      <SharecountItem sharecount={s} onClick={handleOpen}></SharecountItem>
-    </li>
-  ));
-
   if (error) {
     return (
       <div>
@@ -101,15 +98,20 @@ const SharecountList = () => {
   } else {
     return (
       <div>
-        <Header
-          title="Sharecount"
-          searchButton="true"
-          onClick={openSearchBar}
-        ></Header>
-        <ul className="m-2 border-solid">{listSharecount}</ul>
+        <Header title="Sharecount"></Header>
+        <ul className="m-2 border-solid">
+          {sharecounts.map((s: ISharecount) => (
+            <li key={s.id}>
+              <SharecountItem
+                sharecount={s}
+                onClick={handleDisplayModal}
+              ></SharecountItem>
+            </li>
+          ))}
+        </ul>
         <Modal
-          open={open}
-          onClose={handleClose}
+          open={displayModal}
+          onClose={handleCloseModal}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
@@ -125,7 +127,7 @@ const SharecountList = () => {
                 <Button
                   variant="outlined"
                   size="small"
-                  onClick={() => setOpen(false)}
+                  onClick={() => setDisplayModal(false)}
                 >
                   Cancel
                 </Button>

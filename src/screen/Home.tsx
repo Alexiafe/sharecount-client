@@ -1,3 +1,4 @@
+// Components
 import SharecountsList from "../components/SharecountsList";
 
 const Home = () => {

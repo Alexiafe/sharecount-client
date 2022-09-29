@@ -1,21 +1,30 @@
+// Interfaces & configs
+import { IParticipant } from "../interfaces/interfaces";
+import { serverUrl } from "../constants/config";
+
+// Components
+import Header from "../components/Header";
+import Loader from "../components/Loader";
+
+// React
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+
+// MUI
 import { Checkbox, MenuItem, TextField } from "@mui/material";
-import Header from "../components/Header";
-import moment from "moment";
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { LocalizationProvider } from "@mui/x-date-pickers";
-import { IExpense, IParticipant } from "../interfaces/interfaces";
-import { serverUrl } from "../constants/config";
-import Loader from "../components/Loader";
+
+// Other
+import moment from "moment";
 
 const ExpenseAdd = () => {
   const navigate = useNavigate();
   const params = useParams();
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const [name, setName] = useState<string>("");
+  const [expenseName, setExpenseName] = useState<string>("");
   const [amount, setAmount] = useState<string>("");
   const [date, setDate] = useState<moment.Moment | null>(moment());
   const [participants, setParticipants] = useState<IParticipant[]>([]);
@@ -73,7 +82,7 @@ const ExpenseAdd = () => {
 
   const save = () => {
     const newExpense = {
-      name: name,
+      name: expenseName,
       amount_total: parseInt(amount),
       date: moment(date).format(),
       sharecount_id: parseInt(params.sharecountID!),
@@ -117,8 +126,8 @@ const ExpenseAdd = () => {
       <div>
         <Header
           title="New Expense"
-          cancelButton="true"
-          saveButton="true"
+          cancelButton={true}
+          saveButton={true}
           onClick={save}
         ></Header>
         <div className="flex flex-col m-2">
@@ -129,9 +138,9 @@ const ExpenseAdd = () => {
               size="small"
               label="Name"
               variant="outlined"
-              value={name}
+              value={expenseName}
               onChange={(e) => {
-                setName(e.target.value);
+                setExpenseName(e.target.value);
               }}
               InputLabelProps={{
                 shrink: true,

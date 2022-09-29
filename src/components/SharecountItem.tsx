@@ -1,10 +1,20 @@
-import React from "react";
+// Interfaces & configs
+import { ISharecount } from "../interfaces/interfaces";
+
+// React
 import { Link } from "react-router-dom";
+
+// MUI
 import { IconButton } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-const Sharecount = (props: any) => {
+interface IPropsSharecount {
+  sharecount: ISharecount;
+  onClick: (sharecount: ISharecount) => void;
+}
+
+const Sharecount = (props: IPropsSharecount) => {
   const sharecount = props.sharecount;
 
   return (
@@ -12,7 +22,7 @@ const Sharecount = (props: any) => {
       <div className="flex-1">
         <div className="flex flex-col">
           <Link to={`/sharecount/${sharecount.id}`}>{sharecount.name}</Link>
-          <p className="text-xs">Balance: x{sharecount.currency}</p>
+          <p className="text-xs">Balance: TODO {sharecount.currency}</p>
         </div>
       </div>
       <div className="flex-none text-center">

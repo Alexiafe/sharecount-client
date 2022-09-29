@@ -1,6 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+// Interfaces & configs
+import { IParticipant, ISharecount } from "../interfaces/interfaces";
+import { serverUrl } from "../constants/config";
+
+// Components
+import Loader from "../components/Loader";
 import Header from "../components/Header";
+
+// React
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+
+// MUI
 import {
   IconButton,
   List,
@@ -10,9 +20,6 @@ import {
 } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
 import AddIcon from "@mui/icons-material/Add";
-import { IParticipant, ISharecount } from "../interfaces/interfaces";
-import Loader from "../components/Loader";
-import { serverUrl } from "../constants/config";
 
 const SharecountEdit = () => {
   const navigate = useNavigate();
@@ -22,12 +29,13 @@ const SharecountEdit = () => {
   const [sharecount, setSharecount] = useState<ISharecount | undefined>(
     undefined
   );
-  const [name, setName] = useState<string>("");
+  const [sharecountName, setSharecountName] = useState<string>("");
   const [currency, setCurrency] = useState<string>("");
   const [participant, setParticipant] = useState<string>("");
   const [participants, setParticipants] = useState<string[]>([]);
   const [oldParticipants, setOldParticipants] = useState<string[]>([]);
-  const title = `Edit ${sharecount?.name}`;
+
+  const header = `Edit ${sharecount?.name}`;
 
   useEffect(() => {
     fetch(`${serverUrl}/sharecount/${params.sharecountID}`)
@@ -36,7 +44,7 @@ const SharecountEdit = () => {
         (result) => {
           setIsLoaded(true);
           setSharecount(result);
-          setName(result.name);
+          setSharecountName(result.name);
           setCurrency(result.currency);
           setParticipants(result.participants.map((p: IParticipant) => p.name));
           setOldParticipants(
@@ -51,13 +59,16 @@ const SharecountEdit = () => {
   }, [params.sharecountID]);
 
   const editSharecountServer = (sharecount: any) => {
-    return fetch(`${serverUrl}/sharecount-with-partcipants/${params.sharecountID}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(sharecount),
-    }).then((data) => {
+    return fetch(
+      `${serverUrl}/sharecount-with-partcipants/${params.sharecountID}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(sharecount),
+      }
+    ).then((data) => {
       navigate(-1);
       data.json();
     });
@@ -101,7 +112,7 @@ const SharecountEdit = () => {
     );
 
     const newSharecount = {
-      name: name,
+      name: sharecountName,
       currency: currency,
       participants: participantsToAdd,
     };
@@ -131,14 +142,14 @@ const SharecountEdit = () => {
   if (error) {
     return (
       <div>
-        <Header title={title} backButton="true"></Header>
+        <Header title={header} backButton={true}></Header>
         Please try again later
       </div>
     );
   } else if (!isLoaded) {
     return (
       <div>
-        <Header title={title}></Header>
+        <Header title={header}></Header>
         <Loader></Loader>
       </div>
     );
@@ -146,9 +157,9 @@ const SharecountEdit = () => {
     return (
       <div>
         <Header
-          title={title}
-          cancelButton="true"
-          saveButton="true"
+          title={header}
+          cancelButton={true}
+          saveButton={true}
           onClick={save}
         ></Header>
         <div className="flex flex-col m-2">
@@ -159,9 +170,9 @@ const SharecountEdit = () => {
               size="small"
               label="Name"
               variant="outlined"
-              value={name}
+              value={sharecountName}
               onChange={(e) => {
-                setName(e.target.value);
+                setSharecountName(e.target.value);
               }}
               InputLabelProps={{
                 shrink: true,

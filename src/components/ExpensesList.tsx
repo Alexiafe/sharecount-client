@@ -1,12 +1,20 @@
-import React, { useEffect, useState } from "react";
-import ExpenseItem from "./ExpenseItem";
-import { useNavigate, useParams } from "react-router-dom";
+// Interfaces & configs
+import { IExpense, ISharecount } from "../interfaces/interfaces";
+import { serverUrl } from "../constants/config";
+
+// Components
 import Header from "../components/Header";
+import SearchBar from "./SearchBar";
+import ExpenseItem from "./ExpenseItem";
+import Loader from "./Loader";
+
+// React
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+
+// MUI
 import { Box, Button, IconButton, Modal, Typography } from "@mui/material";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
-import { IExpense, ISharecount } from "../interfaces/interfaces";
-import Loader from "./Loader";
-import { serverUrl } from "../constants/config";
 
 const ExpensesList = () => {
   const navigate = useNavigate();
@@ -17,9 +25,10 @@ const ExpensesList = () => {
     undefined
   );
   const [expenses, setExpenses] = useState<IExpense[]>([]);
-  const [open, setOpen] = useState<boolean>(false);
+  const [displayModal, setDisplayModal] = useState<boolean>(false);
   const [expenseID, setExpenseID] = useState<number>(0);
   const [expenseName, setExpenseName] = useState<string>("");
+  const [filter, setFilter] = useState<string>("");
   const header = sharecount?.name;
 
   const style = {
@@ -50,17 +59,17 @@ const ExpensesList = () => {
       );
   }, [params.sharecountID]);
 
-  const handleOpen = (expense: IExpense) => {
+  const handleDisplayModal = (expense: IExpense) => {
     setExpenseID(expense.id);
     setExpenseName(expense.name);
-    setOpen(true);
+    setDisplayModal(true);
   };
 
-  const handleClose = () => setOpen(false);
+  const handleCloseModal = () => setDisplayModal(false);
 
   const confirmDelete = () => {
     deleteExpense(expenseID);
-    setOpen(false);
+    setDisplayModal(false);
   };
 
   const deleteExpense = (expenseID: number) => {
@@ -80,19 +89,21 @@ const ExpensesList = () => {
       });
   };
 
-  const openSearchBar = () => {
-    console.log("Open search bar");
+  const filterExpenses = (filter: string) => {
+    setFilter(filter);
   };
 
-  const listExpenses = expenses.map((e: IExpense) => (
-    <li key={e.id}>
-      <ExpenseItem
-        expense={e}
-        sharecount={sharecount}
-        onClick={handleOpen}
-      ></ExpenseItem>
-    </li>
-  ));
+  const listExpenses = expenses
+    .filter((e) => e.name.toLowerCase().includes(filter.toLowerCase()))
+    .map((e) => (
+      <li key={e.id}>
+        <ExpenseItem
+          expense={e}
+          sharecount={sharecount}
+          onClick={handleDisplayModal}
+        ></ExpenseItem>
+      </li>
+    ));
 
   if (error) {
     return (
@@ -111,17 +122,13 @@ const ExpensesList = () => {
   } else {
     return (
       <div>
-        <Header
-          title={header}
-          backButton="true"
-          searchButton="true"
-          onClick={openSearchBar}
-        ></Header>
+        <Header title={header} backButton={true}></Header>
+        <SearchBar onClick={filterExpenses}></SearchBar>
         <div>
           <ul className="m-2">{listExpenses}</ul>
           <Modal
-            open={open}
-            onClose={handleClose}
+            open={displayModal}
+            onClose={handleCloseModal}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
           >
@@ -137,7 +144,7 @@ const ExpensesList = () => {
                   <Button
                     variant="outlined"
                     size="small"
-                    onClick={() => setOpen(false)}
+                    onClick={() => setDisplayModal(false)}
                   >
                     Cancel
                   </Button>
@@ -158,7 +165,9 @@ const ExpensesList = () => {
         <div className="absolute bottom-0 right-0">
           <IconButton
             color="primary"
-            onClick={() => navigate(`/sharecount/${params.sharecountID}/expense-add`)}
+            onClick={() =>
+              navigate(`/sharecount/${params.sharecountID}/expense-add`)
+            }
           >
             <AddCircleOutlineRoundedIcon fontSize="large" />
           </IconButton>

@@ -33,6 +33,7 @@ export interface IExpense {
   date: string;
   sharecount_id?: number;
   owner_id?: number;
+  owner: IParticipant;
   expense_info?: IExpenseInfo[];
   created_at?: Date;
   updated_at?: Date;

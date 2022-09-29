@@ -5,6 +5,8 @@ Sharecount is the solution for organizing group expenses on the web or mobile.<b
 
 The is the app's client-side code in Typescript.
 
+[Sharecoubt App](https://sharecount-client.herokuapp.com/)
+
 
 ## Built With
 - [React](https://reactjs.org/)
