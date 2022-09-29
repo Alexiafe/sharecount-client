@@ -1,10 +1,16 @@
 // Interfaces & configs
 import { IExpense, IExpenseInfo, IParticipant } from "../interfaces/interfaces";
-import { serverUrl } from "../constants/config";
 
 // Components
 import Loader from "../components/Loader";
 import Header from "../components/Header";
+
+// Servives
+import {
+  editExpenseService,
+  getExpenseService,
+} from "../services/expense.service";
+import { deleteExpenseInfoService } from "../services/expense_info.service";
 
 // React
 import React, { useEffect, useState } from "react";
@@ -18,13 +24,13 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 
 // Other
 import moment from "moment";
+import { getSharecountService } from "../services/sharecount.service";
 
 const ExpenseEdit = () => {
   const navigate = useNavigate();
   const params = useParams();
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const [expense, setExpense] = useState<IExpense | undefined>(undefined);
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState<moment.Moment | null>(moment());
@@ -35,43 +41,38 @@ const ExpenseEdit = () => {
   const [partcipantsToAddIDs, setParticipantsToAddIDs] = useState<number[]>([]);
 
   useEffect(() => {
-    fetch(`${serverUrl}/expense/${params.expenseID}`)
-      .then((res) => res.json())
-      .then(
-        (result1) => {
-          setIsLoaded(true);
-          setExpense(result1);
-          setName(result1.name);
-          setAmount(result1.amount_total);
-          setDate(result1.date);
-          setOwnerID(result1.owner.id);
-          fetch(`${serverUrl}/sharecount/${params.sharecountID}`)
-            .then((res) => res.json())
-            .then(
-              (result2) => {
-                setIsLoaded(true);
-                setParticipants(
-                  result2.participants.map((p: IParticipant) => ({
-                    ...p,
-                    checked: result1?.expense_info?.some(
-                      (e: IExpenseInfo) => e.participant.id === p.id
-                    )
-                      ? true
-                      : false,
-                  }))
-                );
-              },
-              (error) => {
-                setIsLoaded(true);
-                setError(error);
-              }
+    getExpenseService(parseInt(params.expenseID!)).then(
+      (result1) => {
+        setIsLoaded(true);
+        setName(result1.name);
+        setAmount(result1.amount_total);
+        setDate(result1.date);
+        setOwnerID(result1.owner.id);
+        getSharecountService(parseInt(params.sharecountID!)).then(
+          (result2) => {
+            setIsLoaded(true);
+            setParticipants(
+              result2.participants.map((p: IParticipant) => ({
+                ...p,
+                checked: result1?.expense_info?.some(
+                  (e: IExpenseInfo) => e.participant.id === p.id
+                )
+                  ? true
+                  : false,
+              }))
             );
-        },
-        (error) => {
-          setIsLoaded(true);
-          setError(error);
-        }
-      );
+          },
+          (error) => {
+            setIsLoaded(true);
+            setError(error);
+          }
+        );
+      },
+      (error) => {
+        setIsLoaded(true);
+        setError(error);
+      }
+    );
   }, [params.expenseID, params.sharecountID]);
 
   const handleDateChange = (newDate: moment.Moment | null) => {
@@ -103,28 +104,13 @@ const ExpenseEdit = () => {
   };
 
   const editExpenseServer = (expense: IExpense) => {
-    return fetch(`${serverUrl}/expense/${params.expenseID}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(expense),
-    }).then((data) => {
-      data.json();
-      navigate(-1);
-    });
+    editExpenseService(expense, parseInt(params.expenseID!)).then(() =>
+      navigate(-1)
+    );
   };
 
   const deleteParticipantsServer = (expense_infos: IParticipant[]) => {
-    return fetch(`${serverUrl}/expenses_info`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        ids: expense_infos.map((e) => e.id),
-      }),
-    }).then((data) => data.json());
+    deleteExpenseInfoService(expense_infos);
   };
 
   const save = () => {
@@ -162,6 +148,7 @@ const ExpenseEdit = () => {
   ));
 
   if (error) {
+    console.log(error);
     return (
       <div>
         <Header title="Edit Expense" backButton={true}></Header>

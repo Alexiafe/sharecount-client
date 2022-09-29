@@ -1,10 +1,12 @@
 // Interfaces & configs
 import { IExpense, IExpenseInfo, ISharecount } from "../interfaces/interfaces";
-import { serverUrl } from "../constants/config";
 
 // Components
 import Header from "../components/Header";
 import Loader from "../components/Loader";
+
+// Services
+import { getSharecountService } from "../services/sharecount.service";
 
 // React
 import { useEffect, useState } from "react";
@@ -18,47 +20,35 @@ const ExpensesDetails = () => {
   const params = useParams();
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const [expenseDetails, setExpenseDetails] = useState<IExpense | undefined>(
-    undefined
-  );
+  const [expense, setExpense] = useState<IExpense | undefined>(undefined);
   const [expenseInfo, setExpenseInfo] = useState<IExpenseInfo[]>([]);
   const [sharecount, setSharecount] = useState<ISharecount | undefined>(
     undefined
   );
-  const header = expenseDetails?.name;
-  const date = moment(expenseDetails?.date).format("DD/MM/YYYY");
+  const header = expense?.name;
+  const date = moment(expense?.date).format("DD/MM/YYYY");
 
   useEffect(() => {
-    fetch(`${serverUrl}/expense/${params.expenseID}`)
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          setIsLoaded(true);
-          setExpenseDetails(result);
-          setExpenseInfo(result.expense_info);
-        },
-        (error) => {
-          setIsLoaded(true);
-          setError(error);
-        }
-      );
-    fetch(`${serverUrl}/sharecount/${params.sharecountID}`)
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          setIsLoaded(true);
-          setSharecount(result);
-        },
-        (error) => {
-          setIsLoaded(true);
-          setError(error);
-        }
-      );
+    getSharecountService(parseInt(params.sharecountID!)).then(
+      (result) => {
+        setIsLoaded(true);
+        setSharecount(result);
+        let expense = result.expenses.filter(
+          (expense: IExpense) => expense.id === parseInt(params.expenseID!)
+        )[0];
+        setExpense(expense);
+        setExpenseInfo(expense.expense_info);
+      },
+      (error) => {
+        setIsLoaded(true);
+        setError(error);
+      }
+    );
   }, [params.expenseID, params.sharecountID]);
 
   const edit = () => {
     navigate(
-      `/sharecount/${expenseDetails?.sharecount_id}/expense-edit/${params.expenseID}`
+      `/sharecount/${expense?.sharecount_id}/expense-edit/${params.expenseID}`
     );
   };
 
@@ -99,11 +89,11 @@ const ExpensesDetails = () => {
         <div className="items-center m-2">
           <div className="border-b border-grey-500 pb-1">
             <div className="justify-center h-12 flex items-center">
-              {expenseDetails?.amount_total} {sharecount?.currency}
+              {expense?.amount_total} {sharecount?.currency}
             </div>
             <div className="flex text-center">
               <div className="flex-1 text-left">
-                Paid by {expenseDetails?.owner?.name}
+                Paid by {expense?.owner?.name}
               </div>
               <div className="flex-1 text-right">{date}</div>
             </div>

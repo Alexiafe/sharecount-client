@@ -1,10 +1,13 @@
-// Interfaces & configs
-import { IParticipant } from "../interfaces/interfaces";
-import { serverUrl } from "../constants/config";
+// Interfaces
+import { IExpense, IParticipant } from "../interfaces/interfaces";
 
 // Components
 import Header from "../components/Header";
 import Loader from "../components/Loader";
+
+// Services
+import { getSharecountService } from "../services/sharecount.service";
+import { addExpenseService } from "../services/expense.service";
 
 // React
 import React, { useEffect, useState } from "react";
@@ -31,23 +34,21 @@ const ExpenseAdd = () => {
   const [ownerID, setOwnerID] = useState<number>(0);
 
   useEffect(() => {
-    fetch(`${serverUrl}/sharecount/${params.sharecountID}`)
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          setIsLoaded(true);
-          setParticipants(
-            result.participants.map((p: IParticipant) => ({
-              ...p,
-              checked: false,
-            }))
-          );
-        },
-        (error) => {
-          setIsLoaded(true);
-          setError(error);
-        }
-      );
+    getSharecountService(parseInt(params.sharecountID!)).then(
+      (result) => {
+        setIsLoaded(true);
+        setParticipants(
+          result.participants.map((p: IParticipant) => ({
+            ...p,
+            checked: false,
+          }))
+        );
+      },
+      (error) => {
+        setIsLoaded(true);
+        setError(error);
+      }
+    );
   }, [params.sharecountID]);
 
   const handleDateChange = (newDate: moment.Moment | null) => {
@@ -68,16 +69,15 @@ const ExpenseAdd = () => {
   };
 
   const addExpenseServer = (expense: any) => {
-    return fetch(`${serverUrl}/expense`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    addExpenseService(expense).then(
+      () => {
+        navigate(-1);
       },
-      body: JSON.stringify(expense),
-    }).then((data) => {
-      data.json();
-      navigate(-1);
-    });
+      (error) => {
+        setIsLoaded(true);
+        setError(error);
+      }
+    );
   };
 
   const save = () => {

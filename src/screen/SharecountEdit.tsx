@@ -1,10 +1,16 @@
-// Interfaces & configs
+// Interfaces
 import { IParticipant, ISharecount } from "../interfaces/interfaces";
-import { serverUrl } from "../constants/config";
 
 // Components
 import Loader from "../components/Loader";
 import Header from "../components/Header";
+
+// Services
+import {
+  editSharecountService,
+  getSharecountService,
+} from "../services/sharecount.service";
+import { deleteParticipantsService } from "../services/participants.service";
 
 // React
 import { useEffect, useState } from "react";
@@ -38,53 +44,30 @@ const SharecountEdit = () => {
   const header = `Edit ${sharecount?.name}`;
 
   useEffect(() => {
-    fetch(`${serverUrl}/sharecount/${params.sharecountID}`)
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          setIsLoaded(true);
-          setSharecount(result);
-          setSharecountName(result.name);
-          setCurrency(result.currency);
-          setParticipants(result.participants.map((p: IParticipant) => p.name));
-          setOldParticipants(
-            result.participants.map((p: IParticipant) => p.name)
-          );
-        },
-        (error) => {
-          setIsLoaded(true);
-          setError(error);
-        }
-      );
+    getSharecountService(parseInt(params.sharecountID!)).then(
+      (result) => {
+        setIsLoaded(true);
+        setSharecount(result);
+        setSharecountName(result.name);
+        setCurrency(result.currency);
+        setParticipants(result.participants.map((p: IParticipant) => p.name));
+        setOldParticipants(
+          result.participants.map((p: IParticipant) => p.name)
+        );
+      },
+      (error) => {
+        setIsLoaded(true);
+        setError(error);
+      }
+    );
   }, [params.sharecountID]);
 
   const editSharecountServer = (sharecount: any) => {
-    return fetch(
-      `${serverUrl}/sharecount-with-partcipants/${params.sharecountID}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(sharecount),
-      }
-    ).then((data) => {
-      navigate(-1);
-      data.json();
-    });
+    editSharecountService(sharecount).then(() => navigate(-1));
   };
 
   const deleteParticipantsServer = (participants: string[]) => {
-    return fetch(`${serverUrl}/participants`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        participants: participants,
-        sharecount: sharecount?.id,
-      }),
-    }).then((data) => data.json());
+    deleteParticipantsService(participants, sharecount?.id!);
   };
 
   const addParticipants = () => {

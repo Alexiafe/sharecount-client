@@ -36,7 +36,7 @@ const Expense = (props: IPropsExpense) => {
           <div className="flex">
             <div className="flex-1">
               <p>{expense.name}</p>
-              <p className="text-xs">Paid by {expense.owner.name}</p>
+              <p className="text-xs">Paid by {expense.owner!.name}</p>
             </div>
 
             <div className="flex-none text-xs text-right">

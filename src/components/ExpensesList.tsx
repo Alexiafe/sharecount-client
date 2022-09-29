@@ -1,12 +1,15 @@
-// Interfaces & configs
+// Interfaces
 import { IExpense, ISharecount } from "../interfaces/interfaces";
-import { serverUrl } from "../constants/config";
 
 // Components
 import Header from "../components/Header";
 import SearchBar from "./SearchBar";
 import ExpenseItem from "./ExpenseItem";
 import Loader from "./Loader";
+
+// Services
+import { getSharecountService } from "../services/sharecount.service";
+import { deleteExpenseService } from "../services/expense.service";
 
 // React
 import { useEffect, useState } from "react";
@@ -44,19 +47,17 @@ const ExpensesList = () => {
   };
 
   useEffect(() => {
-    fetch(`${serverUrl}/sharecount/${params.sharecountID}`)
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          setIsLoaded(true);
-          setSharecount(result);
-          setExpenses(result.expenses);
-        },
-        (error) => {
-          setIsLoaded(true);
-          setError(error);
-        }
-      );
+    getSharecountService(parseInt(params.sharecountID!)).then(
+      (result) => {
+        setIsLoaded(true);
+        setSharecount(result);
+        setExpenses(result.expenses);
+      },
+      (error) => {
+        setIsLoaded(true);
+        setError(error);
+      }
+    );
   }, [params.sharecountID]);
 
   const handleDisplayModal = (expense: IExpense) => {
@@ -73,20 +74,19 @@ const ExpensesList = () => {
   };
 
   const deleteExpense = (expenseID: number) => {
-    return fetch(`${serverUrl}/expense/${expenseID}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((data) => data.json())
-      .then(() => {
+    deleteExpenseService(expenseID).then(
+      () => {
         setExpenses(
           expenses.filter((e: IExpense) => {
             return e.id !== expenseID;
           })
         );
-      });
+      },
+      (error) => {
+        setIsLoaded(true);
+        setError(error);
+      }
+    );
   };
 
   const filterExpenses = (filter: string) => {
@@ -162,7 +162,7 @@ const ExpensesList = () => {
             </Box>
           </Modal>
         </div>
-        <div className="absolute bottom-0 right-0">
+        <div className="absolute bottom-2 right-2">
           <IconButton
             color="primary"
             onClick={() =>

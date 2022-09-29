@@ -1,8 +1,8 @@
-// Interfaces & configs
-import { serverUrl } from "../constants/config";
-
 // Components
 import Header from "../components/Header";
+
+// Services
+import { addSharecountService } from "../services/sharecount.service";
 
 // React
 import { useState } from "react";
@@ -27,13 +27,7 @@ const SharecountAdd = () => {
   const [participants, setParticipants] = useState<string[]>([]);
 
   const addSharecountServer = (sharecount: any) => {
-    return fetch(`${serverUrl}/sharecount-with-partcipants`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(sharecount),
-    }).then((data) => data.json());
+    addSharecountService(sharecount);
   };
 
   const addParticipants = () => {

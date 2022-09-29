@@ -1,11 +1,16 @@
-// Interfaces & configs
+// Interfaces
 import { ISharecount } from "../interfaces/interfaces";
-import { serverUrl } from "../constants/config";
 
 // Components
 import Loader from "./Loader";
 import SharecountItem from "./SharecountItem";
 import Header from "../components/Header";
+
+// Services
+import {
+  deleteSharecountService,
+  getSharecountsService,
+} from "../services/sharecount.service";
 
 // React
 import { useEffect, useState } from "react";
@@ -37,18 +42,16 @@ const SharecountList = () => {
   };
 
   useEffect(() => {
-    fetch(`${serverUrl}/sharecounts`)
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          setIsLoaded(true);
-          setSharecounts(result);
-        },
-        (error) => {
-          setIsLoaded(true);
-          setError(error);
-        }
-      );
+    getSharecountsService().then(
+      (result) => {
+        setIsLoaded(true);
+        setSharecounts(result);
+      },
+      (error) => {
+        setIsLoaded(true);
+        setError(error);
+      }
+    );
   }, []);
 
   const handleDisplayModal = (sharecount: ISharecount) => {
@@ -65,21 +68,29 @@ const SharecountList = () => {
   };
 
   const deleteSharecount = (sharecountID: number) => {
-    return fetch(`${serverUrl}/sharecount/${sharecountID}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((data) => data.json())
-      .then(() => {
+    deleteSharecountService(sharecountID).then(
+      () => {
         setSharecounts(
           sharecounts.filter((s: ISharecount) => {
             return s.id !== sharecountID;
           })
         );
-      });
+      },
+      (error) => {
+        setIsLoaded(true);
+        setError(error);
+      }
+    );
   };
+
+  const listSharecounts = sharecounts.map((s: ISharecount) => (
+    <li key={s.id}>
+      <SharecountItem
+        sharecount={s}
+        onClick={handleDisplayModal}
+      ></SharecountItem>
+    </li>
+  ));
 
   if (error) {
     return (
@@ -99,16 +110,7 @@ const SharecountList = () => {
     return (
       <div>
         <Header title="Sharecount"></Header>
-        <ul className="m-2 border-solid">
-          {sharecounts.map((s: ISharecount) => (
-            <li key={s.id}>
-              <SharecountItem
-                sharecount={s}
-                onClick={handleDisplayModal}
-              ></SharecountItem>
-            </li>
-          ))}
-        </ul>
+        <ul className="m-2 border-solid">{listSharecounts}</ul>
         <Modal
           open={displayModal}
           onClose={handleCloseModal}
@@ -144,7 +146,7 @@ const SharecountList = () => {
             </div>
           </Box>
         </Modal>
-        <div className="absolute bottom-0 right-0">
+        <div className="absolute bottom-2 right-2">
           <IconButton
             color="primary"
             onClick={() => navigate("/sharecount-add")}
