@@ -11,7 +11,6 @@ const SearchBar = (props: IPropsSearchBar) => {
     <div className="m-2">
       <TextField
         fullWidth
-        size="small"
         variant="outlined"
         placeholder="Search..."
         onChange={(e) => {

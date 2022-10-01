@@ -128,7 +128,7 @@ const ExpensesList = () => {
         <Header title={header} backButton={true} screen="ExpenseList"></Header>
         <SearchBar onClick={filterExpenses}></SearchBar>
         <div>
-          <ul className="m-2">{listExpenses}</ul>
+          <ul>{listExpenses}</ul>
           <Modal
             open={displayModal}
             onClose={handleCloseModal}
@@ -165,14 +165,14 @@ const ExpensesList = () => {
             </Box>
           </Modal>
         </div>
-        <div className="absolute bottom-2 right-2">
+        <div className="absolute bottom-4 right-4">
           <IconButton
             color="primary"
             onClick={() =>
               navigate(`/sharecount/${params.sharecountID}/expense-add`)
             }
           >
-            <AddCircleOutlineRoundedIcon fontSize="large" />
+            <AddCircleOutlineRoundedIcon sx={{ fontSize: 45 }}  />
           </IconButton>
         </div>
       </div>

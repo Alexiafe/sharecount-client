@@ -171,7 +171,6 @@ const ExpenseEdit = () => {
             <TextField
               required
               fullWidth
-              size="small"
               label="Name"
               variant="outlined"
               value={name}
@@ -183,11 +182,10 @@ const ExpenseEdit = () => {
               }}
             />
           </div>
-          <div className=" m-2">
+          <div className="m-2">
             <TextField
               required
               fullWidth
-              size="small"
               label="Amount"
               variant="outlined"
               value={amount}
@@ -207,7 +205,7 @@ const ExpenseEdit = () => {
                 value={date}
                 onChange={handleDateChange}
                 renderInput={(params) => (
-                  <TextField required fullWidth size="small" {...params} />
+                  <TextField required fullWidth {...params} />
                 )}
               />
             </LocalizationProvider>

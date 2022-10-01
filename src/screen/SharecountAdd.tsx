@@ -77,12 +77,11 @@ const SharecountAdd = () => {
         saveButton={true}
         onClick={save}
       ></Header>
-      <div className="flex flex-col m-2">
+      <div className="flex flex-col p-3">
         <div className="m-2">
           <TextField
             fullWidth
             required
-            size="small"
             label="Name"
             variant="outlined"
             value={sharecountName}
@@ -94,11 +93,10 @@ const SharecountAdd = () => {
             }}
           />
         </div>
-        <div className=" m-2">
+        <div className="m-2">
           <TextField
             fullWidth
             required
-            size="small"
             label="Currency"
             variant="outlined"
             value={currency}
@@ -110,14 +108,13 @@ const SharecountAdd = () => {
             }}
           />
         </div>
-        <div>
+        <div className="m-2">
           Participants:
           <List>{listParticipants}</List>
           <div className="flex">
             <TextField
               fullWidth
               required
-              size="small"
               label="New participant"
               variant="standard"
               value={participantTextField}

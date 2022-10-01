@@ -110,7 +110,7 @@ const SharecountList = () => {
     return (
       <div>
         <Header title="Sharecount"></Header>
-        <ul className="m-2 border-solid">{listSharecounts}</ul>
+        <ul>{listSharecounts}</ul>
         <Modal
           open={displayModal}
           onClose={handleCloseModal}
@@ -146,12 +146,12 @@ const SharecountList = () => {
             </div>
           </Box>
         </Modal>
-        <div className="absolute bottom-2 right-2">
+        <div className="absolute bottom-4 right-4">
           <IconButton
             color="primary"
             onClick={() => navigate("/sharecount-add")}
           >
-            <AddCircleOutlineRoundedIcon fontSize="large" />
+            <AddCircleOutlineRoundedIcon sx={{ fontSize: 45 }} />
           </IconButton>
         </div>
       </div>

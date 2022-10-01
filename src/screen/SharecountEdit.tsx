@@ -153,7 +153,6 @@ const SharecountEdit = () => {
             <TextField
               required
               fullWidth
-              size="small"
               label="Name"
               variant="outlined"
               value={sharecountName}
@@ -169,7 +168,6 @@ const SharecountEdit = () => {
             <TextField
               required
               fullWidth
-              size="small"
               label="Currency"
               variant="outlined"
               value={currency}
@@ -189,7 +187,6 @@ const SharecountEdit = () => {
               <TextField
                 fullWidth
                 required
-                size="small"
                 label="New participant"
                 variant="standard"
                 value={participantTextField}

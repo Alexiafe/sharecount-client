@@ -123,12 +123,11 @@ const ExpenseAdd = () => {
           saveButton={true}
           onClick={save}
         ></Header>
-        <div className="flex flex-col m-2">
+        <div className="flex flex-col p-3">
           <div className="m-2">
             <TextField
               required
               fullWidth
-              size="small"
               label="Name"
               variant="outlined"
               value={expenseName}
@@ -140,11 +139,10 @@ const ExpenseAdd = () => {
               }}
             />
           </div>
-          <div className=" m-2">
+          <div className="m-2">
             <TextField
               required
               fullWidth
-              size="small"
               label="Amount"
               variant="outlined"
               value={amount}
@@ -164,7 +162,7 @@ const ExpenseAdd = () => {
                 value={date}
                 onChange={handleDateChange}
                 renderInput={(params) => (
-                  <TextField required fullWidth size="small" {...params} />
+                  <TextField required fullWidth {...params} />
                 )}
               />
             </LocalizationProvider>

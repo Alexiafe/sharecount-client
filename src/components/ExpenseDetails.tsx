@@ -61,7 +61,7 @@ const ExpensesDetails = () => {
 
   const listExpenseParticipants = expenseInfo.map((e: IExpenseInfoResponse) => (
     <li key={e.id}>
-      <div className="flex border-b border-grey-500 pb-1">
+      <div className="flex border-b border-grey-500 py-2">
         <div className="flex-1">{e.participant?.name}</div>
         <div className="flex-none">
           {e.amount} {sharecount?.currency}
@@ -93,19 +93,19 @@ const ExpensesDetails = () => {
           editButton={true}
           onClick={edit}
         ></Header>
-        <div className="items-center m-2">
+        <div className="items-center p-3">
           <div className="border-b border-grey-500 pb-1">
-            <div className="justify-center h-12 flex items-center">
+            <div className="justify-center h-20 flex items-center text-xl py-3">
               {expense?.amount_total} {sharecount?.currency}
             </div>
-            <div className="flex text-center">
+            <div className="flex text-center py-2">
               <div className="flex-1 text-left">
                 Paid by {expense?.owner?.name}
               </div>
               <div className="flex-1 text-right">{date}</div>
             </div>
           </div>
-          <div className=" mt-2">
+          <div className="mt-4">
             For whom:<ul className="mt-2">{listExpenseParticipants}</ul>
           </div>
         </div>

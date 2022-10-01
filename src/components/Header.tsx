@@ -48,7 +48,7 @@ function Header(props: IPropsHeader) {
           component="div"
           sx={{ flexGrow: 1 }}
         >
-          <div className="text-xl">{title}</div>
+          <div className="text-2xl">{title}</div>
         </Typography>
         {saveButton && <div onClick={() => props.onClick?.()}>Save</div>}
         {editButton && <div onClick={() => props.onClick?.()}>Edit</div>}
