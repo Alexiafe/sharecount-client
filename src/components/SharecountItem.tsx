@@ -1,5 +1,5 @@
 // Interfaces & configs
-import { ISharecount } from "../interfaces/interfaces";
+import { ISharecountResponse } from "../interfaces/interfaces";
 
 // React
 import { Link } from "react-router-dom";
@@ -10,8 +10,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 interface IPropsSharecount {
-  sharecount: ISharecount;
-  onClick: (sharecount: ISharecount) => void;
+  sharecount: ISharecountResponse;
+  onClick: (sharecount: ISharecountResponse) => void;
 }
 
 const Sharecount = (props: IPropsSharecount) => {

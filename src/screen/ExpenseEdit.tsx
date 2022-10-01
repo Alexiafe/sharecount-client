@@ -1,5 +1,10 @@
 // Interfaces & configs
-import { IExpense, IExpenseInfo, IParticipant } from "../interfaces/interfaces";
+import {
+  IExpenseInfoResponse,
+  IParticipantResponse,
+  IParticipantForm,
+  IExpenseForm,
+} from "../interfaces/interfaces";
 
 // Components
 import Loader from "../components/Loader";
@@ -11,6 +16,7 @@ import {
   getExpenseService,
 } from "../services/expense.service";
 import { deleteExpenseInfoService } from "../services/expense_info.service";
+import { getSharecountService } from "../services/sharecount.service";
 
 // React
 import React, { useEffect, useState } from "react";
@@ -24,7 +30,6 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 
 // Other
 import moment from "moment";
-import { getSharecountService } from "../services/sharecount.service";
 
 const ExpenseEdit = () => {
   const navigate = useNavigate();
@@ -35,10 +40,12 @@ const ExpenseEdit = () => {
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState<moment.Moment | null>(moment());
 
-  const [participants, setParticipants] = useState<IParticipant[]>([]);
+  const [participants, setParticipants] = useState<IParticipantForm[]>([]);
   const [ownerID, setOwnerID] = useState<number>(0);
 
-  const [partcipantsToAddIDs, setParticipantsToAddIDs] = useState<number[]>([]);
+  const [participantsIDs, setParticipantsIDs] = useState<number[]>([]);
+
+  const header = `Edit expense`;
 
   useEffect(() => {
     getExpenseService(parseInt(params.expenseID!)).then(
@@ -52,10 +59,10 @@ const ExpenseEdit = () => {
           (result2) => {
             setIsLoaded(true);
             setParticipants(
-              result2.participants.map((p: IParticipant) => ({
+              result2.participants.map((p: IParticipantResponse) => ({
                 ...p,
                 checked: result1?.expense_info?.some(
-                  (e: IExpenseInfo) => e.participant.id === p.id
+                  (e: IExpenseInfoResponse) => e.participant?.id === p.id
                 )
                   ? true
                   : false,
@@ -85,43 +92,29 @@ const ExpenseEdit = () => {
 
   const handleCheckChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      setParticipantsToAddIDs([
-        ...partcipantsToAddIDs,
-        parseInt(event.target.value),
-      ]);
+      setParticipantsIDs([...participantsIDs, parseInt(event.target.value)]);
     } else {
-      setParticipantsToAddIDs(
-        partcipantsToAddIDs.filter((p) => p !== parseInt(event.target.value))
+      setParticipantsIDs(
+        participantsIDs.filter((p) => p !== parseInt(event.target.value))
       );
     }
 
     let index = participants.findIndex(
       (p) => p.id === parseInt(event.target.value)
     );
-    let newP = [...participants];
-    newP[index].checked = event.target.checked;
-    setParticipants(newP);
-  };
-
-  const editExpenseServer = (expense: IExpense) => {
-    editExpenseService(expense, parseInt(params.expenseID!)).then(() =>
-      navigate(-1)
-    );
-  };
-
-  const deleteParticipantsServer = (expense_infos: IParticipant[]) => {
-    deleteExpenseInfoService(expense_infos);
+    let newParticipants = [...participants];
+    newParticipants[index].checked = event.target.checked;
+    setParticipants(newParticipants);
   };
 
   const save = () => {
-    console.log(amount);
-    console.log(participants.filter((p) => p.checked).length);
-    let newExpense: any = {
+    let newExpense: IExpenseForm = {
+      id: parseInt(params.expenseID!),
       name: name,
       amount_total: parseInt(amount),
       date: moment(date).format(),
       owner_id: ownerID,
-      expense_info: partcipantsToAddIDs.map((p: number) => {
+      expense_info: participantsIDs.map((p: number) => {
         return {
           amount:
             parseInt(amount) / participants.filter((p) => p.checked).length,
@@ -130,17 +123,19 @@ const ExpenseEdit = () => {
       }),
     };
 
-    let partcipantsToRemove: IParticipant[] = participants.filter(
+    let partcipantsToRemove: IParticipantForm[] = participants.filter(
       (p) => !p.checked
     );
 
     if (partcipantsToRemove.length)
-      deleteParticipantsServer(partcipantsToRemove);
+      deleteExpenseInfoService(partcipantsToRemove);
 
-    editExpenseServer(newExpense);
+    editExpenseService(newExpense).then(() =>
+      navigate(`/sharecount/${params.sharecountID}`)
+    );
   };
 
-  const listParticipants = participants.map((p: IParticipant) => (
+  const listParticipants = participants.map((p: IParticipantForm) => (
     <li key={p.id}>
       <Checkbox value={p.id} checked={p.checked} onChange={handleCheckChange} />{" "}
       {p.name}
@@ -151,14 +146,14 @@ const ExpenseEdit = () => {
     console.log(error);
     return (
       <div>
-        <Header title="Edit Expense" backButton={true}></Header>
+        <Header title={header} backButton={true}></Header>
         Please try again later
       </div>
     );
   } else if (!isLoaded) {
     return (
       <div>
-        <Header title="Edit Expense"></Header>
+        <Header title={header}></Header>
         <Loader></Loader>
       </div>
     );
@@ -166,7 +161,7 @@ const ExpenseEdit = () => {
     return (
       <div>
         <Header
-          title="Edit Expense"
+          title={header}
           cancelButton={true}
           saveButton={true}
           onClick={save}

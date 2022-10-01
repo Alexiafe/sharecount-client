@@ -1,5 +1,5 @@
 // Interfaces
-import { ISharecount } from "../interfaces/interfaces";
+import { ISharecountResponse } from "../interfaces/interfaces";
 
 // Components
 import Loader from "./Loader";
@@ -24,7 +24,7 @@ const SharecountList = () => {
   const navigate = useNavigate();
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const [sharecounts, setSharecounts] = useState<ISharecount[]>([]);
+  const [sharecounts, setSharecounts] = useState<ISharecountResponse[]>([]);
   const [displayModal, setDisplayModal] = useState<boolean>(false);
   const [sharecountID, setSharecountID] = useState<number>(0);
   const [sharecountName, setSharecountName] = useState<string>("");
@@ -54,7 +54,7 @@ const SharecountList = () => {
     );
   }, []);
 
-  const handleDisplayModal = (sharecount: ISharecount) => {
+  const handleDisplayModal = (sharecount: ISharecountResponse) => {
     setSharecountID(sharecount.id);
     setSharecountName(sharecount.name);
     setDisplayModal(true);
@@ -71,7 +71,7 @@ const SharecountList = () => {
     deleteSharecountService(sharecountID).then(
       () => {
         setSharecounts(
-          sharecounts.filter((s: ISharecount) => {
+          sharecounts.filter((s: ISharecountResponse) => {
             return s.id !== sharecountID;
           })
         );
@@ -83,7 +83,7 @@ const SharecountList = () => {
     );
   };
 
-  const listSharecounts = sharecounts.map((s: ISharecount) => (
+  const listSharecounts = sharecounts.map((s: ISharecountResponse) => (
     <li key={s.id}>
       <SharecountItem
         sharecount={s}

@@ -1,5 +1,6 @@
 // Interfaces & configs
 import { serverUrl } from "../constants/config";
+import { IExpenseForm } from "../interfaces/interfaces";
 
 export const getExpenseService = (expenseID: number) => {
   return fetch(`${serverUrl}/expense/${expenseID}`)
@@ -32,7 +33,7 @@ export const deleteExpenseService = (expenseID: number) => {
     );
 };
 
-export const addExpenseService = (expense: any) => {
+export const addExpenseService = (expense: IExpenseForm) => {
   return fetch(`${serverUrl}/expense`, {
     method: "POST",
     headers: {
@@ -51,8 +52,8 @@ export const addExpenseService = (expense: any) => {
     );
 };
 
-export const editExpenseService = (expense: any, expenseID: number) => {
-  return fetch(`${serverUrl}/expense/${expenseID}`, {
+export const editExpenseService = (expense: IExpenseForm) => {
+  return fetch(`${serverUrl}/expense/${expense.id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

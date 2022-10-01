@@ -1,5 +1,6 @@
 // Interfaces & configs
 import { serverUrl } from "../constants/config";
+import { ISharecountForm } from "../interfaces/interfaces";
 
 export const getSharecountsService = () => {
   return fetch(`${serverUrl}/sharecounts`)
@@ -45,7 +46,7 @@ export const deleteSharecountService = (sharecountID: number) => {
     );
 };
 
-export const addSharecountService = (sharecount: any) => {
+export const addSharecountService = (sharecount: ISharecountForm) => {
   return fetch(`${serverUrl}/sharecount-with-partcipants`, {
     method: "POST",
     headers: {
@@ -64,8 +65,8 @@ export const addSharecountService = (sharecount: any) => {
     );
 };
 
-export const editSharecountService = (sharecount: any) => {
-  return fetch(`${serverUrl}/sharecount-with-partcipants`, {
+export const editSharecountService = (sharecount: ISharecountForm) => {
+  return fetch(`${serverUrl}/sharecount-with-partcipants/${sharecount.id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

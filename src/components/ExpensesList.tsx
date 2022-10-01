@@ -1,5 +1,8 @@
 // Interfaces
-import { IExpense, ISharecount } from "../interfaces/interfaces";
+import {
+  ISharecountResponse,
+  IExpenseResponse,
+} from "../interfaces/interfaces";
 
 // Components
 import Header from "../components/Header";
@@ -24,10 +27,10 @@ const ExpensesList = () => {
   const params = useParams();
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const [sharecount, setSharecount] = useState<ISharecount | undefined>(
+  const [sharecount, setSharecount] = useState<ISharecountResponse | undefined>(
     undefined
   );
-  const [expenses, setExpenses] = useState<IExpense[]>([]);
+  const [expenses, setExpenses] = useState<IExpenseResponse[]>([]);
   const [displayModal, setDisplayModal] = useState<boolean>(false);
   const [expenseID, setExpenseID] = useState<number>(0);
   const [expenseName, setExpenseName] = useState<string>("");
@@ -60,7 +63,7 @@ const ExpensesList = () => {
     );
   }, [params.sharecountID]);
 
-  const handleDisplayModal = (expense: IExpense) => {
+  const handleDisplayModal = (expense: IExpenseResponse) => {
     setExpenseID(expense.id);
     setExpenseName(expense.name);
     setDisplayModal(true);
@@ -77,7 +80,7 @@ const ExpensesList = () => {
     deleteExpenseService(expenseID).then(
       () => {
         setExpenses(
-          expenses.filter((e: IExpense) => {
+          expenses.filter((e: IExpenseResponse) => {
             return e.id !== expenseID;
           })
         );
@@ -122,7 +125,7 @@ const ExpensesList = () => {
   } else {
     return (
       <div>
-        <Header title={header} backButton={true}></Header>
+        <Header title={header} backButton={true} screen="ExpenseList"></Header>
         <SearchBar onClick={filterExpenses}></SearchBar>
         <div>
           <ul className="m-2">{listExpenses}</ul>

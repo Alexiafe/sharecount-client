@@ -1,5 +1,9 @@
 // Interfaces & configs
-import { IExpense, IExpenseInfo, ISharecount } from "../interfaces/interfaces";
+import {
+  ISharecountResponse,
+  IExpenseResponse,
+  IExpenseInfoResponse,
+} from "../interfaces/interfaces";
 
 // Components
 import Header from "../components/Header";
@@ -20,9 +24,11 @@ const ExpensesDetails = () => {
   const params = useParams();
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const [expense, setExpense] = useState<IExpense | undefined>(undefined);
-  const [expenseInfo, setExpenseInfo] = useState<IExpenseInfo[]>([]);
-  const [sharecount, setSharecount] = useState<ISharecount | undefined>(
+  const [expense, setExpense] = useState<IExpenseResponse | undefined>(
+    undefined
+  );
+  const [expenseInfo, setExpenseInfo] = useState<IExpenseInfoResponse[]>([]);
+  const [sharecount, setSharecount] = useState<ISharecountResponse | undefined>(
     undefined
   );
   const header = expense?.name;
@@ -34,7 +40,8 @@ const ExpensesDetails = () => {
         setIsLoaded(true);
         setSharecount(result);
         let expense = result.expenses.filter(
-          (expense: IExpense) => expense.id === parseInt(params.expenseID!)
+          (expense: IExpenseResponse) =>
+            expense.id === parseInt(params.expenseID!)
         )[0];
         setExpense(expense);
         setExpenseInfo(expense.expense_info);
@@ -52,10 +59,10 @@ const ExpensesDetails = () => {
     );
   };
 
-  const listExpenseParticipants = expenseInfo.map((e: IExpenseInfo) => (
+  const listExpenseParticipants = expenseInfo.map((e: IExpenseInfoResponse) => (
     <li key={e.id}>
       <div className="flex border-b border-grey-500 pb-1">
-        <div className="flex-1">{e.participant.name}</div>
+        <div className="flex-1">{e.participant?.name}</div>
         <div className="flex-none">
           {e.amount} {sharecount?.currency}
         </div>

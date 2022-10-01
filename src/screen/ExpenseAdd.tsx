@@ -1,5 +1,8 @@
 // Interfaces
-import { IParticipant } from "../interfaces/interfaces";
+import {
+  IParticipantForm,
+  IParticipantResponse,
+} from "../interfaces/interfaces";
 
 // Components
 import Header from "../components/Header";
@@ -30,15 +33,15 @@ const ExpenseAdd = () => {
   const [expenseName, setExpenseName] = useState<string>("");
   const [amount, setAmount] = useState<string>("");
   const [date, setDate] = useState<moment.Moment | null>(moment());
-  const [participants, setParticipants] = useState<IParticipant[]>([]);
   const [ownerID, setOwnerID] = useState<number>(0);
+  const [participants, setParticipants] = useState<IParticipantForm[]>([]);
 
   useEffect(() => {
     getSharecountService(parseInt(params.sharecountID!)).then(
       (result) => {
         setIsLoaded(true);
         setParticipants(
-          result.participants.map((p: IParticipant) => ({
+          result.participants.map((p: IParticipantResponse) => ({
             ...p,
             checked: false,
           }))
@@ -63,21 +66,9 @@ const ExpenseAdd = () => {
     let index = participants.findIndex(
       (p) => p.id === parseInt(event.target.value)
     );
-    let newP = [...participants];
-    newP[index].checked = event.target.checked;
-    setParticipants(newP);
-  };
-
-  const addExpenseServer = (expense: any) => {
-    addExpenseService(expense).then(
-      () => {
-        navigate(-1);
-      },
-      (error) => {
-        setIsLoaded(true);
-        setError(error);
-      }
-    );
+    let newParticipants = [...participants];
+    newParticipants[index].checked = event.target.checked;
+    setParticipants(newParticipants);
   };
 
   const save = () => {
@@ -97,10 +88,12 @@ const ExpenseAdd = () => {
           };
         }),
     };
-    addExpenseServer(newExpense);
+    addExpenseService(newExpense).then(() =>
+      navigate(`/sharecount/${params.sharecountID}`)
+    );
   };
 
-  const listParticipants = participants.map((p: IParticipant) => (
+  const listParticipants = participants.map((p: IParticipantForm) => (
     <li key={p.id}>
       <Checkbox value={p.id} checked={p.checked} onChange={handleCheckChange} />
       {p.name}

@@ -23,23 +23,21 @@ const SharecountAdd = () => {
   const navigate = useNavigate();
   const [sharecountName, setSharecountName] = useState<string>("");
   const [currency, setCurrency] = useState<string>("");
-  const [participant, setParticipant] = useState<string>("");
-  const [participants, setParticipants] = useState<string[]>([]);
-
-  const addSharecountServer = (sharecount: any) => {
-    addSharecountService(sharecount);
-  };
+  const [participantTextField, setParticipantTextField] = useState<string>("");
+  const [participantsNameArray, setParticipantsNameArray] = useState<string[]>(
+    []
+  );
 
   const addParticipants = () => {
-    let cloneParticipants = [...participants];
-    cloneParticipants.push(participant);
-    setParticipants(cloneParticipants);
-    setParticipant("");
+    let newParticipants = [...participantsNameArray];
+    newParticipants.push(participantTextField);
+    setParticipantsNameArray(newParticipants);
+    setParticipantTextField("");
   };
 
   const deleteParticipant = (participant: string) => {
-    setParticipants(
-      participants.filter((p: string) => {
+    setParticipantsNameArray(
+      participantsNameArray.filter((p: string) => {
         return p !== participant;
       })
     );
@@ -49,13 +47,12 @@ const SharecountAdd = () => {
     const newSharecount = {
       name: sharecountName,
       currency: currency,
-      participants: participants,
+      participants: participantsNameArray,
     };
-    addSharecountServer(newSharecount);
-    navigate("/");
+    addSharecountService(newSharecount).then(() => navigate("/"));
   };
 
-  const listParticipants = participants.map((p: string) => (
+  const listParticipants = participantsNameArray.map((p: string) => (
     <ListItem
       key={p}
       secondaryAction={
@@ -123,9 +120,9 @@ const SharecountAdd = () => {
               size="small"
               label="New participant"
               variant="standard"
-              value={participant}
+              value={participantTextField}
               onChange={(e) => {
-                setParticipant(e.target.value);
+                setParticipantTextField(e.target.value);
               }}
               InputLabelProps={{
                 shrink: true,

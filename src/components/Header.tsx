@@ -7,6 +7,7 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
 interface IPropsHeader {
   title?: string;
+  screen?: string;
   backButton?: boolean;
   editButton?: boolean;
   saveButton?: boolean;
@@ -16,6 +17,7 @@ interface IPropsHeader {
 
 function Header(props: IPropsHeader) {
   const title = props.title;
+  const screen = props.screen;
   const backButton = props.backButton;
   const editButton = props.editButton;
   const saveButton = props.saveButton;
@@ -31,7 +33,10 @@ function Header(props: IPropsHeader) {
             edge="start"
             color="inherit"
             aria-label="menu"
-            onClick={() => navigate(-1)}
+            onClick={() => {
+              if (screen === "ExpenseList") navigate("/");
+              else navigate(-1);
+            }}
           >
             <ArrowBackIosIcon />
           </IconButton>

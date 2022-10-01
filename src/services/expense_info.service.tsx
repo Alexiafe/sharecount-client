@@ -2,9 +2,9 @@
 import { serverUrl } from "../constants/config";
 
 // Interfaces
-import { IParticipant } from "../interfaces/interfaces";
+import { IParticipantForm } from "../interfaces/interfaces";
 
-export const deleteExpenseInfoService = (expense_infos: IParticipant[]) => {
+export const deleteExpenseInfoService = (expense_infos: IParticipantForm[]) => {
   return fetch(`${serverUrl}/expenses_info`, {
     method: "DELETE",
     headers: {

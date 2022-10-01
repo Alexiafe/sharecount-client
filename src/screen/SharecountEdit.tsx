@@ -1,5 +1,8 @@
 // Interfaces
-import { IParticipant, ISharecount } from "../interfaces/interfaces";
+import {
+  ISharecountResponse,
+  IParticipantResponse,
+} from "../interfaces/interfaces";
 
 // Components
 import Loader from "../components/Loader";
@@ -32,16 +35,20 @@ const SharecountEdit = () => {
   const params = useParams();
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const [sharecount, setSharecount] = useState<ISharecount | undefined>(
+  const [sharecount, setSharecount] = useState<ISharecountResponse | undefined>(
     undefined
   );
   const [sharecountName, setSharecountName] = useState<string>("");
   const [currency, setCurrency] = useState<string>("");
-  const [participant, setParticipant] = useState<string>("");
-  const [participants, setParticipants] = useState<string[]>([]);
-  const [oldParticipants, setOldParticipants] = useState<string[]>([]);
+  const [participantTextField, setParticipantTextField] = useState<string>("");
+  const [participantsNameArray, setParticipantsNameArray] = useState<string[]>(
+    []
+  );
+  const [oldparticipantsNameArray, setOldParticipantsNameArray] = useState<
+    string[]
+  >([]);
 
-  const header = `Edit ${sharecount?.name}`;
+  const header = `Edit sharecount`;
 
   useEffect(() => {
     getSharecountService(parseInt(params.sharecountID!)).then(
@@ -50,9 +57,11 @@ const SharecountEdit = () => {
         setSharecount(result);
         setSharecountName(result.name);
         setCurrency(result.currency);
-        setParticipants(result.participants.map((p: IParticipant) => p.name));
-        setOldParticipants(
-          result.participants.map((p: IParticipant) => p.name)
+        setParticipantsNameArray(
+          result.participants.map((p: IParticipantResponse) => p.name)
+        );
+        setOldParticipantsNameArray(
+          result.participants.map((p: IParticipantResponse) => p.name)
         );
       },
       (error) => {
@@ -62,57 +71,51 @@ const SharecountEdit = () => {
     );
   }, [params.sharecountID]);
 
-  const editSharecountServer = (sharecount: any) => {
-    editSharecountService(sharecount).then(() => navigate(-1));
-  };
-
-  const deleteParticipantsServer = (participants: string[]) => {
-    deleteParticipantsService(participants, sharecount?.id!);
-  };
-
   const addParticipants = () => {
-    let cloneParticipants = [...participants];
-    cloneParticipants.push(participant);
-    setParticipants(cloneParticipants);
-    setParticipant("");
+    let newParticipants = [...participantsNameArray];
+    newParticipants.push(participantTextField);
+    setParticipantsNameArray(newParticipants);
+    setParticipantTextField("");
   };
 
-  const deleteParticipants = (participant: string) => {
-    setParticipants(
-      participants.filter((p: string) => {
+  const deleteParticipant = (participant: string) => {
+    setParticipantsNameArray(
+      participantsNameArray.filter((p: string) => {
         return p !== participant;
       })
     );
   };
 
   const save = () => {
-    const participantsToAdd = participants.filter(
-      (p: string) => !oldParticipants.includes(p)
+    const participantsToAdd = participantsNameArray.filter(
+      (p: string) => !oldparticipantsNameArray.includes(p)
     );
 
-    const participantsToDelete = oldParticipants.filter(
-      (p: string) => !participants.includes(p)
+    const participantsToDelete = oldparticipantsNameArray.filter(
+      (p: string) => !participantsNameArray.includes(p)
     );
 
     const newSharecount = {
+      id: parseInt(params.sharecountID!),
       name: sharecountName,
       currency: currency,
       participants: participantsToAdd,
     };
 
-    editSharecountServer(newSharecount);
     if (participantsToDelete.length)
-      deleteParticipantsServer(participantsToDelete);
+      deleteParticipantsService(participantsToDelete, sharecount?.id!);
+
+    editSharecountService(newSharecount).then(() => navigate("/"));
   };
 
-  const listParticipants = participants.map((p: string) => (
+  const listParticipants = participantsNameArray.map((p: string) => (
     <ListItem
       key={p}
       secondaryAction={
         <IconButton
           edge="end"
           aria-label="delete"
-          onClick={() => deleteParticipants(p)}
+          onClick={() => deleteParticipant(p)}
         >
           <ClearIcon />
         </IconButton>
@@ -189,9 +192,9 @@ const SharecountEdit = () => {
                 size="small"
                 label="New participant"
                 variant="standard"
-                value={participant}
+                value={participantTextField}
                 onChange={(e) => {
-                  setParticipant(e.target.value);
+                  setParticipantTextField(e.target.value);
                 }}
                 InputLabelProps={{
                   shrink: true,

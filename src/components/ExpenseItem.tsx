@@ -1,5 +1,8 @@
 // Interfaces & configs
-import { IExpense, ISharecount } from "../interfaces/interfaces";
+import {
+  IExpenseResponse,
+  ISharecountResponse,
+} from "../interfaces/interfaces";
 
 // React
 import { Link } from "react-router-dom";
@@ -12,9 +15,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import moment from "moment";
 
 interface IPropsExpense {
-  expense: IExpense;
-  sharecount: ISharecount | undefined;
-  onClick: (expense: IExpense) => void;
+  expense: IExpenseResponse;
+  sharecount: ISharecountResponse | undefined;
+  onClick: (expense: IExpenseResponse) => void;
 }
 
 const Expense = (props: IPropsExpense) => {
