@@ -23,18 +23,18 @@ const Sharecount = (props: IPropsSharecount) => {
         <div className="flex flex-col">
           <Link to={`/sharecount/${sharecount.id}`}>
             {sharecount.name}
-            <p className="text-xs py-2">Balance: TODO {sharecount.currency}</p>
+            <p className="text-xs pt-2">Balance: TODO {sharecount.currency}</p>
           </Link>
         </div>
       </div>
-      <div className="flex-none text-center">
+      <div className="flex-none">
         <Link to={`/sharecount-edit/${sharecount.id}`}>
           <IconButton color="primary">
             <EditIcon />
           </IconButton>
         </Link>
       </div>
-      <div className="flex-none text-center">
+      <div className="flex-none pl-2">
         <IconButton color="primary" onClick={() => props.onClick(sharecount)}>
           <DeleteIcon />
         </IconButton>

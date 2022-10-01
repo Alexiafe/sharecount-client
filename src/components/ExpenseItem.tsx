@@ -52,7 +52,7 @@ const Expense = (props: IPropsExpense) => {
           </div>
         </Link>
       </div>
-      <div className="flex-none">
+      <div className="flex-none pl-2">
         <IconButton color="primary" onClick={() => props.onClick(expense)}>
           <DeleteIcon />
         </IconButton>

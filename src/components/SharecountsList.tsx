@@ -128,7 +128,6 @@ const SharecountList = () => {
               <div>
                 <Button
                   variant="outlined"
-                  size="small"
                   onClick={() => setDisplayModal(false)}
                 >
                   Cancel
@@ -137,7 +136,6 @@ const SharecountList = () => {
               <div className="mx-2">
                 <Button
                   variant="outlined"
-                  size="small"
                   onClick={() => confirmDelete()}
                 >
                   Delete

@@ -44,7 +44,6 @@ function Header(props: IPropsHeader) {
         {cancelButton && <div onClick={() => navigate(-1)}>Cancel</div>}
         <Typography
           className="text-center"
-          variant="h6"
           component="div"
           sx={{ flexGrow: 1 }}
         >
