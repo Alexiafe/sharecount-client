@@ -12,7 +12,8 @@ export interface ISharecountForm {
   id?: number;
   name: string;
   currency: string;
-  participants?: string[];
+  participantsToAdd: string[];
+  participantsToDelete?: string[];
 }
 
 export interface IExpenseResponse {

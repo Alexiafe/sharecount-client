@@ -47,7 +47,7 @@ export const deleteSharecountService = (sharecountID: number) => {
 };
 
 export const addSharecountService = (sharecount: ISharecountForm) => {
-  return fetch(`${serverUrl}/sharecount-with-partcipants`, {
+  return fetch(`${serverUrl}/sharecount`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -66,7 +66,7 @@ export const addSharecountService = (sharecount: ISharecountForm) => {
 };
 
 export const editSharecountService = (sharecount: ISharecountForm) => {
-  return fetch(`${serverUrl}/sharecount-with-partcipants/${sharecount.id}`, {
+  return fetch(`${serverUrl}/sharecount/${sharecount.id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

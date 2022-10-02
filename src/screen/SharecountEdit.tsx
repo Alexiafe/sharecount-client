@@ -1,8 +1,5 @@
 // Interfaces
-import {
-  ISharecountResponse,
-  IParticipantResponse,
-} from "../interfaces/interfaces";
+import { IParticipantResponse } from "../interfaces/interfaces";
 
 // Components
 import Loader from "../components/Loader";
@@ -13,7 +10,6 @@ import {
   editSharecountService,
   getSharecountService,
 } from "../services/sharecount.service";
-import { deleteParticipantsService } from "../services/participants.service";
 
 // React
 import { useEffect, useState } from "react";
@@ -35,9 +31,6 @@ const SharecountEdit = () => {
   const params = useParams();
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const [sharecount, setSharecount] = useState<ISharecountResponse | undefined>(
-    undefined
-  );
   const [sharecountName, setSharecountName] = useState<string>("");
   const [currency, setCurrency] = useState<string>("");
   const [participantTextField, setParticipantTextField] = useState<string>("");
@@ -54,7 +47,6 @@ const SharecountEdit = () => {
     getSharecountService(parseInt(params.sharecountID!)).then(
       (result) => {
         setIsLoaded(true);
-        setSharecount(result);
         setSharecountName(result.name);
         setCurrency(result.currency);
         setParticipantsNameArray(
@@ -99,11 +91,9 @@ const SharecountEdit = () => {
       id: parseInt(params.sharecountID!),
       name: sharecountName,
       currency: currency,
-      participants: participantsToAdd,
+      participantsToAdd: participantsToAdd,
+      participantsToDelete: participantsToDelete,
     };
-
-    if (participantsToDelete.length)
-      deleteParticipantsService(participantsToDelete, sharecount?.id!);
 
     editSharecountService(newSharecount).then(() => navigate("/"));
   };

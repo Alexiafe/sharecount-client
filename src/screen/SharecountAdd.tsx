@@ -47,7 +47,7 @@ const SharecountAdd = () => {
     const newSharecount = {
       name: sharecountName,
       currency: currency,
-      participants: participantsNameArray,
+      participantsToAdd: participantsNameArray,
     };
     addSharecountService(newSharecount).then(() => navigate("/"));
   };
