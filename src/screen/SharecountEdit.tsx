@@ -26,13 +26,15 @@ import {
 import ClearIcon from "@mui/icons-material/Clear";
 import AddIcon from "@mui/icons-material/Add";
 
+// Other
+import { useFormik } from "formik";
+import * as yup from "yup";
+
 const SharecountEdit = () => {
   const navigate = useNavigate();
   const params = useParams();
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const [sharecountName, setSharecountName] = useState<string>("");
-  const [currency, setCurrency] = useState<string>("");
   const [participantTextField, setParticipantTextField] = useState<string>("");
   const [participantsNameArray, setParticipantsNameArray] = useState<string[]>(
     []
@@ -47,8 +49,8 @@ const SharecountEdit = () => {
     getSharecountService(parseInt(params.sharecountID!)).then(
       (result) => {
         setIsLoaded(true);
-        setSharecountName(result.name);
-        setCurrency(result.currency);
+        formik.setFieldValue("sharecountName", result.name);
+        formik.setFieldValue("currency", result.currency);
         setParticipantsNameArray(
           result.participants.map((p: IParticipantResponse) => p.name)
         );
@@ -78,7 +80,7 @@ const SharecountEdit = () => {
     );
   };
 
-  const save = () => {
+  const save = (sharecount: { sharecountName: string; currency: string }) => {
     const participantsToAdd = participantsNameArray.filter(
       (p: string) => !oldparticipantsNameArray.includes(p)
     );
@@ -89,8 +91,8 @@ const SharecountEdit = () => {
 
     const newSharecount = {
       id: parseInt(params.sharecountID!),
-      name: sharecountName,
-      currency: currency,
+      name: sharecount.sharecountName,
+      currency: sharecount.currency,
       participantsToAdd: participantsToAdd,
       participantsToDelete: participantsToDelete,
     };
@@ -115,6 +117,34 @@ const SharecountEdit = () => {
     </ListItem>
   ));
 
+  const validationSchema = yup.object({
+    sharecountName: yup.string().required(`Sharecount's name is required`),
+    currency: yup.string().required("Currency is required"),
+  });
+
+  const formik = useFormik({
+    initialValues: {
+      sharecountName: "",
+      currency: "",
+    },
+    validationSchema: validationSchema,
+    validate: (data) => {
+      let errors: any = {};
+
+      if (data.sharecountName.trim().length === 0)
+        errors.sharecountName = "Name is required";
+
+      if (data.currency.trim().length === 0)
+        errors.currency = "Currency is required";
+
+      return errors;
+    },
+    onSubmit: (sharecount) => {
+      save(sharecount);
+      formik.resetForm();
+    },
+  });
+
   if (error) {
     return (
       <div>
@@ -136,40 +166,50 @@ const SharecountEdit = () => {
           title={header}
           cancelButton={true}
           saveButton={true}
-          onClick={save}
+          onClick={() => formik.handleSubmit()}
         ></Header>
-        <div className="flex flex-col m-2">
-          <div className="m-2">
-            <TextField
-              required
-              fullWidth
-              label="Name"
-              variant="outlined"
-              value={sharecountName}
-              onChange={(e) => {
-                setSharecountName(e.target.value);
-              }}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </div>
-          <div className="m-2">
-            <TextField
-              required
-              fullWidth
-              label="Currency"
-              variant="outlined"
-              value={currency}
-              onChange={(e) => {
-                setCurrency(e.target.value);
-              }}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </div>
-
+        <div className="flex flex-col p-3">
+          <form className="flex flex-col" onSubmit={formik.handleSubmit}>
+            <div className="m-2">
+              <TextField
+                required
+                fullWidth
+                id="sharecountName"
+                name="sharecountName"
+                label="Name"
+                value={formik.values.sharecountName}
+                onChange={formik.handleChange}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                error={
+                  formik.touched.sharecountName &&
+                  Boolean(formik.errors.sharecountName)
+                }
+                helperText={
+                  formik.touched.sharecountName && formik.errors.sharecountName
+                }
+              />
+            </div>
+            <div className="m-2">
+              <TextField
+                required
+                fullWidth
+                id="currency"
+                name="currency"
+                label="Currency"
+                value={formik.values.currency}
+                onChange={formik.handleChange}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                error={
+                  formik.touched.currency && Boolean(formik.errors.currency)
+                }
+                helperText={formik.touched.currency && formik.errors.currency}
+              />
+            </div>
+          </form>
           <div>
             Participants:
             <List>{listParticipants}</List>

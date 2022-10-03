@@ -20,11 +20,13 @@ import ClearIcon from "@mui/icons-material/Clear";
 import AddIcon from "@mui/icons-material/Add";
 import Loader from "../components/Loader";
 
+// Other
+import { useFormik } from "formik";
+import * as yup from "yup";
+
 const SharecountAdd = () => {
   const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState<boolean>(true);
-  const [sharecountName, setSharecountName] = useState<string>("");
-  const [currency, setCurrency] = useState<string>("");
   const [participantTextField, setParticipantTextField] = useState<string>("");
   const [participantsNameArray, setParticipantsNameArray] = useState<string[]>(
     []
@@ -45,10 +47,10 @@ const SharecountAdd = () => {
     );
   };
 
-  const save = () => {
+  const save = (sharecount: { sharecountName: string; currency: string }) => {
     const newSharecount = {
-      name: sharecountName,
-      currency: currency,
+      name: sharecount.sharecountName,
+      currency: sharecount.currency,
       participantsToAdd: participantsNameArray,
     };
     setIsLoaded(false);
@@ -75,6 +77,34 @@ const SharecountAdd = () => {
     </ListItem>
   ));
 
+  const validationSchema = yup.object({
+    sharecountName: yup.string().required(),
+    currency: yup.string().required(),
+  });
+
+  const formik = useFormik({
+    initialValues: {
+      sharecountName: "",
+      currency: "",
+    },
+    validationSchema: validationSchema,
+    validate: (data) => {
+      let errors: any = {};
+
+      if (data.sharecountName.trim().length === 0)
+        errors.sharecountName = "Name is required";
+
+      if (data.currency.trim().length === 0)
+        errors.currency = "Currency is required";
+
+      return errors;
+    },
+    onSubmit: (sharecount) => {
+      save(sharecount);
+      formik.resetForm();
+    },
+  });
+
   if (!isLoaded) {
     return (
       <div>
@@ -89,39 +119,50 @@ const SharecountAdd = () => {
           title="New Sharecount"
           cancelButton={true}
           saveButton={true}
-          onClick={save}
+          onClick={() => formik.handleSubmit()}
         ></Header>
         <div className="flex flex-col p-3">
-          <div className="m-2">
-            <TextField
-              fullWidth
-              required
-              label="Name"
-              variant="outlined"
-              value={sharecountName}
-              onChange={(e) => {
-                setSharecountName(e.target.value);
-              }}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </div>
-          <div className="m-2">
-            <TextField
-              fullWidth
-              required
-              label="Currency"
-              variant="outlined"
-              value={currency}
-              onChange={(e) => {
-                setCurrency(e.target.value);
-              }}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </div>
+          <form className="flex flex-col" onSubmit={formik.handleSubmit}>
+            <div className="m-2">
+              <TextField
+                fullWidth
+                required
+                id="sharecountName"
+                name="sharecountName"
+                label="Name"
+                value={formik.values.sharecountName}
+                onChange={formik.handleChange}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                error={
+                  formik.touched.sharecountName &&
+                  Boolean(formik.errors.sharecountName)
+                }
+                helperText={
+                  formik.touched.sharecountName && formik.errors.sharecountName
+                }
+              />
+            </div>
+            <div className="m-2">
+              <TextField
+                fullWidth
+                required
+                id="currency"
+                name="currency"
+                label="Currency"
+                value={formik.values.currency}
+                onChange={formik.handleChange}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                error={
+                  formik.touched.currency && Boolean(formik.errors.currency)
+                }
+                helperText={formik.touched.currency && formik.errors.currency}
+              />
+            </div>
+          </form>
           <div className="m-2">
             Participants:
             <List>{listParticipants}</List>

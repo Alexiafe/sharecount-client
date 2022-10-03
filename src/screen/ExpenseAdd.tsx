@@ -21,20 +21,22 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 
 // Other
 import moment from "moment";
+import { useFormik } from "formik";
+import * as yup from "yup";
 
 const ExpenseAdd = () => {
   const navigate = useNavigate();
   const params = useParams();
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const [expenseName, setExpenseName] = useState<string>("");
-  const [expenseAmount, setExpenseAmount] = useState<string>("");
   const [expenseDate, setExpenseDate] = useState<moment.Moment | null>(
     moment()
   );
   const [ownerID, setOwnerID] = useState<number>(0);
   const [participants, setParticipants] = useState<IParticipantResponse[]>([]);
   const [partakersIDs, setPartakersIDs] = useState<number[]>([]);
+  const [errorMissingPartakers, setErrorMissingPartakers] =
+    useState<string>("");
 
   useEffect(() => {
     getSharecountService(parseInt(params.sharecountID!)).then(
@@ -46,6 +48,7 @@ const ExpenseAdd = () => {
             checked: false,
           }))
         );
+        setOwnerID(result.participants[0].id);
       },
       (error) => {
         setIsLoaded(true);
@@ -72,16 +75,16 @@ const ExpenseAdd = () => {
     }
   };
 
-  const save = () => {
+  const save = (expense: { expenseName: string; expenseAmount: string }) => {
     const newExpense = {
-      name: expenseName,
-      amount_total: parseInt(expenseAmount),
+      name: expense.expenseName,
+      amount_total: parseInt(expense.expenseAmount),
       date: moment(expenseDate).format(),
       sharecount_id: parseInt(params.sharecountID!),
       owner_id: ownerID,
       partakers: partakersIDs.map((p: number) => {
         return {
-          amount: parseInt(expenseAmount) / partakersIDs.length,
+          amount: parseInt(expense.expenseAmount) / partakersIDs.length,
           participant_id: p,
         };
       }),
@@ -105,6 +108,38 @@ const ExpenseAdd = () => {
     </li>
   ));
 
+  const validationSchema = yup.object({
+    expenseName: yup.string().required(),
+    expenseAmount: yup.number().positive().required().typeError('Amount should be a positive number'),
+  });
+
+  const formik = useFormik({
+    initialValues: {
+      expenseName: "",
+      expenseAmount: "",
+    },
+    validationSchema: validationSchema,
+    validate: (data) => {
+      let errors: any = {};
+
+      if (data.expenseName.trim().length === 0)
+        errors.expenseName = "Name is required";
+
+      if (data.expenseAmount.trim().length === 0)
+        errors.expenseAmount = "Amount is required";
+
+      return errors;
+    },
+    onSubmit: (expense) => {
+      if (partakersIDs.length === 0) {
+        setErrorMissingPartakers("Please select at least one participants");
+      } else {
+        save(expense);
+        formik.resetForm();
+      }
+    },
+  });
+
   if (error) {
     return (
       <div>
@@ -126,39 +161,53 @@ const ExpenseAdd = () => {
           title="New Expense"
           cancelButton={true}
           saveButton={true}
-          onClick={save}
+          onClick={() => formik.handleSubmit()}
         ></Header>
         <div className="flex flex-col p-3">
-          <div className="m-2">
-            <TextField
-              required
-              fullWidth
-              label="Name"
-              variant="outlined"
-              value={expenseName}
-              onChange={(e) => {
-                setExpenseName(e.target.value);
-              }}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </div>
-          <div className="m-2">
-            <TextField
-              required
-              fullWidth
-              label="Amount"
-              variant="outlined"
-              value={expenseAmount}
-              onChange={(e) => {
-                setExpenseAmount(e.target.value);
-              }}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </div>
+          <form className="flex flex-col" onSubmit={formik.handleSubmit}>
+            <div className="m-2">
+              <TextField
+                required
+                fullWidth
+                id="expenseName"
+                name="expenseName"
+                label="Name"
+                value={formik.values.expenseName}
+                onChange={formik.handleChange}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                error={
+                  formik.touched.expenseName &&
+                  Boolean(formik.errors.expenseName)
+                }
+                helperText={
+                  formik.touched.expenseName && formik.errors.expenseName
+                }
+              />
+            </div>
+            <div className="m-2">
+              <TextField
+                required
+                fullWidth
+                id="expenseAmount"
+                name="expenseAmount"
+                label="Amount"
+                value={formik.values.expenseAmount}
+                onChange={formik.handleChange}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                error={
+                  formik.touched.expenseAmount &&
+                  Boolean(formik.errors.expenseAmount)
+                }
+                helperText={
+                  formik.touched.expenseAmount && formik.errors.expenseAmount
+                }
+              />
+            </div>
+          </form>
           <div className="m-2">
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <MobileDatePicker
@@ -189,6 +238,9 @@ const ExpenseAdd = () => {
           </div>
           <div className="m-2">
             From whom:
+            <div className="text-xs" style={{ color: "#d32f2f" }}>
+              {errorMissingPartakers}
+            </div>
             <ul className="mt-2">{listParticipants}</ul>
           </div>
         </div>
