@@ -2,7 +2,7 @@
 import {
   ISharecountResponse,
   IExpenseResponse,
-  IExpenseInfoResponse,
+  IPartakerResponse,
 } from "../interfaces/interfaces";
 
 // Components
@@ -27,7 +27,7 @@ const ExpensesDetails = () => {
   const [expense, setExpense] = useState<IExpenseResponse | undefined>(
     undefined
   );
-  const [expenseInfo, setExpenseInfo] = useState<IExpenseInfoResponse[]>([]);
+  const [partakers, setPartakers] = useState<IPartakerResponse[]>([]);
   const [sharecount, setSharecount] = useState<ISharecountResponse | undefined>(
     undefined
   );
@@ -44,7 +44,7 @@ const ExpensesDetails = () => {
             expense.id === parseInt(params.expenseID!)
         )[0];
         setExpense(expense);
-        setExpenseInfo(expense.expense_info);
+        setPartakers(expense.partakers);
       },
       (error) => {
         setIsLoaded(true);
@@ -59,8 +59,8 @@ const ExpensesDetails = () => {
     );
   };
 
-  const listExpenseParticipants = expenseInfo.map((e: IExpenseInfoResponse) => (
-    <li key={e.id}>
+  const listExpenseParticipants = partakers.map((e: IPartakerResponse) => (
+    <li key={e.participant_id}>
       <div className="flex border-b border-grey-500 py-2">
         <div className="flex-1">{e.participant?.name}</div>
         <div className="flex-none">

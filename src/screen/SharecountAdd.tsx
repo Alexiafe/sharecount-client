@@ -22,7 +22,7 @@ import Loader from "../components/Loader";
 
 const SharecountAdd = () => {
   const navigate = useNavigate();
-  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  const [isLoaded, setIsLoaded] = useState<boolean>(true);
   const [sharecountName, setSharecountName] = useState<string>("");
   const [currency, setCurrency] = useState<string>("");
   const [participantTextField, setParticipantTextField] = useState<string>("");

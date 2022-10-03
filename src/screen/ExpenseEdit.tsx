@@ -1,9 +1,8 @@
 // Interfaces & configs
 import {
-  IExpenseInfoResponse,
   IParticipantResponse,
-  IParticipantForm,
   IExpenseForm,
+  IPartakerResponse,
 } from "../interfaces/interfaces";
 
 // Components
@@ -15,7 +14,6 @@ import {
   editExpenseService,
   getExpenseService,
 } from "../services/expense.service";
-import { deleteExpenseInfoService } from "../services/expense_info.service";
 import { getSharecountService } from "../services/sharecount.service";
 
 // React
@@ -36,44 +34,38 @@ const ExpenseEdit = () => {
   const params = useParams();
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const [name, setName] = useState("");
-  const [amount, setAmount] = useState("");
-  const [date, setDate] = useState<moment.Moment | null>(moment());
-
-  const [participants, setParticipants] = useState<IParticipantForm[]>([]);
+  const [expenseName, setExpenseName] = useState("");
+  const [expenseAmount, setExpenseAmount] = useState("");
+  const [expenseDate, setExpenseDate] = useState<moment.Moment | null>(
+    moment()
+  );
+  const [participants, setParticipants] = useState<IParticipantResponse[]>([]);
+  const [partakersIDs, setPartakersIDs] = useState<number[]>([]);
   const [ownerID, setOwnerID] = useState<number>(0);
-
-  const [participantsIDs, setParticipantsIDs] = useState<number[]>([]);
-
   const header = `Edit expense`;
 
   useEffect(() => {
-    getExpenseService(parseInt(params.expenseID!)).then(
-      (result1) => {
+    getSharecountService(parseInt(params.sharecountID!)).then(
+      (sharecount) => {
+        setParticipants(sharecount.participants);
+      },
+      (error) => {
         setIsLoaded(true);
-        setName(result1.name);
-        setAmount(result1.amount_total);
-        setDate(result1.date);
-        setOwnerID(result1.owner.id);
-        getSharecountService(parseInt(params.sharecountID!)).then(
-          (result2) => {
-            setIsLoaded(true);
-            setParticipants(
-              result2.participants.map((p: IParticipantResponse) => ({
-                ...p,
-                checked: result1?.expense_info?.some(
-                  (e: IExpenseInfoResponse) => e.participant?.id === p.id
-                )
-                  ? true
-                  : false,
-              }))
-            );
-          },
-          (error) => {
-            setIsLoaded(true);
-            setError(error);
-          }
+        setError(error);
+      }
+    );
+    getExpenseService(parseInt(params.expenseID!)).then(
+      (expense) => {
+        setExpenseName(expense.name);
+        setExpenseAmount(expense.amount_total);
+        setExpenseDate(moment(expense.date));
+        setOwnerID(expense.owner_id);
+        setPartakersIDs(
+          expense.partakers.map(
+            (partaker: IPartakerResponse) => partaker.participant_id
+          )
         );
+        setIsLoaded(true);
       },
       (error) => {
         setIsLoaded(true);
@@ -83,7 +75,7 @@ const ExpenseEdit = () => {
   }, [params.expenseID, params.sharecountID]);
 
   const handleDateChange = (newDate: moment.Moment | null) => {
-    setDate(newDate);
+    setExpenseDate(newDate);
   };
 
   const handleOwnerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,58 +84,46 @@ const ExpenseEdit = () => {
 
   const handleCheckChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      setParticipantsIDs([...participantsIDs, parseInt(event.target.value)]);
+      setPartakersIDs([...partakersIDs, parseInt(event.target.value)]);
     } else {
-      setParticipantsIDs(
-        participantsIDs.filter((p) => p !== parseInt(event.target.value))
+      setPartakersIDs(
+        partakersIDs.filter((p) => p !== parseInt(event.target.value))
       );
     }
-
-    let index = participants.findIndex(
-      (p) => p.id === parseInt(event.target.value)
-    );
-    let newParticipants = [...participants];
-    newParticipants[index].checked = event.target.checked;
-    setParticipants(newParticipants);
   };
 
   const save = () => {
     let newExpense: IExpenseForm = {
       id: parseInt(params.expenseID!),
-      name: name,
-      amount_total: parseInt(amount),
-      date: moment(date).format(),
+      name: expenseName,
+      amount_total: parseInt(expenseAmount),
+      date: moment(expenseDate).format(),
       owner_id: ownerID,
-      expense_info: participantsIDs.map((p: number) => {
+      partakers: partakersIDs.map((p: number) => {
         return {
-          amount:
-            parseInt(amount) / participants.filter((p) => p.checked).length,
+          amount: parseInt(expenseAmount) / partakersIDs.length,
           participant_id: p,
         };
       }),
     };
-
-    let partcipantsToRemove: IParticipantForm[] = participants.filter(
-      (p) => !p.checked
-    );
-
-    if (partcipantsToRemove.length)
-      deleteExpenseInfoService(partcipantsToRemove);
 
     editExpenseService(newExpense).then(() =>
       navigate(`/sharecount/${params.sharecountID}`)
     );
   };
 
-  const listParticipants = participants.map((p: IParticipantForm) => (
+  const listParticipants = participants.map((p: IParticipantResponse) => (
     <li key={p.id}>
-      <Checkbox value={p.id} checked={p.checked} onChange={handleCheckChange} />{" "}
+      <Checkbox
+        value={p.id}
+        checked={partakersIDs.includes(p.id)}
+        onChange={handleCheckChange}
+      />
       {p.name}
     </li>
   ));
 
   if (error) {
-    console.log(error);
     return (
       <div>
         <Header title={header} backButton={true}></Header>
@@ -173,9 +153,9 @@ const ExpenseEdit = () => {
               fullWidth
               label="Name"
               variant="outlined"
-              value={name}
+              value={expenseName}
               onChange={(e) => {
-                setName(e.target.value);
+                setExpenseName(e.target.value);
               }}
               InputLabelProps={{
                 shrink: true,
@@ -188,9 +168,9 @@ const ExpenseEdit = () => {
               fullWidth
               label="Amount"
               variant="outlined"
-              value={amount}
+              value={expenseAmount}
               onChange={(e) => {
-                setAmount(e.target.value);
+                setExpenseAmount(e.target.value);
               }}
               InputLabelProps={{
                 shrink: true,
@@ -202,7 +182,7 @@ const ExpenseEdit = () => {
               <MobileDatePicker
                 label="Date"
                 inputFormat="DD/MM/YYYY"
-                value={date}
+                value={expenseDate}
                 onChange={handleDateChange}
                 renderInput={(params) => (
                   <TextField required fullWidth {...params} />

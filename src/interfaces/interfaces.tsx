@@ -26,7 +26,7 @@ export interface IExpenseResponse {
   owner?: IParticipantResponse;
   owner_id: number;
   participants?: IParticipantResponse[];
-  expense_info?: IExpenseInfoResponse[];
+  partakers?: IPartakerResponse[];
   created_at: Date;
   updated_at: Date;
 }
@@ -41,7 +41,7 @@ export interface IExpenseForm {
   owner?: IParticipantForm;
   owner_id: number;
   participants?: IParticipantForm[];
-  expense_info?: IExpenseInfoForm[];
+  partakers?: IPartakerForm[];
 }
 
 export interface IParticipantResponse {
@@ -58,25 +58,20 @@ export interface IParticipantForm {
   name: string;
   sharecount?: ISharecountResponse;
   sharecount_id: number;
-  checked?: boolean;
 }
 
-export interface IExpenseInfoResponse {
-  id: number;
-  amount: number;
-  expense?: IExpenseResponse;
+export interface IPartakerResponse {
   expense_id: number;
-  participant?: IParticipantResponse;
   participant_id: number;
-  created_at?: Date;
-  updated_at?: Date;
+  amount: number;
+  participant: IParticipantResponse;
+  created_at: Date;
+  updated_at: Date;
 }
 
-export interface IExpenseInfoForm {
-  id?: number;
-  amount: number;
-  expense?: IExpenseResponse;
+export interface IPartakerForm {
   expense_id?: number;
+  participant_id: number;
+  amount: number;
   participant?: IParticipantResponse;
-  participant_id?: number;
 }

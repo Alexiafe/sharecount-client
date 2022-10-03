@@ -1,8 +1,5 @@
 // Interfaces
-import {
-  IParticipantForm,
-  IParticipantResponse,
-} from "../interfaces/interfaces";
+import { IParticipantResponse } from "../interfaces/interfaces";
 
 // Components
 import Header from "../components/Header";
@@ -31,10 +28,13 @@ const ExpenseAdd = () => {
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [expenseName, setExpenseName] = useState<string>("");
-  const [amount, setAmount] = useState<string>("");
-  const [date, setDate] = useState<moment.Moment | null>(moment());
+  const [expenseAmount, setExpenseAmount] = useState<string>("");
+  const [expenseDate, setExpenseDate] = useState<moment.Moment | null>(
+    moment()
+  );
   const [ownerID, setOwnerID] = useState<number>(0);
-  const [participants, setParticipants] = useState<IParticipantForm[]>([]);
+  const [participants, setParticipants] = useState<IParticipantResponse[]>([]);
+  const [partakersIDs, setPartakersIDs] = useState<number[]>([]);
 
   useEffect(() => {
     getSharecountService(parseInt(params.sharecountID!)).then(
@@ -55,7 +55,7 @@ const ExpenseAdd = () => {
   }, [params.sharecountID]);
 
   const handleDateChange = (newDate: moment.Moment | null) => {
-    setDate(newDate);
+    setExpenseDate(newDate);
   };
 
   const handleOwnerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,30 +63,28 @@ const ExpenseAdd = () => {
   };
 
   const handleCheckChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let index = participants.findIndex(
-      (p) => p.id === parseInt(event.target.value)
-    );
-    let newParticipants = [...participants];
-    newParticipants[index].checked = event.target.checked;
-    setParticipants(newParticipants);
+    if (event.target.checked) {
+      setPartakersIDs([...partakersIDs, parseInt(event.target.value)]);
+    } else {
+      setPartakersIDs(
+        partakersIDs.filter((p) => p !== parseInt(event.target.value))
+      );
+    }
   };
 
   const save = () => {
     const newExpense = {
       name: expenseName,
-      amount_total: parseInt(amount),
-      date: moment(date).format(),
+      amount_total: parseInt(expenseAmount),
+      date: moment(expenseDate).format(),
       sharecount_id: parseInt(params.sharecountID!),
       owner_id: ownerID,
-      expense_info: participants
-        .filter((p) => p.checked)
-        .map((p) => {
-          return {
-            amount:
-              parseInt(amount) / participants.filter((p) => p.checked).length,
-            participant_id: p.id,
-          };
-        }),
+      partakers: partakersIDs.map((p: number) => {
+        return {
+          amount: parseInt(expenseAmount) / partakersIDs.length,
+          participant_id: p,
+        };
+      }),
     };
 
     setIsLoaded(false);
@@ -96,9 +94,13 @@ const ExpenseAdd = () => {
     });
   };
 
-  const listParticipants = participants.map((p: IParticipantForm) => (
+  const listParticipants = participants.map((p: IParticipantResponse) => (
     <li key={p.id}>
-      <Checkbox value={p.id} checked={p.checked} onChange={handleCheckChange} />
+      <Checkbox
+        value={p.id}
+        checked={partakersIDs.includes(p.id)}
+        onChange={handleCheckChange}
+      />
       {p.name}
     </li>
   ));
@@ -148,9 +150,9 @@ const ExpenseAdd = () => {
               fullWidth
               label="Amount"
               variant="outlined"
-              value={amount}
+              value={expenseAmount}
               onChange={(e) => {
-                setAmount(e.target.value);
+                setExpenseAmount(e.target.value);
               }}
               InputLabelProps={{
                 shrink: true,
@@ -162,7 +164,7 @@ const ExpenseAdd = () => {
               <MobileDatePicker
                 label="Date"
                 inputFormat="DD/MM/YYYY"
-                value={date}
+                value={expenseDate}
                 onChange={handleDateChange}
                 renderInput={(params) => (
                   <TextField required fullWidth {...params} />
