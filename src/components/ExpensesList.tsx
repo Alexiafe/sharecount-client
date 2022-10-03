@@ -77,6 +77,7 @@ const ExpensesList = () => {
   };
 
   const deleteExpense = (expenseID: number) => {
+    setIsLoaded(false);
     deleteExpenseService(expenseID).then(
       () => {
         setExpenses(
@@ -84,6 +85,7 @@ const ExpensesList = () => {
             return e.id !== expenseID;
           })
         );
+        setIsLoaded(true);
       },
       (error) => {
         setIsLoaded(true);
@@ -152,10 +154,7 @@ const ExpensesList = () => {
                   </Button>
                 </div>
                 <div className="mx-2">
-                  <Button
-                    variant="outlined"
-                    onClick={() => confirmDelete()}
-                  >
+                  <Button variant="outlined" onClick={() => confirmDelete()}>
                     Delete
                   </Button>
                 </div>
@@ -170,7 +169,7 @@ const ExpensesList = () => {
               navigate(`/sharecount/${params.sharecountID}/expense-add`)
             }
           >
-            <AddCircleOutlineRoundedIcon sx={{ fontSize: 45 }}  />
+            <AddCircleOutlineRoundedIcon sx={{ fontSize: 45 }} />
           </IconButton>
         </div>
       </div>

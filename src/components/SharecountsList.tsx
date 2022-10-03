@@ -68,6 +68,7 @@ const SharecountList = () => {
   };
 
   const deleteSharecount = (sharecountID: number) => {
+    setIsLoaded(false);
     deleteSharecountService(sharecountID).then(
       () => {
         setSharecounts(
@@ -75,6 +76,7 @@ const SharecountList = () => {
             return s.id !== sharecountID;
           })
         );
+        setIsLoaded(true);
       },
       (error) => {
         setIsLoaded(true);
@@ -134,10 +136,7 @@ const SharecountList = () => {
                 </Button>
               </div>
               <div className="mx-2">
-                <Button
-                  variant="outlined"
-                  onClick={() => confirmDelete()}
-                >
+                <Button variant="outlined" onClick={() => confirmDelete()}>
                   Delete
                 </Button>
               </div>

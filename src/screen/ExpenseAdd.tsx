@@ -88,9 +88,12 @@ const ExpenseAdd = () => {
           };
         }),
     };
-    addExpenseService(newExpense).then(() =>
-      navigate(`/sharecount/${params.sharecountID}`)
-    );
+
+    setIsLoaded(false);
+    addExpenseService(newExpense).then(() => {
+      setIsLoaded(true);
+      navigate(`/sharecount/${params.sharecountID}`);
+    });
   };
 
   const listParticipants = participants.map((p: IParticipantForm) => (

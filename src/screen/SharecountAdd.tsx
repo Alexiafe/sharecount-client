@@ -18,9 +18,11 @@ import {
 } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
 import AddIcon from "@mui/icons-material/Add";
+import Loader from "../components/Loader";
 
 const SharecountAdd = () => {
   const navigate = useNavigate();
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [sharecountName, setSharecountName] = useState<string>("");
   const [currency, setCurrency] = useState<string>("");
   const [participantTextField, setParticipantTextField] = useState<string>("");
@@ -49,7 +51,11 @@ const SharecountAdd = () => {
       currency: currency,
       participantsToAdd: participantsNameArray,
     };
-    addSharecountService(newSharecount).then(() => navigate("/"));
+    setIsLoaded(false);
+    addSharecountService(newSharecount).then(() => {
+      setIsLoaded(true);
+      navigate("/");
+    });
   };
 
   const listParticipants = participantsNameArray.map((p: string) => (
@@ -69,78 +75,87 @@ const SharecountAdd = () => {
     </ListItem>
   ));
 
-  return (
-    <div>
-      <Header
-        title="New Sharecount"
-        cancelButton={true}
-        saveButton={true}
-        onClick={save}
-      ></Header>
-      <div className="flex flex-col p-3">
-        <div className="m-2">
-          <TextField
-            fullWidth
-            required
-            label="Name"
-            variant="outlined"
-            value={sharecountName}
-            onChange={(e) => {
-              setSharecountName(e.target.value);
-            }}
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
-        </div>
-        <div className="m-2">
-          <TextField
-            fullWidth
-            required
-            label="Currency"
-            variant="outlined"
-            value={currency}
-            onChange={(e) => {
-              setCurrency(e.target.value);
-            }}
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
-        </div>
-        <div className="m-2">
-          Participants:
-          <List>{listParticipants}</List>
-          <div className="flex">
+  if (!isLoaded) {
+    return (
+      <div>
+        <Header title="New Sharecount"></Header>
+        <Loader></Loader>
+      </div>
+    );
+  } else {
+    return (
+      <div>
+        <Header
+          title="New Sharecount"
+          cancelButton={true}
+          saveButton={true}
+          onClick={save}
+        ></Header>
+        <div className="flex flex-col p-3">
+          <div className="m-2">
             <TextField
               fullWidth
               required
-              label="New participant"
-              variant="standard"
-              value={participantTextField}
+              label="Name"
+              variant="outlined"
+              value={sharecountName}
               onChange={(e) => {
-                setParticipantTextField(e.target.value);
+                setSharecountName(e.target.value);
               }}
               InputLabelProps={{
                 shrink: true,
               }}
-              InputProps={{
-                endAdornment: (
-                  <IconButton
-                    edge="end"
-                    aria-label="delete"
-                    onClick={() => addParticipants()}
-                  >
-                    <AddIcon />
-                  </IconButton>
-                ),
+            />
+          </div>
+          <div className="m-2">
+            <TextField
+              fullWidth
+              required
+              label="Currency"
+              variant="outlined"
+              value={currency}
+              onChange={(e) => {
+                setCurrency(e.target.value);
+              }}
+              InputLabelProps={{
+                shrink: true,
               }}
             />
           </div>
+          <div className="m-2">
+            Participants:
+            <List>{listParticipants}</List>
+            <div className="flex">
+              <TextField
+                fullWidth
+                required
+                label="New participant"
+                variant="standard"
+                value={participantTextField}
+                onChange={(e) => {
+                  setParticipantTextField(e.target.value);
+                }}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <IconButton
+                      edge="end"
+                      aria-label="delete"
+                      onClick={() => addParticipants()}
+                    >
+                      <AddIcon />
+                    </IconButton>
+                  ),
+                }}
+              />
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  }
 };
 
 export default SharecountAdd;
