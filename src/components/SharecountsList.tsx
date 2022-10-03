@@ -112,7 +112,7 @@ const SharecountList = () => {
     return (
       <div>
         <Header title="Sharecount"></Header>
-        <ul>{listSharecounts}</ul>
+        <ul className="p-2">{listSharecounts}</ul>
         <Modal
           open={displayModal}
           onClose={handleCloseModal}

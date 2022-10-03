@@ -14,7 +14,13 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 // MUI
-import { Checkbox, MenuItem, TextField } from "@mui/material";
+import {
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  MenuItem,
+  TextField,
+} from "@mui/material";
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { LocalizationProvider } from "@mui/x-date-pickers";
@@ -99,18 +105,28 @@ const ExpenseAdd = () => {
 
   const listParticipants = participants.map((p: IParticipantResponse) => (
     <li key={p.id}>
-      <Checkbox
-        value={p.id}
-        checked={partakersIDs.includes(p.id)}
-        onChange={handleCheckChange}
-      />
-      {p.name}
+      <FormGroup>
+        <FormControlLabel
+          control={
+            <Checkbox
+              value={p.id}
+              checked={partakersIDs.includes(p.id)}
+              onChange={handleCheckChange}
+            />
+          }
+          label={p.name}
+        />
+      </FormGroup>
     </li>
   ));
 
   const validationSchema = yup.object({
     expenseName: yup.string().required(),
-    expenseAmount: yup.number().positive().required().typeError('Amount should be a positive number'),
+    expenseAmount: yup
+      .number()
+      .positive()
+      .required()
+      .typeError("Amount should be a positive number"),
   });
 
   const formik = useFormik({

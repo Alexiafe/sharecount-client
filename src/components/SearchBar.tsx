@@ -8,7 +8,7 @@ interface IPropsSearchBar {
 
 const SearchBar = (props: IPropsSearchBar) => {
   return (
-    <div className="p-3">
+    <div className="p-2">
       <TextField
         fullWidth
         variant="outlined"

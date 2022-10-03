@@ -29,7 +29,7 @@ const Expense = (props: IPropsExpense) => {
     : propsDate.format("DD/MM/YYYY");
 
   return (
-    <div className="flex items-center border-b border-grey-500 p-3">
+    <div className="flex items-center p-2">
       <div className="flex flex-1 items-center">
         <Link
           style={{ display: "inline-block" }}
@@ -39,7 +39,7 @@ const Expense = (props: IPropsExpense) => {
           <div className="flex">
             <div className="flex-1">
               <p>{expense.name}</p>
-              <p className="text-xs py-2">Paid by {expense.owner!.name}</p>
+              <p className="text-xs">Paid by {expense.owner!.name}</p>
             </div>
 
             <div className="flex-none text-right">

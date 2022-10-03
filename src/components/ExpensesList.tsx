@@ -130,7 +130,7 @@ const ExpensesList = () => {
         <Header title={header} backButton={true} screen="ExpenseList"></Header>
         <SearchBar onClick={filterExpenses}></SearchBar>
         <div>
-          <ul>{listExpenses}</ul>
+          <ul className="p-2">{listExpenses}</ul>
           <Modal
             open={displayModal}
             onClose={handleCloseModal}
