@@ -117,7 +117,13 @@ const ExpensesList = () => {
         <List disablePadding>
           <ListItem button>
             <ListItemText
+              primaryTypographyProps={{
+                variant: "h6",
+              }}
               primary={e.name}
+              secondaryTypographyProps={{
+                variant: "subtitle1",
+              }}
               secondary={`Paid by ${e.owner?.name}`}
               onClick={() =>
                 navigate(`/sharecount/${sharecount?.id}/expense/${e.id}`)
@@ -125,7 +131,13 @@ const ExpensesList = () => {
             />
             <ListItemText
               style={{ textAlign: "right" }}
+              primaryTypographyProps={{
+                variant: "h6",
+              }}
               primary={`${e.amount_total} ${sharecount?.currency}`}
+              secondaryTypographyProps={{
+                variant: "subtitle1",
+              }}
               secondary={
                 moment(e.date).isSame(moment(), "day")
                   ? "Today"

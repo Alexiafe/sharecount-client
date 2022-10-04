@@ -100,7 +100,13 @@ const SharecountList = () => {
       <List disablePadding>
         <ListItem button>
           <ListItemText
+            primaryTypographyProps={{
+              variant: "h6",
+            }}
             primary={s.name}
+            secondaryTypographyProps={{
+              variant: "subtitle1",
+            }}
             secondary={`Balance: TODO ${s.currency}`}
             onClick={() => navigate(`/sharecount/${s.id}`)}
           />
