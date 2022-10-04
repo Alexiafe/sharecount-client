@@ -18,6 +18,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 // Other
 import moment from "moment";
+import { List, ListItem, ListItemText } from "@mui/material";
 
 const ExpensesDetails = () => {
   const navigate = useNavigate();
@@ -36,10 +37,10 @@ const ExpensesDetails = () => {
 
   useEffect(() => {
     getSharecountService(parseInt(params.sharecountID!)).then(
-      (result) => {
+      (sharecount) => {
         setIsLoaded(true);
-        setSharecount(result);
-        let expense = result.expenses.filter(
+        setSharecount(sharecount);
+        let expense = sharecount.expenses.filter(
           (expense: IExpenseResponse) =>
             expense.id === parseInt(params.expenseID!)
         )[0];
@@ -61,12 +62,15 @@ const ExpensesDetails = () => {
 
   const listExpenseParticipants = partakers.map((e: IPartakerResponse) => (
     <li key={e.participant_id}>
-      <div className="flex border-b border-grey-500 py-2">
-        <div className="flex-1">{e.participant?.name}</div>
-        <div className="flex-none">
-          {e.amount} {sharecount?.currency}
-        </div>
-      </div>
+      <List disablePadding>
+        <ListItem>
+          <ListItemText primary={e.participant.name} />
+          <ListItemText
+            style={{ textAlign: "right" }}
+            primary={`${e.amount} ${sharecount?.currency}`}
+          />
+        </ListItem>
+      </List>
     </li>
   ));
 
@@ -94,19 +98,19 @@ const ExpensesDetails = () => {
           onClick={edit}
         ></Header>
         <div className="items-center p-3">
-          <div className="border-b border-grey-500 pb-1">
+          <div className="border-b border-grey-500">
             <div className="justify-center h-20 flex items-center text-xl py-3">
               {expense?.amount_total} {sharecount?.currency}
             </div>
-            <div className="flex text-center py-2">
+            <div className="flex text-center py-3">
               <div className="flex-1 text-left">
                 Paid by {expense?.owner?.name}
               </div>
               <div className="flex-1 text-right">{date}</div>
             </div>
           </div>
-          <div className="mt-4">
-            For whom:<ul className="mt-2">{listExpenseParticipants}</ul>
+          <div className="py-3">
+            For whom:<ul>{listExpenseParticipants}</ul>
           </div>
         </div>
       </div>

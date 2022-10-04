@@ -6,8 +6,8 @@ export const getExpenseService = (expenseID: number) => {
   return fetch(`${serverUrl}/expense/${expenseID}`)
     .then((res) => res.json())
     .then(
-      (result) => {
-        return result;
+      (expense) => {
+        return expense;
       },
       (error) => {
         return error;
@@ -24,8 +24,8 @@ export const deleteExpenseService = (expenseID: number) => {
   })
     .then((res) => res.json())
     .then(
-      (result) => {
-        return result;
+      (expense) => {
+        return expense;
       },
       (error) => {
         return error;
@@ -43,8 +43,8 @@ export const addExpenseService = (expense: IExpenseForm) => {
   })
     .then((res) => res.json())
     .then(
-      (result) => {
-        return result;
+      (expense) => {
+        return expense;
       },
       (error) => {
         return error;
@@ -62,8 +62,8 @@ export const editExpenseService = (expense: IExpenseForm) => {
   })
     .then((res) => res.json())
     .then(
-      (result) => {
-        return result;
+      (expense) => {
+        return expense;
       },
       (error) => {
         return error;

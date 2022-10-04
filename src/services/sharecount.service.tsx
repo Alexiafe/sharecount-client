@@ -6,8 +6,8 @@ export const getSharecountsService = () => {
   return fetch(`${serverUrl}/sharecounts`)
     .then((res) => res.json())
     .then(
-      (result) => {
-        return result;
+      (sharecounts) => {
+        return sharecounts;
       },
       (error) => {
         return error;
@@ -19,8 +19,8 @@ export const getSharecountService = (sharecountID: number) => {
   return fetch(`${serverUrl}/sharecount/${sharecountID}`)
     .then((res) => res.json())
     .then(
-      (result) => {
-        return result;
+      (sharecount) => {
+        return sharecount;
       },
       (error) => {
         return error;
@@ -37,8 +37,8 @@ export const deleteSharecountService = (sharecountID: number) => {
   })
     .then((res) => res.json())
     .then(
-      (result) => {
-        return result;
+      (sharecount) => {
+        return sharecount;
       },
       (error) => {
         return error;
@@ -56,8 +56,8 @@ export const addSharecountService = (sharecount: ISharecountForm) => {
   })
     .then((res) => res.json())
     .then(
-      (result) => {
-        return result;
+      (sharecount) => {
+        return sharecount;
       },
       (error) => {
         return error;
@@ -75,8 +75,8 @@ export const editSharecountService = (sharecount: ISharecountForm) => {
   })
     .then((res) => res.json())
     .then(
-      (result) => {
-        return result;
+      (sharecount) => {
+        return sharecount;
       },
       (error) => {
         return error;

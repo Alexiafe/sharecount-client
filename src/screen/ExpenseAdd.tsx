@@ -43,18 +43,14 @@ const ExpenseAdd = () => {
   const [partakersIDs, setPartakersIDs] = useState<number[]>([]);
   const [errorMissingPartakers, setErrorMissingPartakers] =
     useState<string>("");
+  const header = `New expense`;
 
   useEffect(() => {
     getSharecountService(parseInt(params.sharecountID!)).then(
-      (result) => {
+      (sharecount) => {
         setIsLoaded(true);
-        setParticipants(
-          result.participants.map((p: IParticipantResponse) => ({
-            ...p,
-            checked: false,
-          }))
-        );
-        setOwnerID(result.participants[0].id);
+        setParticipants(sharecount.participants);
+        setOwnerID(sharecount.participants[0].id);
       },
       (error) => {
         setIsLoaded(true);
@@ -159,14 +155,14 @@ const ExpenseAdd = () => {
   if (error) {
     return (
       <div>
-        <Header title="New Expense"></Header>
+        <Header title={header} backButton={true}></Header>
         Please try again later
       </div>
     );
   } else if (!isLoaded) {
     return (
       <div>
-        <Header title="New Expense"></Header>
+        <Header title={header}></Header>
         <Loader></Loader>
       </div>
     );
@@ -174,14 +170,14 @@ const ExpenseAdd = () => {
     return (
       <div>
         <Header
-          title="New Expense"
+          title={header}
           cancelButton={true}
           saveButton={true}
           onClick={() => formik.handleSubmit()}
         ></Header>
-        <div className="flex flex-col p-3">
+        <div className="flex flex-col p-4">
           <form className="flex flex-col" onSubmit={formik.handleSubmit}>
-            <div className="m-2">
+            <div className="py-2">
               <TextField
                 required
                 fullWidth
@@ -202,7 +198,7 @@ const ExpenseAdd = () => {
                 }
               />
             </div>
-            <div className="m-2">
+            <div className="py-2">
               <TextField
                 required
                 fullWidth
@@ -224,7 +220,7 @@ const ExpenseAdd = () => {
               />
             </div>
           </form>
-          <div className="m-2">
+          <div className="py-2">
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <MobileDatePicker
                 label="Date"
@@ -237,7 +233,7 @@ const ExpenseAdd = () => {
               />
             </LocalizationProvider>
           </div>
-          <div className="m-2">
+          <div className="py-2">
             <TextField
               fullWidth
               select
@@ -252,12 +248,12 @@ const ExpenseAdd = () => {
               ))}
             </TextField>
           </div>
-          <div className="m-2">
+          <div className="py-2">
             From whom:
             <div className="text-xs" style={{ color: "#d32f2f" }}>
               {errorMissingPartakers}
             </div>
-            <ul className="mt-2">{listParticipants}</ul>
+            <ul>{listParticipants}</ul>
           </div>
         </div>
       </div>

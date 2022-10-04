@@ -30,6 +30,7 @@ function Header(props: IPropsHeader) {
       <Toolbar>
         {backButton && (
           <IconButton
+            size="large"
             edge="start"
             color="inherit"
             aria-label="menu"

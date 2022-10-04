@@ -21,7 +21,13 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 // MUI
-import { Checkbox, FormControlLabel, FormGroup, MenuItem, TextField } from "@mui/material";
+import {
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  MenuItem,
+  TextField,
+} from "@mui/material";
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { LocalizationProvider } from "@mui/x-date-pickers";
@@ -39,14 +45,17 @@ const ExpenseEdit = () => {
   const [expenseDate, setExpenseDate] = useState<moment.Moment | null>(
     moment()
   );
+  const [ownerID, setOwnerID] = useState<number>(0);
   const [participants, setParticipants] = useState<IParticipantResponse[]>([]);
   const [partakersIDs, setPartakersIDs] = useState<number[]>([]);
-  const [ownerID, setOwnerID] = useState<number>(0);
+  const [errorMissingPartakers, setErrorMissingPartakers] =
+    useState<string>("");
   const header = `Edit expense`;
 
   useEffect(() => {
     getSharecountService(parseInt(params.sharecountID!)).then(
       (sharecount) => {
+        setIsLoaded(true);
         setParticipants(sharecount.participants);
       },
       (error) => {
@@ -93,7 +102,7 @@ const ExpenseEdit = () => {
   };
 
   const save = (expense: { expenseName: string; expenseAmount: string }) => {
-    let newExpense: IExpenseForm = {
+    const newExpense = {
       id: parseInt(params.expenseID!),
       name: expense.expenseName,
       amount_total: parseInt(expense.expenseAmount),
@@ -107,9 +116,11 @@ const ExpenseEdit = () => {
       }),
     };
 
-    editExpenseService(newExpense).then(() =>
-      navigate(`/sharecount/${params.sharecountID}`)
-    );
+    setIsLoaded(false);
+    editExpenseService(newExpense).then(() => {
+      setIsLoaded(true);
+      navigate(`/sharecount/${params.sharecountID}`);
+    });
   };
 
   const listParticipants = participants.map((p: IParticipantResponse) => (
@@ -156,8 +167,12 @@ const ExpenseEdit = () => {
       return errors;
     },
     onSubmit: (expense) => {
-      save(expense);
-      formik.resetForm();
+      if (partakersIDs.length === 0) {
+        setErrorMissingPartakers("Please select at least one participants");
+      } else {
+        save(expense);
+        formik.resetForm();
+      }
     },
   });
 
@@ -184,16 +199,15 @@ const ExpenseEdit = () => {
           saveButton={true}
           onClick={() => formik.handleSubmit()}
         ></Header>
-        <div className="flex flex-col p-3">
+        <div className="flex flex-col p-4">
           <form className="flex flex-col" onSubmit={formik.handleSubmit}>
-            <div className="m-2">
+            <div className="py-2">
               <TextField
                 required
                 fullWidth
                 id="expenseName"
                 name="expenseName"
                 label="Name"
-                variant="outlined"
                 value={formik.values.expenseName}
                 onChange={formik.handleChange}
                 InputLabelProps={{
@@ -208,14 +222,13 @@ const ExpenseEdit = () => {
                 }
               />
             </div>
-            <div className="m-2">
+            <div className="py-2">
               <TextField
                 required
                 fullWidth
                 id="expenseAmount"
                 name="expenseAmount"
                 label="Amount"
-                variant="outlined"
                 value={formik.values.expenseAmount}
                 onChange={formik.handleChange}
                 InputLabelProps={{
@@ -231,7 +244,7 @@ const ExpenseEdit = () => {
               />
             </div>
           </form>
-          <div className="m-2">
+          <div className="py-2">
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <MobileDatePicker
                 label="Date"
@@ -244,7 +257,7 @@ const ExpenseEdit = () => {
               />
             </LocalizationProvider>
           </div>
-          <div className="m-2">
+          <div className="py-2">
             <TextField
               fullWidth
               select
@@ -259,9 +272,12 @@ const ExpenseEdit = () => {
               ))}
             </TextField>
           </div>
-          <div className="m-2">
+          <div className="py-2">
             From whom:
-            <ul className="mt-2">{listParticipants}</ul>
+            <div className="text-xs" style={{ color: "#d32f2f" }}>
+              {errorMissingPartakers}
+            </div>
+            <ul>{listParticipants}</ul>
           </div>
         </div>
       </div>

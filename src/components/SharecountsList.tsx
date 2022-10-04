@@ -3,7 +3,6 @@ import { ISharecountResponse } from "../interfaces/interfaces";
 
 // Components
 import Loader from "./Loader";
-import SharecountItem from "./SharecountItem";
 import Header from "../components/Header";
 
 // Services
@@ -17,8 +16,19 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 // MUI
-import { Box, Button, IconButton, Modal, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  Modal,
+  Typography,
+} from "@mui/material";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 
 const SharecountList = () => {
   const navigate = useNavigate();
@@ -43,9 +53,9 @@ const SharecountList = () => {
 
   useEffect(() => {
     getSharecountsService().then(
-      (result) => {
+      (sharecounts) => {
         setIsLoaded(true);
-        setSharecounts(result);
+        setSharecounts(sharecounts);
       },
       (error) => {
         setIsLoaded(true);
@@ -87,10 +97,29 @@ const SharecountList = () => {
 
   const listSharecounts = sharecounts.map((s: ISharecountResponse) => (
     <li key={s.id}>
-      <SharecountItem
-        sharecount={s}
-        onClick={handleDisplayModal}
-      ></SharecountItem>
+      <List disablePadding>
+        <ListItem button>
+          <ListItemText
+            primary={s.name}
+            secondary={`Balance: TODO ${s.currency}`}
+            onClick={() => navigate(`/sharecount/${s.id}`)}
+          />
+          <IconButton
+            size="large"
+            color="primary"
+            onClick={() => navigate(`/sharecount-edit/${s.id}`)}
+          >
+            <EditIcon />
+          </IconButton>
+          <IconButton
+            size="large"
+            color="primary"
+            onClick={() => handleDisplayModal(s)}
+          >
+            <DeleteIcon />
+          </IconButton>
+        </ListItem>
+      </List>
     </li>
   ));
 
@@ -112,7 +141,7 @@ const SharecountList = () => {
     return (
       <div>
         <Header title="Sharecount"></Header>
-        <ul className="p-2">{listSharecounts}</ul>
+        <ul>{listSharecounts}</ul>
         <Modal
           open={displayModal}
           onClose={handleCloseModal}
@@ -145,6 +174,7 @@ const SharecountList = () => {
         </Modal>
         <div className="absolute bottom-4 right-4">
           <IconButton
+            size="large"
             color="primary"
             onClick={() => navigate("/sharecount-add")}
           >

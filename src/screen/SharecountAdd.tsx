@@ -31,6 +31,8 @@ const SharecountAdd = () => {
   const [participantsNameArray, setParticipantsNameArray] = useState<string[]>(
     []
   );
+  
+  const header = `New sharecount`;
 
   const addParticipants = () => {
     let newParticipants = [...participantsNameArray];
@@ -53,6 +55,7 @@ const SharecountAdd = () => {
       currency: sharecount.currency,
       participantsToAdd: participantsNameArray,
     };
+    
     setIsLoaded(false);
     addSharecountService(newSharecount).then(() => {
       setIsLoaded(true);
@@ -61,20 +64,14 @@ const SharecountAdd = () => {
   };
 
   const listParticipants = participantsNameArray.map((p: string) => (
-    <ListItem
-      key={p}
-      secondaryAction={
-        <IconButton
-          edge="end"
-          aria-label="delete"
-          onClick={() => deleteParticipant(p)}
-        >
+    <List disablePadding>
+      <ListItem>
+        <ListItemText primary={p} />
+        <IconButton size="large" onClick={() => deleteParticipant(p)}>
           <ClearIcon />
         </IconButton>
-      }
-    >
-      <ListItemText primary={p} />
-    </ListItem>
+      </ListItem>
+    </List>
   ));
 
   const validationSchema = yup.object({
@@ -108,7 +105,7 @@ const SharecountAdd = () => {
   if (!isLoaded) {
     return (
       <div>
-        <Header title="New Sharecount"></Header>
+        <Header title={header}></Header>
         <Loader></Loader>
       </div>
     );
@@ -116,14 +113,14 @@ const SharecountAdd = () => {
     return (
       <div>
         <Header
-          title="New Sharecount"
+          title={header}
           cancelButton={true}
           saveButton={true}
           onClick={() => formik.handleSubmit()}
         ></Header>
-        <div className="flex flex-col p-3">
+        <div className="flex flex-col p-4">
           <form className="flex flex-col" onSubmit={formik.handleSubmit}>
-            <div className="m-2">
+            <div className="py-2">
               <TextField
                 fullWidth
                 required
@@ -144,7 +141,7 @@ const SharecountAdd = () => {
                 }
               />
             </div>
-            <div className="m-2">
+            <div className="py-2">
               <TextField
                 fullWidth
                 required
@@ -163,7 +160,7 @@ const SharecountAdd = () => {
               />
             </div>
           </form>
-          <div className="m-2">
+          <div className="py-2">
             Participants:
             <List>{listParticipants}</List>
             <div className="flex">
@@ -182,6 +179,7 @@ const SharecountAdd = () => {
                 InputProps={{
                   endAdornment: (
                     <IconButton
+                      size="large"
                       edge="end"
                       aria-label="delete"
                       onClick={() => addParticipants()}

@@ -29,13 +29,17 @@ const Sharecount = (props: IPropsSharecount) => {
       </div>
       <div className="flex-none">
         <Link to={`/sharecount-edit/${sharecount.id}`}>
-          <IconButton color="primary">
+          <IconButton size="large" color="primary">
             <EditIcon />
           </IconButton>
         </Link>
       </div>
       <div className="flex-none pl-2">
-        <IconButton color="primary" onClick={() => props.onClick(sharecount)}>
+        <IconButton
+          size="large"
+          color="primary"
+          onClick={() => props.onClick(sharecount)}
+        >
           <DeleteIcon />
         </IconButton>
       </div>

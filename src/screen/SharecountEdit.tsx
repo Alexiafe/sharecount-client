@@ -33,12 +33,12 @@ import * as yup from "yup";
 const SharecountEdit = () => {
   const navigate = useNavigate();
   const params = useParams();
-  const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [participantTextField, setParticipantTextField] = useState<string>("");
   const [participantsNameArray, setParticipantsNameArray] = useState<string[]>(
     []
   );
+  const [error, setError] = useState<any>(null);
   const [oldparticipantsNameArray, setOldParticipantsNameArray] = useState<
     string[]
   >([]);
@@ -47,15 +47,15 @@ const SharecountEdit = () => {
 
   useEffect(() => {
     getSharecountService(parseInt(params.sharecountID!)).then(
-      (result) => {
+      (sharecount) => {
         setIsLoaded(true);
-        formik.setFieldValue("sharecountName", result.name);
-        formik.setFieldValue("currency", result.currency);
+        formik.setFieldValue("sharecountName", sharecount.name);
+        formik.setFieldValue("currency", sharecount.currency);
         setParticipantsNameArray(
-          result.participants.map((p: IParticipantResponse) => p.name)
+          sharecount.participants.map((p: IParticipantResponse) => p.name)
         );
         setOldParticipantsNameArray(
-          result.participants.map((p: IParticipantResponse) => p.name)
+          sharecount.participants.map((p: IParticipantResponse) => p.name)
         );
       },
       (error) => {
@@ -97,29 +97,27 @@ const SharecountEdit = () => {
       participantsToDelete: participantsToDelete,
     };
 
-    editSharecountService(newSharecount).then(() => navigate("/"));
+    setIsLoaded(false);
+    editSharecountService(newSharecount).then(() => {
+      setIsLoaded(true);
+      navigate("/");
+    });
   };
 
   const listParticipants = participantsNameArray.map((p: string) => (
-    <ListItem
-      key={p}
-      secondaryAction={
-        <IconButton
-          edge="end"
-          aria-label="delete"
-          onClick={() => deleteParticipant(p)}
-        >
+    <List disablePadding>
+      <ListItem>
+        <ListItemText primary={p} />
+        <IconButton size="large" onClick={() => deleteParticipant(p)}>
           <ClearIcon />
         </IconButton>
-      }
-    >
-      <ListItemText primary={p} />
-    </ListItem>
+      </ListItem>
+    </List>
   ));
 
   const validationSchema = yup.object({
-    sharecountName: yup.string().required(`Sharecount's name is required`),
-    currency: yup.string().required("Currency is required"),
+    sharecountName: yup.string().required(),
+    currency: yup.string().required(),
   });
 
   const formik = useFormik({
@@ -168,9 +166,9 @@ const SharecountEdit = () => {
           saveButton={true}
           onClick={() => formik.handleSubmit()}
         ></Header>
-        <div className="flex flex-col p-3">
+        <div className="flex flex-col p-4">
           <form className="flex flex-col" onSubmit={formik.handleSubmit}>
-            <div className="m-2">
+            <div className="py-2">
               <TextField
                 required
                 fullWidth
@@ -191,7 +189,7 @@ const SharecountEdit = () => {
                 }
               />
             </div>
-            <div className="m-2">
+            <div className="py-2">
               <TextField
                 required
                 fullWidth
@@ -210,7 +208,7 @@ const SharecountEdit = () => {
               />
             </div>
           </form>
-          <div>
+          <div className="py-2">
             Participants:
             <List>{listParticipants}</List>
             <div className="flex">
@@ -229,6 +227,7 @@ const SharecountEdit = () => {
                 InputProps={{
                   endAdornment: (
                     <IconButton
+                      size="large"
                       edge="end"
                       aria-label="delete"
                       onClick={() => addParticipants()}

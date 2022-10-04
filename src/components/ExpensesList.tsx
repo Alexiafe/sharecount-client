@@ -7,7 +7,6 @@ import {
 // Components
 import Header from "../components/Header";
 import SearchBar from "./SearchBar";
-import ExpenseItem from "./ExpenseItem";
 import Loader from "./Loader";
 
 // Services
@@ -19,8 +18,21 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 // MUI
-import { Box, Button, IconButton, Modal, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  Modal,
+  Typography,
+} from "@mui/material";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
+import DeleteIcon from "@mui/icons-material/Delete";
+
+// Other
+import moment from "moment";
 
 const ExpensesList = () => {
   const navigate = useNavigate();
@@ -51,10 +63,10 @@ const ExpensesList = () => {
 
   useEffect(() => {
     getSharecountService(parseInt(params.sharecountID!)).then(
-      (result) => {
+      (sharecount) => {
         setIsLoaded(true);
-        setSharecount(result);
-        setExpenses(result.expenses);
+        setSharecount(sharecount);
+        setExpenses(sharecount.expenses);
       },
       (error) => {
         setIsLoaded(true);
@@ -102,11 +114,36 @@ const ExpensesList = () => {
     .filter((e) => e.name.toLowerCase().includes(filter.toLowerCase()))
     .map((e) => (
       <li key={e.id}>
-        <ExpenseItem
-          expense={e}
-          sharecount={sharecount}
-          onClick={handleDisplayModal}
-        ></ExpenseItem>
+        <List disablePadding>
+          <ListItem button>
+            <ListItemText
+              primary={e.name}
+              secondary={`Paid by ${e.owner?.name}`}
+              onClick={() =>
+                navigate(`/sharecount/${sharecount?.id}/expense/${e.id}`)
+              }
+            />
+            <ListItemText
+              style={{ textAlign: "right" }}
+              primary={`${e.amount_total} ${sharecount?.currency}`}
+              secondary={
+                moment(e.date).isSame(moment(), "day")
+                  ? "Today"
+                  : moment(e.date).format("DD/MM/YYYY")
+              }
+              onClick={() =>
+                navigate(`/sharecount/${sharecount?.id}/expense/${e.id}`)
+              }
+            />
+            <IconButton
+              size="large"
+              color="primary"
+              onClick={() => handleDisplayModal(e)}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </ListItem>
+        </List>
       </li>
     ));
 
@@ -130,7 +167,7 @@ const ExpensesList = () => {
         <Header title={header} backButton={true} screen="ExpenseList"></Header>
         <SearchBar onClick={filterExpenses}></SearchBar>
         <div>
-          <ul className="p-2">{listExpenses}</ul>
+          <ul>{listExpenses}</ul>
           <Modal
             open={displayModal}
             onClose={handleCloseModal}
@@ -164,6 +201,7 @@ const ExpensesList = () => {
         </div>
         <div className="absolute bottom-4 right-4">
           <IconButton
+            size="large"
             color="primary"
             onClick={() =>
               navigate(`/sharecount/${params.sharecountID}/expense-add`)
