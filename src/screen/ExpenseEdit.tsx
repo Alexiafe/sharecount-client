@@ -1,7 +1,6 @@
 // Interfaces & configs
 import {
   IParticipantResponse,
-  IExpenseForm,
   IPartakerResponse,
 } from "../interfaces/interfaces";
 
@@ -229,6 +228,7 @@ const ExpenseEdit = () => {
                 id="expenseAmount"
                 name="expenseAmount"
                 label="Amount"
+                inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
                 value={formik.values.expenseAmount}
                 onChange={formik.handleChange}
                 InputLabelProps={{

@@ -229,7 +229,6 @@ const SharecountEdit = () => {
                     <IconButton
                       size="large"
                       edge="end"
-                      aria-label="delete"
                       onClick={() => addParticipants()}
                     >
                       <AddIcon />

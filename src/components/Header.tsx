@@ -33,7 +33,6 @@ function Header(props: IPropsHeader) {
             size="large"
             edge="start"
             color="inherit"
-            aria-label="menu"
             onClick={() => {
               if (screen === "ExpenseList") navigate("/");
               else navigate(-1);

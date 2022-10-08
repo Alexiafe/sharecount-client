@@ -183,14 +183,12 @@ const ExpensesList = () => {
           <Modal
             open={displayModal}
             onClose={handleCloseModal}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
           >
             <Box sx={style}>
-              <Typography id="modal-modal-title" variant="h6" component="h2">
+              <Typography variant="h6">
                 {expenseName}
               </Typography>
-              <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+              <Typography sx={{ mt: 2 }}>
                 Confirm delete?
               </Typography>
               <div className="flex m-2 justify-center">
