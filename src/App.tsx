@@ -5,18 +5,18 @@ import Home from "./screen/Home";
 import SharecountEdit from "./screen/SharecountEdit";
 import SharecountAdd from "./screen/SharecountAdd";
 
-import ExpensesList from "./components/ExpensesList";
+import Expenses from "./components/Expenses";
 import ExpensesDetails from "./components/ExpenseDetails";
 import ExpenseAdd from "./screen/ExpenseAdd";
 import ExpenseEdit from "./screen/ExpenseEdit";
 
-function App() {
+const App = () => {
   return (
     <div>
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/sharecount/:sharecountID" element={<ExpensesList />} />
+          <Route path="/sharecount/:sharecountID" element={<Expenses />} />
           <Route
             path="/sharecount-edit/:sharecountID"
             element={<SharecountEdit />}

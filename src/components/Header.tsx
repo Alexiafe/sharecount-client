@@ -15,7 +15,7 @@ interface IPropsHeader {
   onClick?: () => void;
 }
 
-function Header(props: IPropsHeader) {
+const Header = (props: IPropsHeader) => {
   const title = props.title;
   const screen = props.screen;
   const backButton = props.backButton;
@@ -34,7 +34,7 @@ function Header(props: IPropsHeader) {
             edge="start"
             color="inherit"
             onClick={() => {
-              if (screen === "ExpenseList") navigate("/");
+              if (screen === "Expenses") navigate("/");
               else navigate(-1);
             }}
           >
@@ -54,6 +54,6 @@ function Header(props: IPropsHeader) {
       </Toolbar>
     </AppBar>
   );
-}
+};
 
 export default Header;

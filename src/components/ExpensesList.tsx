@@ -5,7 +5,6 @@ import {
 } from "../interfaces/interfaces";
 
 // Components
-import Header from "../components/Header";
 import SearchBar from "./SearchBar";
 import Loader from "./Loader";
 
@@ -47,7 +46,6 @@ const ExpensesList = () => {
   const [expenseID, setExpenseID] = useState<number>(0);
   const [expenseName, setExpenseName] = useState<string>("");
   const [filter, setFilter] = useState<string>("");
-  const header = sharecount?.name;
 
   const style = {
     position: "absolute" as "absolute",
@@ -160,37 +158,23 @@ const ExpensesList = () => {
     ));
 
   if (error) {
-    return (
-      <div>
-        <Header title={header}></Header>
-        Please try again later
-      </div>
-    );
+    return <div>Please try again later</div>;
   } else if (!isLoaded) {
     return (
       <div>
-        <Header title={header}></Header>
         <Loader></Loader>
       </div>
     );
   } else {
     return (
       <div>
-        <Header title={header} backButton={true} screen="ExpenseList"></Header>
         <SearchBar onClick={filterExpenses}></SearchBar>
         <div>
           <ul>{listExpenses}</ul>
-          <Modal
-            open={displayModal}
-            onClose={handleCloseModal}
-          >
+          <Modal open={displayModal} onClose={handleCloseModal}>
             <Box sx={style}>
-              <Typography variant="h6">
-                {expenseName}
-              </Typography>
-              <Typography sx={{ mt: 2 }}>
-                Confirm delete?
-              </Typography>
+              <Typography variant="h6">{expenseName}</Typography>
+              <Typography sx={{ mt: 2 }}>Confirm delete?</Typography>
               <div className="flex m-2 justify-center">
                 <div>
                   <Button
