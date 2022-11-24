@@ -107,7 +107,7 @@ const SharecountList = () => {
             secondaryTypographyProps={{
               variant: "subtitle1",
             }}
-            secondary={`Balance: TODO ${s.currency}`}
+            secondary={`Balance: ${s.participants?.filter(p => p.name == 'Alexia')[0].balance.toFixed(2)} ${s.currency}`}
             onClick={() => navigate(`/sharecount/${s.id}`)}
           />
           <IconButton

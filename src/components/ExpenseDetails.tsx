@@ -67,7 +67,7 @@ const ExpensesDetails = () => {
           <ListItemText primary={e.participant.name} />
           <ListItemText
             style={{ textAlign: "right" }}
-            primary={`${e.amount} ${sharecount?.currency}`}
+            primary={`${e.amount.toFixed(2)} ${sharecount?.currency}`}
           />
         </ListItem>
       </List>
