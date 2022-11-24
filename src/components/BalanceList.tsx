@@ -24,7 +24,14 @@ const BalanceList = () => {
     getSharecountService(parseInt(params.sharecountID!)).then(
       (sharecount) => {
         setIsLoaded(true);
-        setParticipants(sharecount.participants);
+        setParticipants(
+          sharecount.participants.sort(function (
+            a: IParticipantResponse,
+            b: IParticipantResponse
+          ) {
+            return a.balance - b.balance;
+          })
+        );
       },
       (error) => {
         setIsLoaded(true);
