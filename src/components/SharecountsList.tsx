@@ -30,7 +30,7 @@ import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRou
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 
-const SharecountList = () => {
+const SharecountsList = () => {
   const navigate = useNavigate();
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
@@ -107,7 +107,9 @@ const SharecountList = () => {
             secondaryTypographyProps={{
               variant: "subtitle1",
             }}
-            secondary={`Balance: ${s.participants?.filter(p => p.name == 'Alexia')[0].balance.toFixed(2)} ${s.currency}`}
+            secondary={`Balance: ${s.participants
+              ?.filter((p) => p.name === "Alexia")[0]
+              .balance.toFixed(2)} ${s.currency}`}
             onClick={() => navigate(`/sharecount/${s.id}`)}
           />
           <IconButton
@@ -129,6 +131,25 @@ const SharecountList = () => {
     </li>
   ));
 
+  let modalContent = (
+    <Box sx={style}>
+      <Typography variant="h6">{sharecountName}</Typography>
+      <Typography sx={{ mt: 2 }}>Confirm delete?</Typography>
+      <div className="flex m-2 justify-center">
+        <div>
+          <Button variant="outlined" onClick={() => setDisplayModal(false)}>
+            Cancel
+          </Button>
+        </div>
+        <div className="mx-2">
+          <Button variant="outlined" onClick={() => confirmDelete()}>
+            Delete
+          </Button>
+        </div>
+      </div>
+    </Box>
+  );
+
   if (error) {
     return (
       <div>
@@ -148,33 +169,8 @@ const SharecountList = () => {
       <div>
         <Header title="Sharecount"></Header>
         <ul>{listSharecounts}</ul>
-        <Modal
-          open={displayModal}
-          onClose={handleCloseModal}
-        >
-          <Box sx={style}>
-            <Typography variant="h6">
-              {sharecountName}
-            </Typography>
-            <Typography sx={{ mt: 2 }}>
-              Confirm delete?
-            </Typography>
-            <div className="flex m-2 justify-center">
-              <div>
-                <Button
-                  variant="outlined"
-                  onClick={() => setDisplayModal(false)}
-                >
-                  Cancel
-                </Button>
-              </div>
-              <div className="mx-2">
-                <Button variant="outlined" onClick={() => confirmDelete()}>
-                  Delete
-                </Button>
-              </div>
-            </div>
-          </Box>
+        <Modal open={displayModal} onClose={handleCloseModal}>
+          {modalContent}
         </Modal>
         <div className="absolute bottom-4 right-4">
           <IconButton
@@ -190,4 +186,4 @@ const SharecountList = () => {
   }
 };
 
-export default SharecountList;
+export default SharecountsList;

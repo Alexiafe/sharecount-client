@@ -157,6 +157,25 @@ const ExpensesList = () => {
       </li>
     ));
 
+  let modalContent = (
+    <Box sx={style}>
+      <Typography variant="h6">{expenseName}</Typography>
+      <Typography sx={{ mt: 2 }}>Confirm delete?</Typography>
+      <div className="flex m-2 justify-center">
+        <div>
+          <Button variant="outlined" onClick={() => setDisplayModal(false)}>
+            Cancel
+          </Button>
+        </div>
+        <div className="mx-2">
+          <Button variant="outlined" onClick={() => confirmDelete()}>
+            Delete
+          </Button>
+        </div>
+      </div>
+    </Box>
+  );
+
   if (error) {
     return <div>Please try again later</div>;
   } else if (!isLoaded) {
@@ -172,25 +191,7 @@ const ExpensesList = () => {
         <div>
           <ul>{listExpenses}</ul>
           <Modal open={displayModal} onClose={handleCloseModal}>
-            <Box sx={style}>
-              <Typography variant="h6">{expenseName}</Typography>
-              <Typography sx={{ mt: 2 }}>Confirm delete?</Typography>
-              <div className="flex m-2 justify-center">
-                <div>
-                  <Button
-                    variant="outlined"
-                    onClick={() => setDisplayModal(false)}
-                  >
-                    Cancel
-                  </Button>
-                </div>
-                <div className="mx-2">
-                  <Button variant="outlined" onClick={() => confirmDelete()}>
-                    Delete
-                  </Button>
-                </div>
-              </div>
-            </Box>
+            {modalContent}
           </Modal>
         </div>
         <div className="absolute bottom-4 right-4">
