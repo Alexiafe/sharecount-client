@@ -107,9 +107,13 @@ const SharecountsList = () => {
             secondaryTypographyProps={{
               variant: "subtitle1",
             }}
-            secondary={`Balance: ${s.participants
-              ?.filter((p) => p.name === "Alexia")[0]
-              .balance.toFixed(2)} ${s.currency}`}
+            secondary={
+              s.participants?.filter((p) => p.name === "Alexia").length
+                ? `Balance : ${s.participants
+                    ?.filter((p) => p.name === "Alexia")[0]
+                    .balance.toFixed(2)} ${s.currency}`
+                : ""
+            }
             onClick={() => navigate(`/sharecount/${s.id}`)}
           />
           <IconButton
@@ -168,7 +172,14 @@ const SharecountsList = () => {
     return (
       <div>
         <Header title="Sharecount"></Header>
-        <ul>{listSharecounts}</ul>
+        {sharecounts.length ? (
+          <ul>{listSharecounts}</ul>
+        ) : (
+          <div className="p-3 text-center">
+            <p>No sharecounts yet.</p>
+            <p>Click the " + " button to create one</p>
+          </div>
+        )}
         <Modal open={displayModal} onClose={handleCloseModal}>
           {modalContent}
         </Modal>

@@ -187,13 +187,23 @@ const ExpensesList = () => {
   } else {
     return (
       <div>
-        <SearchBar onClick={filterExpenses}></SearchBar>
-        <div>
-          <ul>{listExpenses}</ul>
-          <Modal open={displayModal} onClose={handleCloseModal}>
-            {modalContent}
-          </Modal>
-        </div>
+        {expenses.length ? (
+          <div>
+            <SearchBar onClick={filterExpenses}></SearchBar>
+            <div>
+              <ul>{listExpenses}</ul>
+              <Modal open={displayModal} onClose={handleCloseModal}>
+                {modalContent}
+              </Modal>
+            </div>
+          </div>
+        ) : (
+          <div className="p-3 text-center">
+            <p>No expenses yet.</p>
+            <p>Click the " + " button to create one</p>
+          </div>
+        )}
+
         <div className="absolute bottom-4 right-4">
           <IconButton
             size="large"

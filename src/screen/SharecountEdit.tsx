@@ -105,14 +105,16 @@ const SharecountEdit = () => {
   };
 
   const listParticipants = participantsNameArray.map((p: string) => (
-    <List disablePadding>
-      <ListItem>
-        <ListItemText primary={p} />
-        <IconButton size="large" onClick={() => deleteParticipant(p)}>
-          <ClearIcon />
-        </IconButton>
-      </ListItem>
-    </List>
+    <li key={p}>
+      <List disablePadding>
+        <ListItem>
+          <ListItemText primary={p} />
+          <IconButton size="large" onClick={() => deleteParticipant(p)}>
+            <ClearIcon />
+          </IconButton>
+        </ListItem>
+      </List>
+    </li>
   ));
 
   const validationSchema = yup.object({
@@ -210,7 +212,7 @@ const SharecountEdit = () => {
           </form>
           <div className="py-2">
             Participants:
-            <List>{listParticipants}</List>
+            <ul>{listParticipants}</ul>
             <div className="flex">
               <TextField
                 fullWidth

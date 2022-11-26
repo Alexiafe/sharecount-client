@@ -31,7 +31,7 @@ const SharecountAdd = () => {
   const [participantsNameArray, setParticipantsNameArray] = useState<string[]>(
     []
   );
-  
+
   const header = `New sharecount`;
 
   const addParticipants = () => {
@@ -55,7 +55,7 @@ const SharecountAdd = () => {
       currency: sharecount.currency,
       participantsToAdd: participantsNameArray,
     };
-    
+
     setIsLoaded(false);
     addSharecountService(newSharecount).then(() => {
       setIsLoaded(true);
@@ -64,14 +64,16 @@ const SharecountAdd = () => {
   };
 
   const listParticipants = participantsNameArray.map((p: string) => (
-    <List disablePadding>
-      <ListItem>
-        <ListItemText primary={p} />
-        <IconButton size="large" onClick={() => deleteParticipant(p)}>
-          <ClearIcon />
-        </IconButton>
-      </ListItem>
-    </List>
+    <li key={p}>
+      <List disablePadding>
+        <ListItem>
+          <ListItemText primary={p} />
+          <IconButton size="large" onClick={() => deleteParticipant(p)}>
+            <ClearIcon />
+          </IconButton>
+        </ListItem>
+      </List>
+    </li>
   ));
 
   const validationSchema = yup.object({
@@ -162,7 +164,7 @@ const SharecountAdd = () => {
           </form>
           <div className="py-2">
             Participants:
-            <List>{listParticipants}</List>
+            <ul>{listParticipants}</ul>
             <div className="flex">
               <TextField
                 fullWidth
