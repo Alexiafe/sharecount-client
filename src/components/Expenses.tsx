@@ -3,7 +3,6 @@ import { ISharecountResponse } from "../interfaces/interfaces";
 
 // Components
 import Header from "./Header";
-import Loader from "./Loader";
 import MenuTabs from "./MenuTabs";
 
 // Services
@@ -11,9 +10,10 @@ import { getSharecountService } from "../services/sharecount.service";
 
 // React
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Expenses = () => {
+  const navigate = useNavigate();
   const params = useParams();
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
@@ -35,6 +35,10 @@ const Expenses = () => {
     );
   }, [params.sharecountID]);
 
+  const edit = () => {
+    navigate(`/sharecount-edit/${params.sharecountID}`);
+  };
+
   if (error) {
     return (
       <div>
@@ -42,17 +46,16 @@ const Expenses = () => {
         Please try again later
       </div>
     );
-  } else if (!isLoaded) {
-    return (
-      <div>
-        <Header title={header}></Header>
-        <Loader></Loader>
-      </div>
-    );
   } else {
     return (
       <div>
-        <Header title={header} backButton={true} screen="Expenses"></Header>
+        <Header
+          title={header}
+          backButton={true}
+          editButton={true}
+          onClick={edit}
+          screen="Expenses"
+        ></Header>
         <MenuTabs></MenuTabs>
       </div>
     );

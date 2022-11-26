@@ -53,7 +53,7 @@ const BalanceList = () => {
           <ListItemText
             style={{
               textAlign: "right",
-              color: p.balance > 0 ? "green" : "red",
+              color: p.balance < 0 ? "red" : "green",
             }}
             primaryTypographyProps={{
               variant: "h6",

@@ -12,7 +12,7 @@ const SearchBar = (props: IPropsSearchBar) => {
       <TextField
         fullWidth
         variant="outlined"
-        placeholder="Search..."
+        placeholder="Search"
         onChange={(e) => {
           props.onClick(e.target.value);
         }}
