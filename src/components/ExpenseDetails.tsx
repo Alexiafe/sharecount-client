@@ -5,15 +5,19 @@ import {
   IPartakerResponse,
 } from "../interfaces/interfaces";
 
+// Context
+import AuthContext from "../context/auth.context";
+
 // Components
 import Header from "../components/Header";
 import Loader from "../components/Loader";
+import NotLoggedIn from "../components/NotLoggedIn";
 
 // Services
 import { getSharecountService } from "../services/sharecount.service";
 
 // React
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 // Other
@@ -32,6 +36,8 @@ const ExpensesDetails = () => {
   const [sharecount, setSharecount] = useState<ISharecountResponse | undefined>(
     undefined
   );
+  const { userSession } = useContext(AuthContext);
+  const userEmail = userSession?.email;
   const header = expense?.name;
   const date = moment(expense?.date).format("DD/MM/YYYY");
 
@@ -88,6 +94,8 @@ const ExpensesDetails = () => {
         <Loader></Loader>
       </div>
     );
+  } else if (!userEmail) {
+    return <NotLoggedIn></NotLoggedIn>;
   } else {
     return (
       <div>

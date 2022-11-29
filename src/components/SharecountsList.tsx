@@ -1,9 +1,13 @@
 // Interfaces
 import { ISharecountResponse } from "../interfaces/interfaces";
 
+// Context
+import AuthContext from "../context/auth.context";
+
 // Components
 import Loader from "./Loader";
 import Header from "../components/Header";
+import NotLoggedIn from "../components/NotLoggedIn";
 
 // Services
 import {
@@ -12,7 +16,7 @@ import {
 } from "../services/sharecount.service";
 
 // React
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 // MUI
@@ -38,6 +42,8 @@ const SharecountsList = () => {
   const [displayModal, setDisplayModal] = useState<boolean>(false);
   const [sharecountID, setSharecountID] = useState<number>(0);
   const [sharecountName, setSharecountName] = useState<string>("");
+  const { userSession, loading } = useContext(AuthContext);
+  const userEmail = userSession?.email;
 
   const style = {
     position: "absolute" as "absolute",
@@ -52,17 +58,19 @@ const SharecountsList = () => {
   };
 
   useEffect(() => {
-    getSharecountsService().then(
-      (sharecounts) => {
-        setIsLoaded(true);
-        setSharecounts(sharecounts);
-      },
-      (error) => {
-        setIsLoaded(true);
-        setError(error);
-      }
-    );
-  }, []);
+    if (!loading) {
+      getSharecountsService(userEmail!).then(
+        (sharecounts) => {
+          setIsLoaded(true);
+          setSharecounts(sharecounts);
+        },
+        (error) => {
+          setIsLoaded(true);
+          setError(error);
+        }
+      );
+    }
+  }, [userEmail, loading]);
 
   const handleDisplayModal = (sharecount: ISharecountResponse) => {
     setSharecountID(sharecount.id);
@@ -168,10 +176,16 @@ const SharecountsList = () => {
         <Loader></Loader>
       </div>
     );
+  } else if (!userEmail) {
+    return <NotLoggedIn></NotLoggedIn>;
   } else {
     return (
       <div>
-        <Header title="Sharecount"></Header>
+        <Header
+          title="Sharecount"
+          homeButton={true}
+          emptyButtonL={true}
+        ></Header>
         {sharecounts.length ? (
           <ul>{listSharecounts}</ul>
         ) : (

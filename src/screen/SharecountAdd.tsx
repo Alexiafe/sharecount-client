@@ -1,11 +1,15 @@
+// Context
+import AuthContext from "../context/auth.context";
+
 // Components
 import Header from "../components/Header";
+import NotLoggedIn from "../components/NotLoggedIn";
 
 // Services
 import { addSharecountService } from "../services/sharecount.service";
 
 // React
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 // MUI
@@ -31,7 +35,8 @@ const SharecountAdd = () => {
   const [participantsNameArray, setParticipantsNameArray] = useState<string[]>(
     []
   );
-
+  const { userSession } = useContext(AuthContext);
+  const userEmail = userSession?.email;
   const header = `New sharecount`;
 
   const addParticipants = () => {
@@ -57,7 +62,7 @@ const SharecountAdd = () => {
     };
 
     setIsLoaded(false);
-    addSharecountService(newSharecount).then(() => {
+    addSharecountService(userEmail!, newSharecount).then(() => {
       setIsLoaded(true);
       navigate("/");
     });
@@ -111,6 +116,8 @@ const SharecountAdd = () => {
         <Loader></Loader>
       </div>
     );
+  } else if (!userEmail) {
+    return <NotLoggedIn></NotLoggedIn>;
   } else {
     return (
       <div>

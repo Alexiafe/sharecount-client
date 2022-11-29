@@ -1,16 +1,20 @@
 // Interfaces
 import { IParticipantResponse } from "../interfaces/interfaces";
 
+// Context
+import AuthContext from "../context/auth.context";
+
 // Components
 import Header from "../components/Header";
 import Loader from "../components/Loader";
+import NotLoggedIn from "../components/NotLoggedIn";
 
 // Services
 import { getSharecountService } from "../services/sharecount.service";
 import { addExpenseService } from "../services/expense.service";
 
 // React
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 // MUI
@@ -43,6 +47,8 @@ const ExpenseAdd = () => {
   const [partakersIDs, setPartakersIDs] = useState<number[]>([]);
   const [errorMissingPartakers, setErrorMissingPartakers] =
     useState<string>("");
+  const { userSession } = useContext(AuthContext);
+  const userEmail = userSession?.email;
   const header = `New expense`;
 
   useEffect(() => {
@@ -166,6 +172,8 @@ const ExpenseAdd = () => {
         <Loader></Loader>
       </div>
     );
+  } else if (!userEmail) {
+    return <NotLoggedIn></NotLoggedIn>;
   } else {
     return (
       <div>

@@ -4,9 +4,13 @@ import {
   IPartakerResponse,
 } from "../interfaces/interfaces";
 
+// Context
+import AuthContext from "../context/auth.context";
+
 // Components
 import Loader from "../components/Loader";
 import Header from "../components/Header";
+import NotLoggedIn from "../components/NotLoggedIn";
 
 // Servives
 import {
@@ -16,7 +20,7 @@ import {
 import { getSharecountService } from "../services/sharecount.service";
 
 // React
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 // MUI
@@ -49,6 +53,8 @@ const ExpenseEdit = () => {
   const [partakersIDs, setPartakersIDs] = useState<number[]>([]);
   const [errorMissingPartakers, setErrorMissingPartakers] =
     useState<string>("");
+  const { userSession } = useContext(AuthContext);
+  const userEmail = userSession?.email;
   const header = `Edit expense`;
 
   useEffect(() => {
@@ -189,6 +195,8 @@ const ExpenseEdit = () => {
         <Loader></Loader>
       </div>
     );
+  } else if (!userEmail) {
+    return <NotLoggedIn></NotLoggedIn>;
   } else {
     return (
       <div>

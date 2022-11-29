@@ -1,9 +1,13 @@
 // Interfaces
 import { IParticipantResponse } from "../interfaces/interfaces";
 
+// Context
+import AuthContext from "../context/auth.context";
+
 // Components
 import Loader from "../components/Loader";
 import Header from "../components/Header";
+import NotLoggedIn from "../components/NotLoggedIn";
 
 // Services
 import {
@@ -12,7 +16,7 @@ import {
 } from "../services/sharecount.service";
 
 // React
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 // MUI
@@ -42,6 +46,8 @@ const SharecountEdit = () => {
   const [oldparticipantsNameArray, setOldParticipantsNameArray] = useState<
     string[]
   >([]);
+  const { userSession } = useContext(AuthContext);
+  const userEmail = userSession?.email;
 
   const header = `Edit sharecount`;
 
@@ -159,6 +165,8 @@ const SharecountEdit = () => {
         <Loader></Loader>
       </div>
     );
+  } else if (!userEmail) {
+    return <NotLoggedIn></NotLoggedIn>;
   } else {
     return (
       <div>

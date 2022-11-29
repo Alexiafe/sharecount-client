@@ -49,7 +49,7 @@ export interface IParticipantResponse {
   name: string;
   sharecount?: ISharecountResponse;
   sharecount_id: number;
-  balance: number
+  balance: number;
   created_at: Date;
   updated_at: Date;
 }

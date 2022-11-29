@@ -2,8 +2,12 @@
 import { serverUrl } from "../constants/config";
 import { ISharecountForm } from "../interfaces/interfaces";
 
-export const getSharecountsService = () => {
-  return fetch(`${serverUrl}/sharecounts`)
+export const getSharecountsService = (userEmail: string) => {
+  return fetch(`${serverUrl}/sharecounts`, {
+    headers: {
+      Authorization: `${userEmail}`,
+    },
+  })
     .then((res) => res.json())
     .then(
       (sharecounts) => {
@@ -46,11 +50,15 @@ export const deleteSharecountService = (sharecountID: number) => {
     );
 };
 
-export const addSharecountService = (sharecount: ISharecountForm) => {
+export const addSharecountService = (
+  userEmail: string,
+  sharecount: ISharecountForm
+) => {
   return fetch(`${serverUrl}/sharecount`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: userEmail,
     },
     body: JSON.stringify(sharecount),
   })

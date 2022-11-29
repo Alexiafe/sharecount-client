@@ -1,35 +1,38 @@
 // Interfaces
 import { ISharecountResponse } from "../interfaces/interfaces";
 
+// Context
+import AuthContext from "../context/auth.context";
+
 // Components
 import Header from "./Header";
 import MenuTabs from "./MenuTabs";
+import NotLoggedIn from "../components/NotLoggedIn";
 
 // Services
 import { getSharecountService } from "../services/sharecount.service";
 
 // React
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 const Expenses = () => {
   const navigate = useNavigate();
   const params = useParams();
   const [error, setError] = useState<any>(null);
-  const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [sharecount, setSharecount] = useState<ISharecountResponse | undefined>(
     undefined
   );
+  const { userSession } = useContext(AuthContext);
+  const userEmail = userSession?.email;
   const header = sharecount?.name;
 
   useEffect(() => {
     getSharecountService(parseInt(params.sharecountID!)).then(
       (sharecount) => {
-        setIsLoaded(true);
         setSharecount(sharecount);
       },
       (error) => {
-        setIsLoaded(true);
         setError(error);
       }
     );
@@ -46,6 +49,8 @@ const Expenses = () => {
         Please try again later
       </div>
     );
+  } else if (!userEmail) {
+    return <NotLoggedIn></NotLoggedIn>;
   } else {
     return (
       <div>

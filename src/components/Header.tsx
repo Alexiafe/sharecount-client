@@ -4,6 +4,10 @@ import { useNavigate } from "react-router-dom";
 // MUI
 import { IconButton, AppBar, Toolbar, Typography } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import CloseIcon from "@mui/icons-material/Close";
+import DoneIcon from "@mui/icons-material/Done";
+import EditIcon from "@mui/icons-material/Edit";
 
 interface IPropsHeader {
   title?: string;
@@ -12,6 +16,9 @@ interface IPropsHeader {
   editButton?: boolean;
   saveButton?: boolean;
   cancelButton?: boolean;
+  homeButton?: boolean;
+  emptyButtonL?: boolean;
+  emptyButtonR?: boolean;
   onClick?: () => void;
 }
 
@@ -22,26 +29,51 @@ const Header = (props: IPropsHeader) => {
   const editButton = props.editButton;
   const saveButton = props.saveButton;
   const cancelButton = props.cancelButton;
+  const homeButton = props.homeButton;
+  const emptyButtonL = props.emptyButtonL;
+  const emptyButtonR = props.emptyButtonR;
 
   const navigate = useNavigate();
 
   return (
     <AppBar position="static">
       <Toolbar>
+        {/* LEFT */}
         {backButton && (
           <IconButton
             size="large"
             edge="start"
             color="inherit"
             onClick={() => {
-              if (screen === "Expenses") navigate("/");
+              if (screen === "Expenses" || screen === "Profile") navigate("/");
               else navigate(-1);
             }}
           >
             <ArrowBackIosIcon />
           </IconButton>
         )}
-        {cancelButton && <div onClick={() => navigate(-1)}>Cancel</div>}
+        {cancelButton && (
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            onClick={() => navigate(-1)}
+          >
+            <CloseIcon />
+          </IconButton>
+        )}
+        {emptyButtonL && (
+          <IconButton
+            className="invisible"
+            size="large"
+            edge="start"
+            color="inherit"
+          >
+            <ArrowBackIosIcon />
+          </IconButton>
+        )}
+
+        {/* CENTER */}
         <Typography
           className="text-center"
           component="div"
@@ -49,8 +81,48 @@ const Header = (props: IPropsHeader) => {
         >
           <div className="text-2xl">{title}</div>
         </Typography>
-        {saveButton && <div onClick={() => props.onClick?.()}>Save</div>}
-        {editButton && <div onClick={() => props.onClick?.()}>Edit</div>}
+
+        {/* RIGHT */}
+        {saveButton && (
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            onClick={() => props.onClick?.()}
+          >
+            <DoneIcon />
+          </IconButton>
+        )}
+        {editButton && (
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            onClick={() => props.onClick?.()}
+          >
+            <EditIcon />
+          </IconButton>
+        )}
+        {homeButton && (
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            onClick={() => navigate("/login")}
+          >
+            <AccountCircleIcon />
+          </IconButton>
+        )}
+        {emptyButtonR && (
+          <IconButton
+            className="items-left invisible"
+            size="large"
+            edge="start"
+            color="inherit"
+          >
+            <AccountCircleIcon />
+          </IconButton>
+        )}
       </Toolbar>
     </AppBar>
   );
