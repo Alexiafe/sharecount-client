@@ -10,10 +10,8 @@ import Header from "../components/Header";
 import NotLoggedIn from "../components/NotLoggedIn";
 
 // Services
-import {
-  deleteSharecountService,
-  getSharecountsService,
-} from "../services/sharecount.service";
+import { removeUserFromSharecount } from "../services/sharecount.service";
+import { getUserService } from "../services/user.service";
 
 // React
 import { useContext, useEffect, useState } from "react";
@@ -39,6 +37,7 @@ const SharecountsList = () => {
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [sharecounts, setSharecounts] = useState<ISharecountResponse[]>([]);
+  const [balances, setBalances] = useState<any[]>([]);
   const [displayModal, setDisplayModal] = useState<boolean>(false);
   const [sharecountID, setSharecountID] = useState<number>(0);
   const [sharecountName, setSharecountName] = useState<string>("");
@@ -58,11 +57,20 @@ const SharecountsList = () => {
   };
 
   useEffect(() => {
-    if (!loading) {
-      getSharecountsService(userEmail!).then(
-        (sharecounts) => {
+    if (userEmail && !loading) {
+      getUserService(userEmail!).then(
+        (user) => {
           setIsLoaded(true);
-          setSharecounts(sharecounts);
+          setSharecounts(
+            user.userInSharecount.map(
+              (sharecount: any) => sharecount.sharecount
+            )
+          );
+          setBalances(
+            user.userInSharecount.map(
+              (sharecount: any) => sharecount.participant
+            )
+          );
         },
         (error) => {
           setIsLoaded(true);
@@ -87,7 +95,11 @@ const SharecountsList = () => {
 
   const deleteSharecount = (sharecountID: number) => {
     setIsLoaded(false);
-    deleteSharecountService(sharecountID).then(
+    let userInSharecountData = {
+      sharecount_id: sharecountID,
+      user_email: userEmail!,
+    };
+    removeUserFromSharecount(userInSharecountData).then(
       () => {
         setSharecounts(
           sharecounts.filter((s: ISharecountResponse) => {
@@ -115,13 +127,18 @@ const SharecountsList = () => {
             secondaryTypographyProps={{
               variant: "subtitle1",
             }}
-            secondary={
-              s.participants?.filter((p) => p.name === "Alexia").length
-                ? `Balance : ${s.participants
-                    ?.filter((p) => p.name === "Alexia")[0]
-                    .balance.toFixed(2)} ${s.currency}`
-                : ""
-            }
+            secondary={`Balance :
+              ${
+                balances.filter((b: any) => b.sharecount_id === s.id)[0]
+                  .balance > 0
+                  ? `+`
+                  : ``
+              } 
+              ${
+                balances.filter((b: any) => b.sharecount_id === s.id)[0].balance
+              }
+              ${s.currency}
+              `}
             onClick={() => navigate(`/sharecount/${s.id}`)}
           />
           <IconButton
@@ -169,6 +186,8 @@ const SharecountsList = () => {
         Please try again later
       </div>
     );
+  } else if (!userEmail) {
+    return <NotLoggedIn></NotLoggedIn>;
   } else if (!isLoaded) {
     return (
       <div>
@@ -176,8 +195,6 @@ const SharecountsList = () => {
         <Loader></Loader>
       </div>
     );
-  } else if (!userEmail) {
-    return <NotLoggedIn></NotLoggedIn>;
   } else {
     return (
       <div>

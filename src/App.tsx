@@ -7,6 +7,7 @@ import Login from "./screen/Login";
 
 import SharecountEdit from "./screen/SharecountEdit";
 import SharecountAdd from "./screen/SharecountAdd";
+import SharecountConnect from "./screen/SharecountConnect";
 
 import Expenses from "./components/Expenses";
 import ExpensesDetails from "./components/ExpenseDetails";
@@ -30,6 +31,10 @@ const App = () => {
               element={<SharecountEdit />}
             />
             <Route path="/sharecount-add" element={<SharecountAdd />} />
+            <Route
+              path="/sharecount-connect/:sharecountID"
+              element={<SharecountConnect />}
+            />
             <Route
               path="/sharecount/:sharecountID/expense/:expenseID"
               element={<ExpensesDetails />}

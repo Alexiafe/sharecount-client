@@ -10,10 +10,12 @@ export interface ISharecountResponse {
 
 export interface ISharecountForm {
   id?: number;
-  name: string;
-  currency: string;
-  participantsToAdd: string[];
+  name?: string;
+  currency?: string;
+  participantsToAdd?: string[];
   participantsToDelete?: string[];
+  user_email?: string;
+  participant_id?: number;
 }
 
 export interface IExpenseResponse {
@@ -75,4 +77,9 @@ export interface IPartakerForm {
   participant_id: number;
   amount: number;
   participant?: IParticipantResponse;
+}
+
+export interface IUserInSharecountDataForm {
+  sharecount_id: number;
+  user_email: string;
 }

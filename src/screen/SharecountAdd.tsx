@@ -62,9 +62,8 @@ const SharecountAdd = () => {
     };
 
     setIsLoaded(false);
-    addSharecountService(userEmail!, newSharecount).then(() => {
-      setIsLoaded(true);
-      navigate("/");
+    addSharecountService(newSharecount).then((sharecount) => {
+      navigate(`/sharecount-connect/${sharecount.id}`);
     });
   };
 

@@ -1,23 +1,9 @@
 // Interfaces & configs
 import { serverUrl } from "../constants/config";
-import { ISharecountForm } from "../interfaces/interfaces";
-
-export const getSharecountsService = (userEmail: string) => {
-  return fetch(`${serverUrl}/sharecounts`, {
-    headers: {
-      Authorization: `${userEmail}`,
-    },
-  })
-    .then((res) => res.json())
-    .then(
-      (sharecounts) => {
-        return sharecounts;
-      },
-      (error) => {
-        return error;
-      }
-    );
-};
+import {
+  ISharecountForm,
+  IUserInSharecountDataForm,
+} from "../interfaces/interfaces";
 
 export const getSharecountService = (sharecountID: number) => {
   return fetch(`${serverUrl}/sharecount/${sharecountID}`)
@@ -32,33 +18,11 @@ export const getSharecountService = (sharecountID: number) => {
     );
 };
 
-export const deleteSharecountService = (sharecountID: number) => {
-  return fetch(`${serverUrl}/sharecount/${sharecountID}`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  })
-    .then((res) => res.json())
-    .then(
-      (sharecount) => {
-        return sharecount;
-      },
-      (error) => {
-        return error;
-      }
-    );
-};
-
-export const addSharecountService = (
-  userEmail: string,
-  sharecount: ISharecountForm
-) => {
+export const addSharecountService = (sharecount: ISharecountForm) => {
   return fetch(`${serverUrl}/sharecount`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: userEmail,
     },
     body: JSON.stringify(sharecount),
   })
@@ -85,6 +49,27 @@ export const editSharecountService = (sharecount: ISharecountForm) => {
     .then(
       (sharecount) => {
         return sharecount;
+      },
+      (error) => {
+        return error;
+      }
+    );
+};
+
+export const removeUserFromSharecount = (
+  userInSharecountData: IUserInSharecountDataForm
+) => {
+  return fetch(`${serverUrl}/userInSharecountData`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(userInSharecountData),
+  })
+    .then((res) => res.json())
+    .then(
+      (res) => {
+        return res;
       },
       (error) => {
         return error;

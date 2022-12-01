@@ -58,7 +58,7 @@ const BalanceList = () => {
             primaryTypographyProps={{
               variant: "h6",
             }}
-            primary={p.balance.toFixed(2)}
+            primary={`${p.balance > 0 ? `+` : ``}` + p.balance.toFixed(2)}
           />
         </ListItem>
       </List>

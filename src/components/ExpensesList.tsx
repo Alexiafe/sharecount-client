@@ -109,7 +109,7 @@ const ExpensesList = () => {
   };
 
   const listExpenses = expenses
-    .filter((e) => e.name.toLowerCase().includes(filter.toLowerCase()))
+    ?.filter((e) => e.name.toLowerCase().includes(filter.toLowerCase()))
     .map((e) => (
       <li key={e.id}>
         <List disablePadding>
@@ -187,7 +187,7 @@ const ExpensesList = () => {
   } else {
     return (
       <div>
-        {expenses.length ? (
+        {!expenses || expenses.length > 0? (
           <div>
             <SearchBar onClick={filterExpenses}></SearchBar>
             <div>
