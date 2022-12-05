@@ -1,3 +1,6 @@
+// Interfaces & configs
+import { clientUrl } from "../constants/config";
+
 // React
 import { useNavigate } from "react-router-dom";
 
@@ -8,15 +11,18 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
 import EditIcon from "@mui/icons-material/Edit";
+import ShareIcon from "@mui/icons-material/Share";
 
 interface IPropsHeader {
   title?: string;
+  id?: number;
   screen?: string;
   backButton?: boolean;
   editButton?: boolean;
   saveButton?: boolean;
   cancelButton?: boolean;
   homeButton?: boolean;
+  shareButton?: boolean;
   emptyButtonL?: boolean;
   emptyButtonR?: boolean;
   onClick?: () => void;
@@ -24,12 +30,14 @@ interface IPropsHeader {
 
 const Header = (props: IPropsHeader) => {
   const title = props.title;
+  const id = props.id;
   const screen = props.screen;
   const backButton = props.backButton;
   const editButton = props.editButton;
   const saveButton = props.saveButton;
   const cancelButton = props.cancelButton;
   const homeButton = props.homeButton;
+  const shareButton = props.shareButton;
   const emptyButtonL = props.emptyButtonL;
   const emptyButtonR = props.emptyButtonR;
 
@@ -111,6 +119,16 @@ const Header = (props: IPropsHeader) => {
             onClick={() => navigate("/login")}
           >
             <AccountCircleIcon />
+          </IconButton>
+        )}
+        {shareButton && (
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            onClick={() => navigator.share({ title, url: `${clientUrl}/sharecount-connect/${id}` })}
+          >
+            <ShareIcon />
           </IconButton>
         )}
         {emptyButtonR && (

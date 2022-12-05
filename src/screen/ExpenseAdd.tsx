@@ -44,7 +44,10 @@ const ExpenseAdd = () => {
   );
   const [ownerID, setOwnerID] = useState<number>(0);
   const [participants, setParticipants] = useState<IParticipantResponse[]>([]);
-  const [partakersIDs, setPartakersIDs] = useState<number[]>([]);
+  const [selectedParticipantsIDs, setSelectedParticipantsIDs] = useState<
+    number[]
+  >([]);
+  const [selectAll, setSelectAll] = useState<boolean>(true);
   const [errorMissingPartakers, setErrorMissingPartakers] =
     useState<string>("");
   const { userSession } = useContext(AuthContext);
@@ -57,6 +60,9 @@ const ExpenseAdd = () => {
         setIsLoaded(true);
         setParticipants(sharecount.participants);
         setOwnerID(sharecount.participants[0].id);
+        setSelectedParticipantsIDs(
+          sharecount.participants.map((p: IParticipantResponse) => p.id)
+        );
       },
       (error) => {
         setIsLoaded(true);
@@ -73,12 +79,34 @@ const ExpenseAdd = () => {
     setOwnerID(parseInt(event.target.value));
   };
 
+  const handleCheckAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      setSelectedParticipantsIDs(participants.map((p) => p.id));
+      setSelectAll(true);
+    } else {
+      setSelectedParticipantsIDs([]);
+      setSelectAll(false);
+    }
+  };
+
   const handleCheckChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      setPartakersIDs([...partakersIDs, parseInt(event.target.value)]);
+      setSelectedParticipantsIDs([
+        ...selectedParticipantsIDs,
+        parseInt(event.target.value),
+      ]);
+      if (
+        [...selectedParticipantsIDs, parseInt(event.target.value)].length ===
+        participants.length
+      ) {
+        setSelectAll(true);
+      }
     } else {
-      setPartakersIDs(
-        partakersIDs.filter((p) => p !== parseInt(event.target.value))
+      setSelectAll(false);
+      setSelectedParticipantsIDs(
+        selectedParticipantsIDs.filter(
+          (p) => p !== parseInt(event.target.value)
+        )
       );
     }
   };
@@ -90,9 +118,10 @@ const ExpenseAdd = () => {
       date: moment(expenseDate).format(),
       sharecount_id: parseInt(params.sharecountID!),
       owner_id: ownerID,
-      partakers: partakersIDs.map((p: number) => {
+      partakers: selectedParticipantsIDs.map((p: number) => {
         return {
-          amount: parseInt(expense.expenseAmount) / partakersIDs.length,
+          amount:
+            parseInt(expense.expenseAmount) / selectedParticipantsIDs.length,
           participant_id: p,
         };
       }),
@@ -112,7 +141,9 @@ const ExpenseAdd = () => {
           control={
             <Checkbox
               value={p.id}
-              checked={partakersIDs.includes(p.id)}
+              checked={
+                selectAll ? true : selectedParticipantsIDs.includes(p.id)
+              }
               onChange={handleCheckChange}
             />
           }
@@ -149,7 +180,7 @@ const ExpenseAdd = () => {
       return errors;
     },
     onSubmit: (expense) => {
-      if (partakersIDs.length === 0) {
+      if (selectedParticipantsIDs.length === 0) {
         setErrorMissingPartakers("Please select at least one participants");
       } else {
         save(expense);
@@ -262,6 +293,14 @@ const ExpenseAdd = () => {
             <div className="text-xs" style={{ color: "#d32f2f" }}>
               {errorMissingPartakers}
             </div>
+            <Checkbox
+              checked={
+                selectedParticipantsIDs.length === participants.length ||
+                selectAll
+              }
+              onChange={handleCheckAll}
+              style={{ width: "20px", padding: 0 }}
+            />
             <ul>{listParticipants}</ul>
           </div>
         </div>

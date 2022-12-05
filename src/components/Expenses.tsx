@@ -56,8 +56,10 @@ const Expenses = () => {
       <div>
         <Header
           title={header}
+          id={Number(params.sharecountID)}
           backButton={true}
           editButton={true}
+          shareButton={true}
           onClick={edit}
           screen="Expenses"
         ></Header>
