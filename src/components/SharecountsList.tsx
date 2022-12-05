@@ -41,7 +41,7 @@ const SharecountsList = () => {
   const [displayModal, setDisplayModal] = useState<boolean>(false);
   const [sharecountID, setSharecountID] = useState<number>(0);
   const [sharecountName, setSharecountName] = useState<string>("");
-  const { userSession, loading } = useContext(AuthContext);
+  const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession?.email;
 
   const style = {
@@ -57,7 +57,7 @@ const SharecountsList = () => {
   };
 
   useEffect(() => {
-    if (userEmail && !loading) {
+    if (userEmail && !userLoading) {
       getUserService(userEmail!).then(
         (user) => {
           setIsLoaded(true);
@@ -78,7 +78,7 @@ const SharecountsList = () => {
         }
       );
     }
-  }, [userEmail, loading]);
+  }, [userEmail, userLoading]);
 
   const handleDisplayModal = (sharecount: ISharecountResponse) => {
     setSharecountID(sharecount.id);
@@ -179,7 +179,14 @@ const SharecountsList = () => {
     </Box>
   );
 
-  if (error) {
+  if (!isLoaded || userLoading) {
+    return (
+      <div>
+        <Header title="Sharecount"></Header>
+        <Loader></Loader>
+      </div>
+    );
+  } else if (error) {
     return (
       <div>
         <Header title="Sharecount"></Header>
@@ -188,13 +195,6 @@ const SharecountsList = () => {
     );
   } else if (!userEmail) {
     return <NotLoggedIn></NotLoggedIn>;
-  } else if (!isLoaded) {
-    return (
-      <div>
-        <Header title="Sharecount"></Header>
-        <Loader></Loader>
-      </div>
-    );
   } else {
     return (
       <div>

@@ -33,7 +33,7 @@ import {
 import Loader from "../components/Loader";
 
 const SharecountConnect = () => {
-  const { userSession, loading } = useContext(AuthContext);
+  const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession?.email;
   const navigate = useNavigate();
   const params = useParams();
@@ -98,18 +98,18 @@ const SharecountConnect = () => {
     </RadioGroup>
   );
 
-  if (error) {
-    return (
-      <div>
-        <Header title={header} backButton={true}></Header>
-        Please try again later
-      </div>
-    );
-  } else if (!isLoaded || loading) {
+  if (!isLoaded || userLoading) {
     return (
       <div>
         <Header title={header}></Header>
         <Loader></Loader>
+      </div>
+    );
+  } else if (error) {
+    return (
+      <div>
+        <Header title={header} backButton={true}></Header>
+        Please try again later
       </div>
     );
   } else if (!userEmail) {

@@ -36,7 +36,7 @@ const ExpensesDetails = () => {
   const [sharecount, setSharecount] = useState<ISharecountResponse | undefined>(
     undefined
   );
-  const { userSession } = useContext(AuthContext);
+  const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession?.email;
   const header = expense?.name;
   const date = moment(expense?.date).format("DD/MM/YYYY");
@@ -80,18 +80,18 @@ const ExpensesDetails = () => {
     </li>
   ));
 
-  if (error) {
-    return (
-      <div>
-        <Header title={header}></Header>
-        Please try again later
-      </div>
-    );
-  } else if (!isLoaded) {
+  if (!isLoaded || userLoading) {
     return (
       <div>
         <Header title={header}></Header>
         <Loader></Loader>
+      </div>
+    );
+  } else if (error) {
+    return (
+      <div>
+        <Header title={header}></Header>
+        Please try again later
       </div>
     );
   } else if (!userEmail) {

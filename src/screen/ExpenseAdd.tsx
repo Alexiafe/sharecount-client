@@ -50,7 +50,7 @@ const ExpenseAdd = () => {
   const [selectAll, setSelectAll] = useState<boolean>(true);
   const [errorMissingPartakers, setErrorMissingPartakers] =
     useState<string>("");
-  const { userSession } = useContext(AuthContext);
+  const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession?.email;
   const header = `New expense`;
 
@@ -189,18 +189,18 @@ const ExpenseAdd = () => {
     },
   });
 
-  if (error) {
-    return (
-      <div>
-        <Header title={header} backButton={true}></Header>
-        Please try again later
-      </div>
-    );
-  } else if (!isLoaded) {
+  if (!isLoaded || userLoading) {
     return (
       <div>
         <Header title={header}></Header>
         <Loader></Loader>
+      </div>
+    );
+  } else if (error) {
+    return (
+      <div>
+        <Header title={header} backButton={true}></Header>
+        Please try again later
       </div>
     );
   } else if (!userEmail) {

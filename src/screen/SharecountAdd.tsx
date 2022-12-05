@@ -35,7 +35,7 @@ const SharecountAdd = () => {
   const [participantsNameArray, setParticipantsNameArray] = useState<string[]>(
     []
   );
-  const { userSession } = useContext(AuthContext);
+  const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession?.email;
   const header = `New sharecount`;
 
@@ -108,7 +108,7 @@ const SharecountAdd = () => {
     },
   });
 
-  if (!isLoaded) {
+  if (!isLoaded || userLoading) {
     return (
       <div>
         <Header title={header}></Header>

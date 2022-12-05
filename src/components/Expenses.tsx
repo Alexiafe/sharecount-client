@@ -15,24 +15,28 @@ import { getSharecountService } from "../services/sharecount.service";
 // React
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import Loader from "./Loader";
 
 const Expenses = () => {
   const navigate = useNavigate();
   const params = useParams();
   const [error, setError] = useState<any>(null);
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [sharecount, setSharecount] = useState<ISharecountResponse | undefined>(
     undefined
   );
-  const { userSession } = useContext(AuthContext);
+  const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession?.email;
   const header = sharecount?.name;
 
   useEffect(() => {
     getSharecountService(parseInt(params.sharecountID!)).then(
       (sharecount) => {
+        setIsLoaded(true);
         setSharecount(sharecount);
       },
       (error) => {
+        setIsLoaded(true);
         setError(error);
       }
     );
@@ -42,7 +46,14 @@ const Expenses = () => {
     navigate(`/sharecount-edit/${params.sharecountID}`);
   };
 
-  if (error) {
+  if (!isLoaded || userLoading) {
+    return (
+      <div>
+        <Header title={header}></Header>
+        <Loader></Loader>
+      </div>
+    );
+  } else if (error) {
     return (
       <div>
         <Header title={header}></Header>

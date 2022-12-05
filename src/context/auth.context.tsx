@@ -6,14 +6,14 @@ import { addUserService, getUserService } from "../services/user.service";
 
 interface IAuthContext {
   userSession: User;
-  loading: boolean;
+  userLoading: boolean;
 }
 
 const AuthContext = createContext({} as IAuthContext);
 
 export function AuthContextProvider({ children }: any) {
   const [userSession, setUserSession] = useState<User>({} as User);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [userLoading, setUserLoading] = useState<boolean>(true);
 
   useEffect(() => {
     let unsubscribe;
@@ -30,14 +30,14 @@ export function AuthContextProvider({ children }: any) {
         // Logout
         setUserSession({} as User);
       }
-      setLoading(false);
+      setUserLoading(false);
     });
 
     return unsubscribe;
   }, []);
 
   return (
-    <AuthContext.Provider value={{ userSession, loading }}>
+    <AuthContext.Provider value={{ userSession, userLoading }}>
       {children}
     </AuthContext.Provider>
   );
