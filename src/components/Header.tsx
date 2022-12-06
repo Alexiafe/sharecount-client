@@ -15,6 +15,8 @@ import ShareIcon from "@mui/icons-material/Share";
 
 interface IPropsHeader {
   title?: string;
+  total?: number;
+  currency?: string;
   id?: number;
   screen?: string;
   backButton?: boolean;
@@ -30,6 +32,8 @@ interface IPropsHeader {
 
 const Header = (props: IPropsHeader) => {
   const title = props.title;
+  const total = props.total;
+  const currency = props.currency;
   const id = props.id;
   const screen = props.screen;
   const backButton = props.backButton;
@@ -88,6 +92,11 @@ const Header = (props: IPropsHeader) => {
           sx={{ flexGrow: 1 }}
         >
           <div className="text-2xl">{title}</div>
+          {total && currency && (
+            <div className="text-sm">
+              Total: {total} {currency}
+            </div>
+          )}
         </Typography>
 
         {/* RIGHT */}
@@ -126,7 +135,12 @@ const Header = (props: IPropsHeader) => {
             size="large"
             edge="start"
             color="inherit"
-            onClick={() => navigator.share({ title, url: `${clientUrl}/sharecount-connect/${id}` })}
+            onClick={() =>
+              navigator.share({
+                title,
+                url: `${clientUrl}/sharecount-connect/${id}`,
+              })
+            }
           >
             <ShareIcon />
           </IconButton>

@@ -28,6 +28,8 @@ const Expenses = () => {
   const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession?.email;
   const header = sharecount?.name;
+  const total = sharecount?.total;
+  const currency = sharecount?.currency;
 
   useEffect(() => {
     getSharecountService(parseInt(params.sharecountID!)).then(
@@ -73,6 +75,8 @@ const Expenses = () => {
           shareButton={true}
           onClick={edit}
           screen="Expenses"
+          total={total}
+          currency={currency}
         ></Header>
         <MenuTabs></MenuTabs>
       </div>

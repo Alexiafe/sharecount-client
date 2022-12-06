@@ -2,6 +2,7 @@ export interface ISharecountResponse {
   id: number;
   name: string;
   currency: string;
+  total: number;
   expenses?: IExpenseResponse[];
   participants?: IParticipantResponse[];
   created_at: Date;
