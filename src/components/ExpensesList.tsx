@@ -42,6 +42,7 @@ const ExpensesList = () => {
     undefined
   );
   const [expenses, setExpenses] = useState<IExpenseResponse[]>([]);
+  const [expensesGroupped, setExpensesGroupped] = useState<any[]>([]);
   const [displayModal, setDisplayModal] = useState<boolean>(false);
   const [expenseID, setExpenseID] = useState<number>(0);
   const [expenseName, setExpenseName] = useState<string>("");
@@ -65,6 +66,14 @@ const ExpensesList = () => {
         setIsLoaded(true);
         setSharecount(sharecount);
         setExpenses(sharecount.expenses);
+        setExpensesGroupped(
+          sharecount.expenses.reduce((group: any, expense: any) => {
+            const { date } = expense;
+            group[date] = group[date] ?? [];
+            group[date].push(expense);
+            return group;
+          }, {})
+        );
       },
       (error) => {
         setIsLoaded(true);
@@ -90,10 +99,17 @@ const ExpensesList = () => {
     setIsLoaded(false);
     deleteExpenseService(expenseID).then(
       () => {
-        setExpenses(
-          expenses.filter((e: IExpenseResponse) => {
-            return e.id !== expenseID;
-          })
+        setExpensesGroupped(
+          expenses
+            .filter((e: IExpenseResponse) => {
+              return e.id !== expenseID;
+            })
+            .reduce((group: any, expense: any) => {
+              const { date } = expense;
+              group[date] = group[date] ?? [];
+              group[date].push(expense);
+              return group;
+            }, {})
         );
         setIsLoaded(true);
       },
@@ -107,60 +123,6 @@ const ExpensesList = () => {
   const filterExpenses = (filter: string) => {
     setFilter(filter);
   };
-
-  const listExpenses = expenses
-    ?.filter((e) => e.name.toLowerCase().includes(filter.toLowerCase()))
-    .map((e) => (
-      <li key={e.id}>
-        <List disablePadding>
-          <ListItem button>
-            <ListItemText
-              primaryTypographyProps={{
-                variant: "h6",
-              }}
-              primary={e.name}
-              secondaryTypographyProps={{
-                variant: "subtitle1",
-              }}
-              secondary={`Paid by ${e.owner?.name} ${
-                e.owner?.name ===
-                sharecount?.userInSharecount[0].participant.name
-                  ? "(me)"
-                  : ""
-              }`}
-              onClick={() =>
-                navigate(`/sharecount/${sharecount?.id}/expense/${e.id}`)
-              }
-            />
-            <ListItemText
-              style={{ textAlign: "right" }}
-              primaryTypographyProps={{
-                variant: "h6",
-              }}
-              primary={`${e.amount_total} ${sharecount?.currency}`}
-              secondaryTypographyProps={{
-                variant: "subtitle1",
-              }}
-              secondary={
-                moment(e.date).isSame(moment(), "day")
-                  ? "Today"
-                  : moment(e.date).format("DD/MM/YYYY")
-              }
-              onClick={() =>
-                navigate(`/sharecount/${sharecount?.id}/expense/${e.id}`)
-              }
-            />
-            <IconButton
-              size="large"
-              color="primary"
-              onClick={() => handleDisplayModal(e)}
-            >
-              <DeleteIcon />
-            </IconButton>
-          </ListItem>
-        </List>
-      </li>
-    ));
 
   let modalContent = (
     <Box sx={style}>
@@ -195,8 +157,76 @@ const ExpensesList = () => {
         {!expenses || expenses.length > 0 ? (
           <div>
             <SearchBar onClick={filterExpenses}></SearchBar>
-            <div>
-              <ul>{listExpenses}</ul>
+            <div className="p-3">
+              {Object.keys(expensesGroupped)
+                .sort()
+                .reverse()
+                .map((date: any) => (
+                  <div key={date}>
+                    <div>
+                      {moment(date).isSame(moment(), "day")
+                        ? "Today"
+                        : moment(date).format("DD/MM/YYYY")}
+                    </div>
+                    <div>
+                      {expensesGroupped[date]
+                        ?.filter((e: IExpenseResponse) =>
+                          e.name.toLowerCase().includes(filter.toLowerCase())
+                        )
+                        .map((e: IExpenseResponse) => (
+                          <div key={e.id}>
+                            <List disablePadding>
+                              <ListItem button>
+                                <ListItemText
+                                  primaryTypographyProps={{
+                                    variant: "h6",
+                                  }}
+                                  primary={e.name}
+                                  secondaryTypographyProps={{
+                                    variant: "subtitle1",
+                                  }}
+                                  secondary={`Paid by ${e.owner?.name} ${
+                                    e.owner?.name ===
+                                    sharecount?.userInSharecount[0].participant
+                                      .name
+                                      ? "(me)"
+                                      : ""
+                                  }`}
+                                  onClick={() =>
+                                    navigate(
+                                      `/sharecount/${sharecount?.id}/expense/${e.id}`
+                                    )
+                                  }
+                                />
+                                <ListItemText
+                                  style={{ textAlign: "right" }}
+                                  primaryTypographyProps={{
+                                    variant: "h6",
+                                  }}
+                                  primary={`${e.amount_total} ${sharecount?.currency}`}
+                                  secondaryTypographyProps={{
+                                    variant: "subtitle1",
+                                  }}
+                                  onClick={() =>
+                                    navigate(
+                                      `/sharecount/${sharecount?.id}/expense/${e.id}`
+                                    )
+                                  }
+                                />
+                                <IconButton
+                                  size="large"
+                                  color="primary"
+                                  onClick={() => handleDisplayModal(e)}
+                                >
+                                  <DeleteIcon />
+                                </IconButton>
+                              </ListItem>
+                            </List>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                ))}
               <Modal open={displayModal} onClose={handleCloseModal}>
                 {modalContent}
               </Modal>

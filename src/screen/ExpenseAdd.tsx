@@ -115,7 +115,10 @@ const ExpenseAdd = () => {
     const newExpense = {
       name: expense.expenseName,
       amount_total: parseInt(expense.expenseAmount),
-      date: moment(expenseDate).format(),
+      date: moment(expenseDate)
+        ?.utcOffset(0)
+        .set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
+        .format(),
       sharecount_id: parseInt(params.sharecountID!),
       owner_id: ownerID,
       partakers: selectedParticipantsIDs.map((p: number) => {
