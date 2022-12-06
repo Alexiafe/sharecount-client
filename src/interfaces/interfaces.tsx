@@ -5,6 +5,7 @@ export interface ISharecountResponse {
   total: number;
   expenses?: IExpenseResponse[];
   participants?: IParticipantResponse[];
+  userInSharecount: IUserInSharecountResponse[];
   created_at: Date;
   updated_at: Date;
 }
@@ -62,6 +63,11 @@ export interface IParticipantForm {
   name: string;
   sharecount?: ISharecountResponse;
   sharecount_id: number;
+}
+
+export interface IUserInSharecountResponse {
+  participant: { name: string };
+  user: { email: string };
 }
 
 export interface IPartakerResponse {

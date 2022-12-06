@@ -122,7 +122,12 @@ const ExpensesList = () => {
               secondaryTypographyProps={{
                 variant: "subtitle1",
               }}
-              secondary={`Paid by ${e.owner?.name}`}
+              secondary={`Paid by ${e.owner?.name} ${
+                e.owner?.name ===
+                sharecount?.userInSharecount[0].participant.name
+                  ? "(me)"
+                  : ""
+              }`}
               onClick={() =>
                 navigate(`/sharecount/${sharecount?.id}/expense/${e.id}`)
               }
@@ -187,7 +192,7 @@ const ExpensesList = () => {
   } else {
     return (
       <div>
-        {!expenses || expenses.length > 0? (
+        {!expenses || expenses.length > 0 ? (
           <div>
             <SearchBar onClick={filterExpenses}></SearchBar>
             <div>
