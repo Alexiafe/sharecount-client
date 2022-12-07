@@ -66,8 +66,9 @@ export interface IParticipantForm {
 }
 
 export interface IUserInSharecountResponse {
-  participant: { name: string };
-  user: { email: string };
+  participant?: { name: string; balance: number };
+  user?: { email: string };
+  sharecount?: ISharecountResponse;
 }
 
 export interface IPartakerResponse {

@@ -40,7 +40,7 @@ const BalanceList = () => {
     );
   }, [params.sharecountID]);
 
-  const balanceslist = participants?.map((p: IParticipantResponse) => (
+  const balanceslist = participants.map((p: IParticipantResponse) => (
     <li key={p.id}>
       <List disablePadding>
         <ListItem button>

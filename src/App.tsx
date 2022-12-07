@@ -2,15 +2,15 @@
 import { AuthContextProvider } from "./context/auth.context";
 
 // Screen
-import Home from "./screen/Home";
 import Login from "./screen/Login";
 
+import SharecountsList from "./screen/SharecountsList";
 import SharecountEdit from "./screen/SharecountEdit";
 import SharecountAdd from "./screen/SharecountAdd";
 import SharecountConnect from "./screen/SharecountConnect";
 
-import Expenses from "./components/Expenses";
-import ExpensesDetails from "./components/ExpenseDetails";
+import Expenses from "./screen/Expenses";
+import ExpensesDetails from "./screen/ExpenseDetails";
 import ExpenseAdd from "./screen/ExpenseAdd";
 import ExpenseEdit from "./screen/ExpenseEdit";
 
@@ -23,9 +23,9 @@ const App = () => {
       <div>
         <Router>
           <Routes>
-            <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/sharecount/:sharecountID" element={<Expenses />} />
+
+            <Route path="/" element={<SharecountsList />} />
             <Route
               path="/sharecount-edit/:sharecountID"
               element={<SharecountEdit />}
@@ -35,17 +35,19 @@ const App = () => {
               path="/sharecount-connect/:sharecountID"
               element={<SharecountConnect />}
             />
+
+            <Route path="/sharecount/:sharecountID" element={<Expenses />} />
             <Route
               path="/sharecount/:sharecountID/expense/:expenseID"
               element={<ExpensesDetails />}
             />
             <Route
-              path="/sharecount/:sharecountID/expense-edit/:expenseID"
-              element={<ExpenseEdit />}
-            />
-            <Route
               path="/sharecount/:sharecountID/expense-add"
               element={<ExpenseAdd />}
+            />
+            <Route
+              path="/sharecount/:sharecountID/expense-edit/:expenseID"
+              element={<ExpenseEdit />}
             />
           </Routes>
         </Router>

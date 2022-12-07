@@ -1,8 +1,5 @@
 // Interfaces
-import {
-  ISharecountResponse,
-  IExpenseResponse,
-} from "../interfaces/interfaces";
+import { IExpenseResponse } from "../interfaces/interfaces";
 
 // Components
 import SearchBar from "./SearchBar";
@@ -33,19 +30,38 @@ import DeleteIcon from "@mui/icons-material/Delete";
 // Other
 import moment from "moment";
 
+interface IExpenseList {
+  id: number;
+  name: string;
+  owner: string;
+  amount_total: number;
+  date: string;
+}
+
+interface ISharecount {
+  id: number;
+  currency: string;
+  user: string;
+}
+
 const ExpensesList = () => {
   const navigate = useNavigate();
   const params = useParams();
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const [sharecount, setSharecount] = useState<ISharecountResponse | undefined>(
+  const [sharecount, setSharecount] = useState<ISharecount | undefined>(
     undefined
   );
-  const [expenses, setExpenses] = useState<IExpenseResponse[]>([]);
+  const [expenses, setExpenses] = useState<IExpenseList[]>([]);
   const [expensesGroupped, setExpensesGroupped] = useState<any[]>([]);
+  const [selectedExpense, setSelectedExpense] = useState<IExpenseList>({
+    id: 0,
+    name: "",
+    owner: "",
+    amount_total: 0,
+    date: "",
+  });
   const [displayModal, setDisplayModal] = useState<boolean>(false);
-  const [expenseID, setExpenseID] = useState<number>(0);
-  const [expenseName, setExpenseName] = useState<string>("");
   const [filter, setFilter] = useState<string>("");
 
   const style = {
@@ -64,10 +80,23 @@ const ExpensesList = () => {
     getSharecountService(parseInt(params.sharecountID!)).then(
       (sharecount) => {
         setIsLoaded(true);
-        setSharecount(sharecount);
-        setExpenses(sharecount.expenses);
+        setSharecount({
+          id: sharecount.id,
+          currency: sharecount.currency,
+          user: sharecount?.userInSharecount[0].participant?.name,
+        });
+        let parsedExpenses = sharecount.expenses.map((e: IExpenseResponse) => {
+          return {
+            id: e.id,
+            name: e.name,
+            owner: e.owner?.name,
+            amount_total: e.amount_total,
+            date: e.date,
+          };
+        });
+        setExpenses(parsedExpenses);
         setExpensesGroupped(
-          sharecount.expenses.reduce((group: any, expense: any) => {
+          parsedExpenses.reduce((group: any, expense: any) => {
             const { date } = expense;
             group[date] = group[date] ?? [];
             group[date].push(expense);
@@ -82,27 +111,26 @@ const ExpensesList = () => {
     );
   }, [params.sharecountID]);
 
-  const handleDisplayModal = (expense: IExpenseResponse) => {
-    setExpenseID(expense.id);
-    setExpenseName(expense.name);
+  const handleDisplayModal = (expense: IExpenseList) => {
+    setSelectedExpense(expense);
     setDisplayModal(true);
   };
 
   const handleCloseModal = () => setDisplayModal(false);
 
   const confirmDelete = () => {
-    deleteExpense(expenseID);
+    deleteExpense(selectedExpense);
     setDisplayModal(false);
   };
 
-  const deleteExpense = (expenseID: number) => {
+  const deleteExpense = (expense: IExpenseList) => {
     setIsLoaded(false);
-    deleteExpenseService(expenseID).then(
+    deleteExpenseService(expense.id).then(
       () => {
         setExpensesGroupped(
           expenses
-            .filter((e: IExpenseResponse) => {
-              return e.id !== expenseID;
+            .filter((e: IExpenseList) => {
+              return e.id !== expense.id;
             })
             .reduce((group: any, expense: any) => {
               const { date } = expense;
@@ -126,7 +154,7 @@ const ExpensesList = () => {
 
   let modalContent = (
     <Box sx={style}>
-      <Typography variant="h6">{expenseName}</Typography>
+      <Typography variant="h6">{selectedExpense.name}</Typography>
       <Typography sx={{ mt: 2 }}>Confirm delete?</Typography>
       <div className="flex m-2 justify-center">
         <div>
@@ -154,7 +182,7 @@ const ExpensesList = () => {
   } else {
     return (
       <div>
-        {!expenses || expenses.length > 0 ? (
+        {expenses.length ? (
           <div>
             <SearchBar onClick={filterExpenses}></SearchBar>
             <div className="p-3">
@@ -170,10 +198,10 @@ const ExpensesList = () => {
                     </div>
                     <div>
                       {expensesGroupped[date]
-                        ?.filter((e: IExpenseResponse) =>
+                        ?.filter((e: IExpenseList) =>
                           e.name.toLowerCase().includes(filter.toLowerCase())
                         )
-                        .map((e: IExpenseResponse) => (
+                        .map((e: IExpenseList) => (
                           <div key={e.id}>
                             <List disablePadding>
                               <ListItem button>
@@ -185,12 +213,8 @@ const ExpensesList = () => {
                                   secondaryTypographyProps={{
                                     variant: "subtitle1",
                                   }}
-                                  secondary={`Paid by ${e.owner?.name} ${
-                                    e.owner?.name ===
-                                    sharecount?.userInSharecount[0].participant
-                                      .name
-                                      ? "(me)"
-                                      : ""
+                                  secondary={`Paid by ${e.owner} ${
+                                    e.owner === sharecount?.user ? "(me)" : ""
                                   }`}
                                   onClick={() =>
                                     navigate(

@@ -5,8 +5,8 @@ import { ISharecountResponse } from "../interfaces/interfaces";
 import AuthContext from "../context/auth.context";
 
 // Components
-import Header from "./Header";
-import MenuTabs from "./MenuTabs";
+import Header from "../components/Header";
+import MenuTabs from "../components/MenuTabs";
 import NotLoggedIn from "../components/NotLoggedIn";
 
 // Services
@@ -15,7 +15,7 @@ import { getSharecountService } from "../services/sharecount.service";
 // React
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Loader from "./Loader";
+import Loader from "../components/Loader";
 
 const Expenses = () => {
   const navigate = useNavigate();
@@ -27,9 +27,6 @@ const Expenses = () => {
   );
   const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession?.email;
-  const header = sharecount?.name;
-  const total = sharecount?.total;
-  const currency = sharecount?.currency;
 
   useEffect(() => {
     getSharecountService(parseInt(params.sharecountID!)).then(
@@ -51,14 +48,14 @@ const Expenses = () => {
   if (!isLoaded || userLoading) {
     return (
       <div>
-        <Header title={header}></Header>
+        <Header title={sharecount?.name}></Header>
         <Loader></Loader>
       </div>
     );
   } else if (error) {
     return (
       <div>
-        <Header title={header}></Header>
+        <Header title={sharecount?.name}></Header>
         Please try again later
       </div>
     );
@@ -68,15 +65,15 @@ const Expenses = () => {
     return (
       <div>
         <Header
-          title={header}
-          id={Number(params.sharecountID)}
+          title={sharecount?.name}
+          id={sharecount?.id}
           backButton={true}
           editButton={true}
           shareButton={true}
           onClick={edit}
           screen="Expenses"
-          total={total}
-          currency={currency}
+          total={sharecount?.total}
+          currency={sharecount?.currency}
         ></Header>
         <MenuTabs></MenuTabs>
       </div>

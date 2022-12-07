@@ -1,11 +1,11 @@
 // Interfaces
-import { ISharecountResponse } from "../interfaces/interfaces";
+import { IUserInSharecountResponse } from "../interfaces/interfaces";
 
 // Context
 import AuthContext from "../context/auth.context";
 
 // Components
-import Loader from "./Loader";
+import Loader from "../components/Loader";
 import Header from "../components/Header";
 import NotLoggedIn from "../components/NotLoggedIn";
 
@@ -32,15 +32,22 @@ import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRou
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 
+interface ISharecountList {
+  id: number;
+  name: string;
+  currency: string;
+  balance: number;
+}
+
 const SharecountsList = () => {
   const navigate = useNavigate();
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const [sharecounts, setSharecounts] = useState<ISharecountResponse[]>([]);
-  const [balances, setBalances] = useState<any[]>([]);
+  const [sharecounts, setSharecounts] = useState<ISharecountList[]>([]);
+  const [selectedSharecount, setSelectedSharecount] = useState<ISharecountList>(
+    { id: 0, name: "", currency: "", balance: 0 }
+  );
   const [displayModal, setDisplayModal] = useState<boolean>(false);
-  const [sharecountID, setSharecountID] = useState<number>(0);
-  const [sharecountName, setSharecountName] = useState<string>("");
   const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession?.email;
 
@@ -63,12 +70,12 @@ const SharecountsList = () => {
           setIsLoaded(true);
           setSharecounts(
             user.userInSharecount.map(
-              (sharecount: any) => sharecount.sharecount
-            )
-          );
-          setBalances(
-            user.userInSharecount.map(
-              (sharecount: any) => sharecount.participant
+              (userInSharecount: IUserInSharecountResponse) => ({
+                id: userInSharecount.sharecount?.id,
+                name: userInSharecount.sharecount?.name,
+                currency: userInSharecount.sharecount?.currency,
+                balance: userInSharecount.participant?.balance,
+              })
             )
           );
         },
@@ -80,30 +87,29 @@ const SharecountsList = () => {
     }
   }, [userEmail, userLoading]);
 
-  const handleDisplayModal = (sharecount: ISharecountResponse) => {
-    setSharecountID(sharecount.id);
-    setSharecountName(sharecount.name);
+  const handleDisplayModal = (sharecount: ISharecountList) => {
+    setSelectedSharecount(sharecount);
     setDisplayModal(true);
   };
 
   const handleCloseModal = () => setDisplayModal(false);
 
   const confirmDelete = () => {
-    deleteSharecount(sharecountID);
+    deleteSharecount(selectedSharecount);
     setDisplayModal(false);
   };
 
-  const deleteSharecount = (sharecountID: number) => {
+  const deleteSharecount = (sharecount: ISharecountList) => {
     setIsLoaded(false);
     let userInSharecountData = {
-      sharecount_id: sharecountID,
+      sharecount_id: sharecount.id,
       user_email: userEmail!,
     };
     removeUserFromSharecount(userInSharecountData).then(
       () => {
         setSharecounts(
-          sharecounts.filter((s: ISharecountResponse) => {
-            return s.id !== sharecountID;
+          sharecounts.filter((s: ISharecountList) => {
+            return s.id !== sharecount.id;
           })
         );
         setIsLoaded(true);
@@ -115,7 +121,7 @@ const SharecountsList = () => {
     );
   };
 
-  const listSharecounts = sharecounts.map((s: ISharecountResponse) => (
+  const listSharecounts = sharecounts.map((s: ISharecountList) => (
     <li key={s.id}>
       <List disablePadding>
         <ListItem button>
@@ -128,15 +134,8 @@ const SharecountsList = () => {
               variant: "subtitle1",
             }}
             secondary={`Balance :
-              ${
-                balances.filter((b: any) => b.sharecount_id === s.id)[0]
-                  .balance > 0
-                  ? `+`
-                  : ``
-              } 
-              ${
-                balances.filter((b: any) => b.sharecount_id === s.id)[0].balance
-              }
+              ${s.balance > 0 ? `+` : ``} 
+              ${s.balance}
               ${s.currency}
               `}
             onClick={() => navigate(`/sharecount/${s.id}`)}
@@ -162,7 +161,7 @@ const SharecountsList = () => {
 
   let modalContent = (
     <Box sx={style}>
-      <Typography variant="h6">{sharecountName}</Typography>
+      <Typography variant="h6">{selectedSharecount.name}</Typography>
       <Typography sx={{ mt: 2 }}>Confirm delete?</Typography>
       <div className="flex m-2 justify-center">
         <div>
