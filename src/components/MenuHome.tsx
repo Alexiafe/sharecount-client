@@ -28,7 +28,7 @@ const MenuHome = (props: IPropsMenuHome) => {
       </div>
       <div className="flex-1 self-center">
         <IconButton onClick={() => navigate("/sharecount-add")}>
-          <AddCircleIcon className="text-text" sx={{ fontSize: 45 }} />
+          <AddCircleIcon className="text-text" sx={{ fontSize: 55 }} />
         </IconButton>
       </div>
       <div className="flex-1 self-center">

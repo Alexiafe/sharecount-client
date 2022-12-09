@@ -282,15 +282,18 @@ const ExpensesList = () => {
         )}
 
         <footer className="absolute bottom-0 right-0">
-          <IconButton
-            size="large"
-            color="secondary"
-            onClick={() =>
-              navigate(`/sharecount/${params.sharecountID}/expense-add`)
-            }
-          >
-            <AddCircleIcon sx={{ fontSize: 60 }} />
-          </IconButton>
+          <div className="pb-5 pr-5">
+            <IconButton
+              className="pb-5 pr-5"
+              size="large"
+              color="secondary"
+              onClick={() =>
+                navigate(`/sharecount/${params.sharecountID}/expense-add`)
+              }
+            >
+              <AddCircleIcon sx={{ fontSize: 65 }} />
+            </IconButton>
+          </div>
         </footer>
       </div>
     );

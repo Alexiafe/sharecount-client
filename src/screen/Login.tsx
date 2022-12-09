@@ -36,10 +36,7 @@ const Login = () => {
             You're logged in as {userEmail}
             <Button
               variant="contained"
-              sx={{
-                width: 200,
-                margin: 2,
-              }}
+              sx={{ width: 200, margin: 2 }}
               onClick={() => signOut(auth)}
             >
               Log out
@@ -49,10 +46,7 @@ const Login = () => {
           <div className="flex flex-col p-4 items-center">
             <Button
               variant="contained"
-              sx={{
-                width: 200,
-                margin: 2,
-              }}
+              sx={{ width: 200, margin: 2 }}
               onClick={() => signInWithPopup(auth, new GoogleAuthProvider())}
             >
               Login
