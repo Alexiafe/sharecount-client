@@ -39,7 +39,6 @@ const Login = () => {
               sx={{
                 width: 200,
                 margin: 2,
-                borderRadius: 30,
               }}
               onClick={() => signOut(auth)}
             >
@@ -53,7 +52,6 @@ const Login = () => {
               sx={{
                 width: 200,
                 margin: 2,
-                borderRadius: 30,
               }}
               onClick={() => signInWithPopup(auth, new GoogleAuthProvider())}
             >

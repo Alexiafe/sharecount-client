@@ -30,7 +30,6 @@ import {
   Typography,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 interface ISharecountList {
@@ -150,7 +149,7 @@ const SharecountsList = () => {
                   `}
                   </Typography>
                 ) : (
-                  <Typography sx={{ color: "red" }} component="span">
+                  <Typography sx={{ color: "#E53935" }} component="span">
                     {` ${s.balance} ${s.currency} `}
                   </Typography>
                 )}

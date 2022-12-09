@@ -60,7 +60,7 @@ const BalanceList = () => {
                   sx={{ color: "green", fontSize: "20px" }}
                 >{`+${p.balance.toFixed(2)}`}</Typography>
               ) : (
-                <Typography sx={{ color: "red", fontSize: "20px" }}>
+                <Typography sx={{ color: "#E53935", fontSize: "20px" }}>
                   {p.balance.toFixed(2)}
                 </Typography>
               )

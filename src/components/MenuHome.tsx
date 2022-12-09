@@ -22,7 +22,7 @@ const MenuHome = (props: IPropsMenuHome) => {
       <div className="flex-1 self-center">
         <IconButton size="large" onClick={() => navigate("/")}>
           <GridViewIcon
-            className={`${screen == "home" ? "text-secondary" : "text-text"}`}
+            className={`${screen === "home" ? "text-secondary" : "text-text"}`}
           />
         </IconButton>
       </div>
@@ -35,7 +35,7 @@ const MenuHome = (props: IPropsMenuHome) => {
         <IconButton size="large" onClick={() => navigate("/login")}>
           <PersonIcon
             className={`${
-              screen == "profile" ? "text-secondary" : "text-text"
+              screen === "profile" ? "text-secondary" : "text-text"
             }`}
           />
         </IconButton>

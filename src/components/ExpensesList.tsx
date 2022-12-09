@@ -24,7 +24,6 @@ import {
   Modal,
   Typography,
 } from "@mui/material";
-import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 
@@ -276,7 +275,7 @@ const ExpensesList = () => {
               navigate(`/sharecount/${params.sharecountID}/expense-add`)
             }
           >
-            <AddCircleIcon sx={{ fontSize: 45 }} />
+            <AddCircleIcon sx={{ fontSize: 60 }} />
           </IconButton>
         </footer>
       </div>

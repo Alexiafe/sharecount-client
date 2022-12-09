@@ -17,6 +17,7 @@ interface IPropsHeader {
   total?: number;
   currency?: string;
   id?: number;
+  expense_id?: number;
   screen?: string;
   backButton?: boolean;
   editButton?: boolean;
@@ -31,6 +32,7 @@ const Header = (props: IPropsHeader) => {
   const total = props.total;
   const currency = props.currency;
   const id = props.id;
+  const expense_id = props.expense_id;
   const screen = props.screen;
   const backButton = props.backButton;
   const editButton = props.editButton;
@@ -130,13 +132,22 @@ const Header = (props: IPropsHeader) => {
             </div>
           </div>
         </div>
-        <div className="self-center text-2xl font-bold">{title}</div>
         <div
-          className={`self-center pt-2 ${
-            screen === "Expenses" ? "" : "opacity-0"
-          }`}
+          className="flex flex-col"
+          onClick={() => {
+            if (screen === "Expenses") navigate(`/sharecount-edit/${id}`);
+            else if (screen === "Details")
+              navigate(`/sharecount/${id}/expense-edit/${expense_id}`);
+          }}
         >
-          Total: {total} {currency}
+          <div className="self-center text-2xl font-bold">{title}</div>
+          <div
+            className={`self-center pt-2 ${
+              screen === "Expenses" ? "" : "opacity-0"
+            }`}
+          >
+            Total: {total} {currency}
+          </div>
         </div>
       </header>
     );

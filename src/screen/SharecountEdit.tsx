@@ -14,6 +14,7 @@ import {
   editSharecountService,
   getSharecountService,
 } from "../services/sharecount.service";
+import { removeUserFromSharecount } from "../services/sharecount.service";
 
 // React
 import { useContext, useEffect, useState } from "react";
@@ -21,12 +22,16 @@ import { useNavigate, useParams } from "react-router-dom";
 
 // MUI
 import {
+  Button,
   IconButton,
   List,
   ListItem,
   ListItemText,
+  Modal,
   TextField,
+  Typography,
 } from "@mui/material";
+import { Box } from "@mui/system";
 import ClearIcon from "@mui/icons-material/Clear";
 import AddIcon from "@mui/icons-material/Add";
 
@@ -46,10 +51,23 @@ const SharecountEdit = () => {
   const [oldparticipantsNameArray, setOldParticipantsNameArray] = useState<
     string[]
   >([]);
+  const [displayModal, setDisplayModal] = useState<boolean>(false);
   const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession?.email;
 
   const header = `Edit sharecount`;
+
+  const style = {
+    position: "absolute" as "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "80%",
+    bgcolor: "background.paper",
+    boxShadow: 24,
+    textAlign: "center",
+    p: 4,
+  };
 
   useEffect(() => {
     getSharecountService(parseInt(params.sharecountID!)).then(
@@ -70,6 +88,31 @@ const SharecountEdit = () => {
       }
     );
   }, [params.sharecountID]);
+
+  const confirmDelete = () => {
+    deleteSharecount(Number(params.sharecountID));
+    setDisplayModal(false);
+  };
+
+  const deleteSharecount = (sharecount_id: number) => {
+    setIsLoaded(false);
+    let userInSharecountData = {
+      sharecount_id: sharecount_id,
+      user_email: userEmail!,
+    };
+    removeUserFromSharecount(userInSharecountData).then(
+      () => {
+        setIsLoaded(true);
+        navigate("/");
+      },
+      (error) => {
+        setIsLoaded(true);
+        setError(error);
+      }
+    );
+  };
+
+  const handleCloseModal = () => setDisplayModal(false);
 
   const addParticipants = () => {
     let newParticipants = [...participantsNameArray];
@@ -151,6 +194,24 @@ const SharecountEdit = () => {
     },
   });
 
+  let modalContent = (
+    <Box sx={style}>
+      <Typography sx={{ mt: 2 }}>Confirm delete?</Typography>
+      <div className="flex m-2 justify-center">
+        <div>
+          <Button variant="outlined" onClick={() => setDisplayModal(false)}>
+            Cancel
+          </Button>
+        </div>
+        <div className="mx-2">
+          <Button variant="outlined" onClick={() => confirmDelete()}>
+            Delete
+          </Button>
+        </div>
+      </div>
+    </Box>
+  );
+
   if (!isLoaded || userLoading) {
     return (
       <div>
@@ -169,14 +230,14 @@ const SharecountEdit = () => {
     return <NotLoggedIn></NotLoggedIn>;
   } else {
     return (
-      <div>
+      <div className="h-screen flex flex-col">
         <Header
           title={header}
           cancelButton={true}
           saveButton={true}
           onClick={() => formik.handleSubmit()}
         ></Header>
-        <div className="flex flex-col p-4">
+        <div className="flex flex-1 flex-col p-4 overflow-auto">
           <form className="flex flex-col" onSubmit={formik.handleSubmit}>
             <div className="py-2">
               <TextField
@@ -249,6 +310,18 @@ const SharecountEdit = () => {
             </div>
           </div>
         </div>
+        <footer className="flex w-full p-5 justify-center">
+          <Button
+            variant="outlined"
+            onClick={() => setDisplayModal(true)}
+            sx={{ width: 200, margin: 2 }}
+          >
+            Delete
+          </Button>
+        </footer>
+        <Modal open={displayModal} onClose={handleCloseModal}>
+          {modalContent}
+        </Modal>
       </div>
     );
   }

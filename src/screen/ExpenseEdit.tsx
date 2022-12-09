@@ -14,6 +14,7 @@ import NotLoggedIn from "../components/NotLoggedIn";
 
 // Servives
 import {
+  deleteExpenseService,
   editExpenseService,
   getExpenseService,
 } from "../services/expense.service";
@@ -25,11 +26,15 @@ import { useNavigate, useParams } from "react-router-dom";
 
 // MUI
 import {
+  Box,
+  Button,
   Checkbox,
   FormControlLabel,
   FormGroup,
   MenuItem,
+  Modal,
   TextField,
+  Typography,
 } from "@mui/material";
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
@@ -56,9 +61,23 @@ const ExpenseEdit = () => {
   const [selectAll, setSelectAll] = useState<boolean>(false);
   const [errorMissingPartakers, setErrorMissingPartakers] =
     useState<string>("");
+  const [displayModal, setDisplayModal] = useState<boolean>(false);
+
   const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession?.email;
   const header = `Edit expense`;
+
+  const style = {
+    position: "absolute" as "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "80%",
+    bgcolor: "background.paper",
+    boxShadow: 24,
+    textAlign: "center",
+    p: 4,
+  };
 
   useEffect(() => {
     getSharecountService(parseInt(params.sharecountID!)).then(
@@ -90,6 +109,27 @@ const ExpenseEdit = () => {
       }
     );
   }, [params.expenseID, params.sharecountID]);
+
+  const handleCloseModal = () => setDisplayModal(false);
+
+  const confirmDelete = () => {
+    deleteExpense(Number(params.expenseID));
+    setDisplayModal(false);
+  };
+
+  const deleteExpense = (expense_id: number) => {
+    setIsLoaded(false);
+    deleteExpenseService(expense_id).then(
+      () => {
+        setIsLoaded(true);
+        navigate(`/sharecount/${params.sharecountID}`);
+      },
+      (error) => {
+        setIsLoaded(true);
+        setError(error);
+      }
+    );
+  };
 
   const handleDateChange = (newDate: moment.Moment | null) => {
     setExpenseDate(newDate);
@@ -211,6 +251,24 @@ const ExpenseEdit = () => {
     },
   });
 
+  let modalContent = (
+    <Box sx={style}>
+      <Typography sx={{ mt: 2 }}>Confirm delete?</Typography>
+      <div className="flex m-2 justify-center">
+        <div>
+          <Button variant="outlined" onClick={() => setDisplayModal(false)}>
+            Cancel
+          </Button>
+        </div>
+        <div className="mx-2">
+          <Button variant="outlined" onClick={() => confirmDelete()}>
+            Delete
+          </Button>
+        </div>
+      </div>
+    </Box>
+  );
+
   if (!isLoaded || userLoading) {
     return (
       <div>
@@ -229,14 +287,14 @@ const ExpenseEdit = () => {
     return <NotLoggedIn></NotLoggedIn>;
   } else {
     return (
-      <div>
+      <div className="h-screen flex flex-col">
         <Header
           title={header}
           cancelButton={true}
           saveButton={true}
           onClick={() => formik.handleSubmit()}
         ></Header>
-        <div className="flex flex-col p-4">
+        <div className="flex flex-1 flex-col p-4 overflow-auto">
           <form className="flex flex-col" onSubmit={formik.handleSubmit}>
             <div className="py-2">
               <TextField
@@ -324,6 +382,18 @@ const ExpenseEdit = () => {
             <ul>{listParticipants}</ul>
           </div>
         </div>
+        <footer className="flex w-full p-5 justify-center">
+          <Button
+            variant="outlined"
+            onClick={() => setDisplayModal(true)}
+            sx={{ width: 200, margin: 2 }}
+          >
+            Delete
+          </Button>
+        </footer>
+        <Modal open={displayModal} onClose={handleCloseModal}>
+          {modalContent}
+        </Modal>
       </div>
     );
   }

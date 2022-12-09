@@ -101,8 +101,11 @@ const ExpensesDetails = () => {
       <div>
         <Header
           title={header}
+          id={Number(params.sharecountID)}
+          expense_id={Number(params.expenseID)}
           backButton={true}
           editButton={true}
+          screen="Details"
           onClick={edit}
         ></Header>
         <div className="items-center p-3">
