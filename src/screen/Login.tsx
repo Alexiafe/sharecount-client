@@ -32,7 +32,7 @@ const Login = () => {
       <div className="h-screen flex flex-col">
         <Header title="Profile"></Header>
         {userEmail ? (
-          <div className="flex flex-col p-3 items-center text-text">
+          <div className="flex flex-col p-4 items-center text-text">
             You're logged in as {userEmail}
             <Button
               variant="contained"
@@ -46,7 +46,7 @@ const Login = () => {
             </Button>
           </div>
         ) : (
-          <div className="flex flex-col p-3 items-center">
+          <div className="flex flex-col p-4 items-center">
             <Button
               variant="contained"
               sx={{

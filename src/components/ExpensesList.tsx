@@ -156,14 +156,22 @@ const ExpensesList = () => {
     <Box sx={style}>
       <Typography variant="h6">{selectedExpense.name}</Typography>
       <Typography sx={{ mt: 2 }}>Confirm delete?</Typography>
-      <div className="flex m-2 justify-center">
+      <div className="flex justify-center">
         <div>
-          <Button variant="outlined" onClick={() => setDisplayModal(false)}>
+          <Button
+            variant="outlined"
+            sx={{ width: 100, margin: 2 }}
+            onClick={() => setDisplayModal(false)}
+          >
             Cancel
           </Button>
         </div>
-        <div className="mx-2">
-          <Button variant="outlined" onClick={() => confirmDelete()}>
+        <div>
+          <Button
+            variant="outlined"
+            sx={{ width: 100, margin: 2 }}
+            onClick={() => confirmDelete()}
+          >
             Delete
           </Button>
         </div>
@@ -185,17 +193,23 @@ const ExpensesList = () => {
         {expenses.length ? (
           <div>
             <SearchBar onClick={filterExpenses}></SearchBar>
-            <div className="p-3">
+            <div className="p-4">
               {Object.keys(expensesGroupped)
                 .sort()
                 .reverse()
                 .map((date: any) => (
                   <div key={date}>
-                    <div className="text-secondary">
-                      {moment(date).isSame(moment(), "day")
-                        ? "Today"
-                        : moment(date).format("DD/MM/YYYY")}
-                    </div>
+                    {expensesGroupped[date]?.filter((e: IExpenseList) =>
+                      e.name.toLowerCase().includes(filter.toLowerCase())
+                    ).length ? (
+                      <div className="text-secondary">
+                        {moment(date).isSame(moment(), "day")
+                          ? "Today"
+                          : moment(date).format("DD/MM/YYYY")}
+                      </div>
+                    ) : (
+                      <div></div>
+                    )}
                     <div>
                       {expensesGroupped[date]
                         ?.filter((e: IExpenseList) =>
@@ -261,7 +275,7 @@ const ExpensesList = () => {
             </div>
           </div>
         ) : (
-          <div className="p-3 text-center">
+          <div className="p-4 text-center">
             <p>No expenses yet.</p>
             <p>Click the " + " button to create one</p>
           </div>

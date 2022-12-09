@@ -108,7 +108,7 @@ const ExpensesDetails = () => {
           screen="Details"
           onClick={edit}
         ></Header>
-        <div className="items-center p-3">
+        <div className="items-center p-4">
           <div className="border-b border-grey-500 text-text">
             <div className="justify-center h-20 flex items-center text-xl font-medium py-3">
               {expense?.amount_total} {sharecount?.currency}

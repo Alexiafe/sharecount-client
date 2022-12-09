@@ -8,15 +8,19 @@ interface IPropsSearchBar {
 
 const SearchBar = (props: IPropsSearchBar) => {
   return (
-    <div className="p-3">
+    <div className="px-4 pt-4">
       <TextField
         fullWidth
-        variant="outlined"
+        size="small"
         placeholder="Search"
         onChange={(e) => {
           props.onClick(e.target.value);
         }}
+        sx={{
+          "& fieldset": { border: 'none' },
+        }}
         InputProps={{
+          className: "bg-gray-100",
           startAdornment: (
             <InputAdornment position="start">
               <SearchIcon />

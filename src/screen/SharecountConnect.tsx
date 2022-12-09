@@ -118,7 +118,7 @@ const SharecountConnect = () => {
     return (
       <div>
         <Header title={header}></Header>
-        <div className="p-3 flex flex-col">
+        <div className="p-4 flex flex-col">
           <FormControl>
             <FormLabel id="demo-radio-buttons-group-label">
               Select who you are:

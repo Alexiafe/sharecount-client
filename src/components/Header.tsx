@@ -54,7 +54,7 @@ const Header = (props: IPropsHeader) => {
   } else {
     return (
       <header
-        className="flex flex-col bg-primary text-white justify-center p-3"
+        className="flex flex-col bg-primary text-white justify-center p-4"
         style={{ height: "150px", borderRadius: "0 0 30px 30px" }}
       >
         <div className="flex justify-between">

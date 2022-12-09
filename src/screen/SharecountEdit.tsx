@@ -197,14 +197,22 @@ const SharecountEdit = () => {
   let modalContent = (
     <Box sx={style}>
       <Typography sx={{ mt: 2 }}>Confirm delete?</Typography>
-      <div className="flex m-2 justify-center">
+      <div className="flex justify-center">
         <div>
-          <Button variant="outlined" onClick={() => setDisplayModal(false)}>
+          <Button
+            variant="outlined"
+            sx={{ width: 100, margin: 2 }}
+            onClick={() => setDisplayModal(false)}
+          >
             Cancel
           </Button>
         </div>
-        <div className="mx-2">
-          <Button variant="outlined" onClick={() => confirmDelete()}>
+        <div>
+          <Button
+            variant="outlined"
+            sx={{ width: 100, margin: 2 }}
+            onClick={() => confirmDelete()}
+          >
             Delete
           </Button>
         </div>
@@ -310,11 +318,11 @@ const SharecountEdit = () => {
             </div>
           </div>
         </div>
-        <footer className="flex w-full p-5 justify-center">
+        <footer className="flex w-full pb-6 justify-center">
           <Button
             variant="outlined"
-            onClick={() => setDisplayModal(true)}
             sx={{ width: 200, margin: 2 }}
+            onClick={() => setDisplayModal(true)}
           >
             Delete
           </Button>

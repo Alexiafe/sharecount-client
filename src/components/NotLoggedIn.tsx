@@ -13,7 +13,7 @@ const NotLoggedIn = () => {
   return (
     <div>
       <Header title="Sharecount"></Header>
-      <div className="p-3 flex flex-col items-center text-text">
+      <div className="p-4 flex flex-col items-center text-text">
         You are not logged in.
         <Button
           variant="contained"

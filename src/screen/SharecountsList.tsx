@@ -172,14 +172,22 @@ const SharecountsList = () => {
     <Box sx={style}>
       <Typography variant="h6">{selectedSharecount.name}</Typography>
       <Typography sx={{ mt: 2 }}>Confirm delete?</Typography>
-      <div className="flex m-2 justify-center">
+      <div className="flex justify-center">
         <div>
-          <Button variant="outlined" onClick={() => setDisplayModal(false)}>
+          <Button
+            variant="outlined"
+            sx={{ width: 100, margin: 2 }}
+            onClick={() => setDisplayModal(false)}
+          >
             Cancel
           </Button>
         </div>
-        <div className="mx-2">
-          <Button variant="outlined" onClick={() => confirmDelete()}>
+        <div>
+          <Button
+            variant="outlined"
+            sx={{ width: 100, margin: 2 }}
+            onClick={() => confirmDelete()}
+          >
             Delete
           </Button>
         </div>
@@ -214,7 +222,7 @@ const SharecountsList = () => {
           {sharecounts.length ? (
             <ul className="w-full">{listSharecounts}</ul>
           ) : (
-            <div className="p-3 text-center w-full text-white">
+            <div className="p-4 text-center w-full text-white">
               <p>No sharecounts yet.</p>
               <p>Click the " + " button to create one</p>
             </div>

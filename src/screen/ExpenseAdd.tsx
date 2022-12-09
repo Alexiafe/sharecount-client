@@ -293,9 +293,7 @@ const ExpenseAdd = () => {
           </div>
           <div className="py-2">
             From whom:
-            <div className="text-xs text-red-600">
-              {errorMissingPartakers}
-            </div>
+            <div className="text-xs text-red-600">{errorMissingPartakers}</div>
             <FormGroup>
               <FormControlLabel
                 control={
