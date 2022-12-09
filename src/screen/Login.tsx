@@ -3,6 +3,8 @@ import AuthContext from "../context/auth.context";
 
 // Components
 import Header from "../components/Header";
+import MenuHome from "../components/MenuHome";
+import Loader from "../components/Loader";
 
 // React
 import { useContext } from "react";
@@ -15,51 +17,58 @@ import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import { auth } from "../firebase-config";
 
 const Login = () => {
-  const { userSession } = useContext(AuthContext);
+  const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession?.email;
 
-  if (userEmail) {
+  if (userLoading) {
     return (
       <div>
-        <Header
-          title="Profile"
-          backButton={true}
-          screen="Profile"
-          emptyButtonR={true}
-        ></Header>
-        <div className="p-3 flex flex-col items-center">
-          You're logged in as {userEmail}
-          <Button
-            variant="contained"
-            sx={{ width: 200, margin: 2 }}
-            onClick={() => signOut(auth)}
-          >
-            Log out
-          </Button>
-        </div>
+        <Header title="Profile"></Header>
+        <Loader></Loader>
       </div>
     );
-  } else {
+  } else
     return (
-      <div>
-        <Header
-          title="Profile"
-          backButton={true}
-          screen="Profile"
-          emptyButtonR={true}
-        ></Header>
-        <div className="p-3 flex flex-col items-center">
-          <Button
-            variant="contained"
-            sx={{ width: 200, margin: 2 }}
-            onClick={() => signInWithPopup(auth, new GoogleAuthProvider())}
-          >
-            Login
-          </Button>
-        </div>
+      <div className="h-screen flex flex-col">
+        <Header title="Profile"></Header>
+        {userEmail ? (
+          <div className="flex flex-col p-3 items-center text-text">
+            You're logged in as {userEmail}
+            <Button
+              variant="contained"
+              sx={{
+                width: 200,
+                margin: 2,
+                borderRadius: 30,
+              }}
+              onClick={() => signOut(auth)}
+            >
+              Log out
+            </Button>
+          </div>
+        ) : (
+          <div className="flex flex-col p-3 items-center">
+            <Button
+              variant="contained"
+              sx={{
+                width: 200,
+                margin: 2,
+                borderRadius: 30,
+              }}
+              onClick={() => signInWithPopup(auth, new GoogleAuthProvider())}
+            >
+              Login
+            </Button>
+          </div>
+        )}
+        <footer
+          className="flex bg-gray-200 bottom-0 absolute w-full"
+          style={{ height: "100px" }}
+        >
+          <MenuHome screen="profile"></MenuHome>
+        </footer>
       </div>
     );
-  }
 };
 
 export default Login;

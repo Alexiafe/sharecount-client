@@ -10,7 +10,7 @@ import { getSharecountService } from "../services/sharecount.service";
 import { deleteExpenseService } from "../services/expense.service";
 
 // React
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 // MUI
@@ -26,6 +26,7 @@ import {
 } from "@mui/material";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import DeleteIcon from "@mui/icons-material/Delete";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 // Other
 import moment from "moment";
@@ -191,7 +192,7 @@ const ExpensesList = () => {
                 .reverse()
                 .map((date: any) => (
                   <div key={date}>
-                    <div>
+                    <div className="text-secondary">
                       {moment(date).isSame(moment(), "day")
                         ? "Today"
                         : moment(date).format("DD/MM/YYYY")}
@@ -213,9 +214,20 @@ const ExpensesList = () => {
                                   secondaryTypographyProps={{
                                     variant: "subtitle1",
                                   }}
-                                  secondary={`Paid by ${e.owner} ${
-                                    e.owner === sharecount?.user ? "(me)" : ""
-                                  }`}
+                                  secondary={
+                                    <React.Fragment>
+                                      Paid by
+                                      <Typography component="span">
+                                        {`
+                                          ${e.owner}
+                                          ${
+                                            e.owner === sharecount?.user
+                                              ? "(me)"
+                                              : ""
+                                          }`}
+                                      </Typography>
+                                    </React.Fragment>
+                                  }
                                   onClick={() =>
                                     navigate(
                                       `/sharecount/${sharecount?.id}/expense/${e.id}`
@@ -237,13 +249,6 @@ const ExpensesList = () => {
                                     )
                                   }
                                 />
-                                <IconButton
-                                  size="large"
-                                  color="primary"
-                                  onClick={() => handleDisplayModal(e)}
-                                >
-                                  <DeleteIcon />
-                                </IconButton>
                               </ListItem>
                             </List>
                           </div>
@@ -263,17 +268,17 @@ const ExpensesList = () => {
           </div>
         )}
 
-        <div className="absolute bottom-4 right-4">
+        <footer className="absolute bottom-0 right-0">
           <IconButton
             size="large"
-            color="primary"
+            color="secondary"
             onClick={() =>
               navigate(`/sharecount/${params.sharecountID}/expense-add`)
             }
           >
-            <AddCircleOutlineRoundedIcon sx={{ fontSize: 45 }} />
+            <AddCircleIcon sx={{ fontSize: 45 }} />
           </IconButton>
-        </div>
+        </footer>
       </div>
     );
   }

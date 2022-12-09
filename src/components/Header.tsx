@@ -5,9 +5,8 @@ import { clientUrl } from "../constants/config";
 import { useNavigate } from "react-router-dom";
 
 // MUI
-import { IconButton, AppBar, Toolbar, Typography } from "@mui/material";
+import { IconButton } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
 import EditIcon from "@mui/icons-material/Edit";
@@ -23,10 +22,7 @@ interface IPropsHeader {
   editButton?: boolean;
   saveButton?: boolean;
   cancelButton?: boolean;
-  homeButton?: boolean;
   shareButton?: boolean;
-  emptyButtonL?: boolean;
-  emptyButtonR?: boolean;
   onClick?: () => void;
 }
 
@@ -40,124 +36,111 @@ const Header = (props: IPropsHeader) => {
   const editButton = props.editButton;
   const saveButton = props.saveButton;
   const cancelButton = props.cancelButton;
-  const homeButton = props.homeButton;
   const shareButton = props.shareButton;
-  const emptyButtonL = props.emptyButtonL;
-  const emptyButtonR = props.emptyButtonR;
 
   const navigate = useNavigate();
 
-  return (
-    <AppBar position="static">
-      <Toolbar>
-        {/* LEFT */}
-        {backButton && (
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            onClick={() => {
-              if (screen === "Expenses" || screen === "Profile") navigate("/");
-              else navigate(-1);
-            }}
-          >
-            <ArrowBackIosIcon />
-          </IconButton>
-        )}
-        {cancelButton && (
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            onClick={() => navigate(-1)}
-          >
-            <CloseIcon />
-          </IconButton>
-        )}
-        {emptyButtonL && (
-          <IconButton
-            className="invisible"
-            size="large"
-            edge="start"
-            color="inherit"
-          >
-            <ArrowBackIosIcon />
-          </IconButton>
-        )}
-
-        {/* CENTER */}
-        <Typography
-          className="text-center"
-          component="div"
-          sx={{ flexGrow: 1 }}
-        >
-          <div className="text-2xl">{title}</div>
-          {total && currency && (
-            <div className="text-sm">
-              Total: {total} {currency}
+  if (screen === "Home") {
+    return (
+      <header
+        className="flex bg-primary text-white justify-center"
+        style={{ height: "150px" }}
+      >
+        <div className="self-center text-2xl font-bold">{title}</div>
+      </header>
+    );
+  } else {
+    return (
+      <header
+        className="flex flex-col bg-primary text-white justify-center p-3"
+        style={{ height: "150px", borderRadius: "0 0 30px 30px" }}
+      >
+        <div className="flex justify-between">
+          <div className="flex">
+            <div>
+              {backButton && (
+                <IconButton
+                  size="large"
+                  edge="start"
+                  color="inherit"
+                  onClick={() => {
+                    if (screen === "Expenses" || screen === "Profile")
+                      navigate("/");
+                    else navigate(-1);
+                  }}
+                >
+                  <ArrowBackIosIcon />
+                </IconButton>
+              )}
             </div>
-          )}
-        </Typography>
-
-        {/* RIGHT */}
-        {saveButton && (
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            onClick={() => props.onClick?.()}
-          >
-            <DoneIcon />
-          </IconButton>
-        )}
-        {editButton && (
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            onClick={() => props.onClick?.()}
-          >
-            <EditIcon />
-          </IconButton>
-        )}
-        {homeButton && (
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            onClick={() => navigate("/login")}
-          >
-            <AccountCircleIcon />
-          </IconButton>
-        )}
-        {shareButton && (
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            onClick={() =>
-              navigator.share({
-                title,
-                url: `${clientUrl}/sharecount-connect/${id}`,
-              })
-            }
-          >
-            <ShareIcon />
-          </IconButton>
-        )}
-        {emptyButtonR && (
-          <IconButton
-            className="items-left invisible"
-            size="large"
-            edge="start"
-            color="inherit"
-          >
-            <AccountCircleIcon />
-          </IconButton>
-        )}
-      </Toolbar>
-    </AppBar>
-  );
+            <div>
+              {cancelButton && (
+                <IconButton
+                  size="large"
+                  edge="start"
+                  color="inherit"
+                  onClick={() => navigate(-1)}
+                >
+                  <CloseIcon />
+                </IconButton>
+              )}
+            </div>
+          </div>
+          <div className="flex">
+            <div>
+              {editButton && (
+                <IconButton
+                  size="large"
+                  edge="start"
+                  color="inherit"
+                  onClick={() => props.onClick?.()}
+                >
+                  <EditIcon />
+                </IconButton>
+              )}
+            </div>
+            <div>
+              {shareButton && (
+                <IconButton
+                  size="large"
+                  edge="start"
+                  color="inherit"
+                  onClick={() =>
+                    navigator.share({
+                      title,
+                      url: `${clientUrl}/sharecount-connect/${id}`,
+                    })
+                  }
+                >
+                  <ShareIcon />
+                </IconButton>
+              )}
+            </div>
+            <div>
+              {saveButton && (
+                <IconButton
+                  size="large"
+                  edge="start"
+                  color="inherit"
+                  onClick={() => props.onClick?.()}
+                >
+                  <DoneIcon />
+                </IconButton>
+              )}
+            </div>
+          </div>
+        </div>
+        <div className="self-center text-2xl font-bold">{title}</div>
+        <div
+          className={`self-center pt-2 ${
+            screen === "Expenses" ? "" : "opacity-0"
+          }`}
+        >
+          Total: {total} {currency}
+        </div>
+      </header>
+    );
+  }
 };
 
 export default Header;

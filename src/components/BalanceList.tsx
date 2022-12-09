@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 // MUI
-import { List, ListItem, ListItemText } from "@mui/material";
+import { List, ListItem, ListItemText, Typography } from "@mui/material";
 
 const BalanceList = () => {
   const params = useParams();
@@ -53,12 +53,18 @@ const BalanceList = () => {
           <ListItemText
             style={{
               textAlign: "right",
-              color: p.balance < 0 ? "red" : "green",
             }}
-            primaryTypographyProps={{
-              variant: "h6",
-            }}
-            primary={`${p.balance > 0 ? `+` : ``}` + p.balance.toFixed(2)}
+            primary={
+              p.balance > 0 ? (
+                <Typography
+                  sx={{ color: "green", fontSize: "20px" }}
+                >{`+${p.balance.toFixed(2)}`}</Typography>
+              ) : (
+                <Typography sx={{ color: "red", fontSize: "20px" }}>
+                  {p.balance.toFixed(2)}
+                </Typography>
+              )
+            }
           />
         </ListItem>
       </List>

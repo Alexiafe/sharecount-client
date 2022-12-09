@@ -4,6 +4,7 @@ import AuthContext from "../context/auth.context";
 // Components
 import Header from "../components/Header";
 import NotLoggedIn from "../components/NotLoggedIn";
+import Loader from "../components/Loader";
 
 // Services
 import { addSharecountService } from "../services/sharecount.service";
@@ -22,7 +23,6 @@ import {
 } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
 import AddIcon from "@mui/icons-material/Add";
-import Loader from "../components/Loader";
 
 // Other
 import { useFormik } from "formik";
@@ -168,7 +168,7 @@ const SharecountAdd = () => {
               />
             </div>
           </form>
-          <div className="py-2">
+          <div className="py-2 text-text">
             Participants:
             <ul>{listParticipants}</ul>
             <div className="flex">

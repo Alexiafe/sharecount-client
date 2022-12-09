@@ -6,15 +6,16 @@ import AuthContext from "../context/auth.context";
 
 // Components
 import Loader from "../components/Loader";
-import Header from "../components/Header";
+import MenuHome from "../components/MenuHome";
 import NotLoggedIn from "../components/NotLoggedIn";
+import Header from "../components/Header";
 
 // Services
 import { removeUserFromSharecount } from "../services/sharecount.service";
 import { getUserService } from "../services/user.service";
 
 // React
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 // MUI
@@ -28,9 +29,9 @@ import {
   Modal,
   Typography,
 } from "@mui/material";
-import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 interface ISharecountList {
   id: number;
@@ -42,7 +43,7 @@ interface ISharecountList {
 const SharecountsList = () => {
   const navigate = useNavigate();
   const [error, setError] = useState<any>(null);
-  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  const [isLoaded, setIsLoaded] = useState<boolean>(true);
   const [sharecounts, setSharecounts] = useState<ISharecountList[]>([]);
   const [selectedSharecount, setSelectedSharecount] = useState<ISharecountList>(
     { id: 0, name: "", currency: "", balance: 0 }
@@ -64,7 +65,8 @@ const SharecountsList = () => {
   };
 
   useEffect(() => {
-    if (userEmail && !userLoading) {
+    if (userEmail) {
+      setIsLoaded(false);
       getUserService(userEmail!).then(
         (user) => {
           setIsLoaded(true);
@@ -122,9 +124,15 @@ const SharecountsList = () => {
   };
 
   const listSharecounts = sharecounts.map((s: ISharecountList) => (
-    <li key={s.id}>
+    <li key={s.id} className="py-2 px-5">
       <List disablePadding>
-        <ListItem button>
+        <ListItem
+          button
+          sx={{
+            bgcolor: "white",
+            borderRadius: "20px",
+          }}
+        >
           <ListItemText
             primaryTypographyProps={{
               variant: "h6",
@@ -133,26 +141,28 @@ const SharecountsList = () => {
             secondaryTypographyProps={{
               variant: "subtitle1",
             }}
-            secondary={`Balance :
-              ${s.balance > 0 ? `+` : ``} 
-              ${s.balance}
-              ${s.currency}
-              `}
+            secondary={
+              <React.Fragment>
+                Balance:
+                {s.balance > 0 ? (
+                  <Typography sx={{ color: "green" }} component="span">
+                    {` +${s.balance} ${s.currency}
+                  `}
+                  </Typography>
+                ) : (
+                  <Typography sx={{ color: "red" }} component="span">
+                    {` ${s.balance} ${s.currency} `}
+                  </Typography>
+                )}
+              </React.Fragment>
+            }
             onClick={() => navigate(`/sharecount/${s.id}`)}
           />
           <IconButton
             size="large"
-            color="primary"
-            onClick={() => navigate(`/sharecount-edit/${s.id}`)}
+            onClick={() => navigate(`/sharecount/${s.id}`)}
           >
-            <EditIcon />
-          </IconButton>
-          <IconButton
-            size="large"
-            color="primary"
-            onClick={() => handleDisplayModal(s)}
-          >
-            <DeleteIcon />
+            <ChevronRightIcon />
           </IconButton>
         </ListItem>
       </List>
@@ -181,14 +191,14 @@ const SharecountsList = () => {
   if (!isLoaded || userLoading) {
     return (
       <div>
-        <Header title="Sharecount"></Header>
+        <Header></Header>
         <Loader></Loader>
       </div>
     );
   } else if (error) {
     return (
       <div>
-        <Header title="Sharecount"></Header>
+        <Header></Header>
         Please try again later
       </div>
     );
@@ -196,32 +206,27 @@ const SharecountsList = () => {
     return <NotLoggedIn></NotLoggedIn>;
   } else {
     return (
-      <div>
+      <div className="h-screen flex flex-col">
         <Header
-          title="Sharecount"
-          homeButton={true}
-          emptyButtonL={true}
+          title={`Hi ${userSession.displayName!} !`}
+          screen={"Home"}
         ></Header>
-        {sharecounts.length ? (
-          <ul>{listSharecounts}</ul>
-        ) : (
-          <div className="p-3 text-center">
-            <p>No sharecounts yet.</p>
-            <p>Click the " + " button to create one</p>
-          </div>
-        )}
+        <div className="flex flex-1 bg-primary overflow-auto">
+          {sharecounts.length ? (
+            <ul className="w-full">{listSharecounts}</ul>
+          ) : (
+            <div className="p-3 text-center w-full text-white">
+              <p>No sharecounts yet.</p>
+              <p>Click the " + " button to create one</p>
+            </div>
+          )}
+        </div>
+        <footer className="flex w-full">
+          <MenuHome screen="home"></MenuHome>
+        </footer>
         <Modal open={displayModal} onClose={handleCloseModal}>
           {modalContent}
         </Modal>
-        <div className="absolute bottom-4 right-4">
-          <IconButton
-            size="large"
-            color="primary"
-            onClick={() => navigate("/sharecount-add")}
-          >
-            <AddCircleOutlineRoundedIcon sx={{ fontSize: 45 }} />
-          </IconButton>
-        </div>
       </div>
     );
   }

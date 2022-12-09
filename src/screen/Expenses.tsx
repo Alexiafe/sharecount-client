@@ -63,17 +63,17 @@ const Expenses = () => {
     return <NotLoggedIn></NotLoggedIn>;
   } else {
     return (
-      <div>
+      <div className="h-screen flex flex-col">
         <Header
           title={sharecount?.name}
           id={sharecount?.id}
+          total={sharecount?.total}
+          currency={sharecount?.currency}
           backButton={true}
           editButton={true}
           shareButton={true}
-          onClick={edit}
           screen="Expenses"
-          total={sharecount?.total}
-          currency={sharecount?.currency}
+          onClick={edit}
         ></Header>
         <MenuTabs></MenuTabs>
       </div>

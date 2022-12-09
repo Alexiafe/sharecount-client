@@ -293,17 +293,23 @@ const ExpenseAdd = () => {
           </div>
           <div className="py-2">
             From whom:
-            <div className="text-xs" style={{ color: "#d32f2f" }}>
+            <div className="text-xs text-red-600">
               {errorMissingPartakers}
             </div>
-            <Checkbox
-              checked={
-                selectedParticipantsIDs.length === participants.length ||
-                selectAll
-              }
-              onChange={handleCheckAll}
-              style={{ width: "20px", padding: 0 }}
-            />
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={
+                      selectedParticipantsIDs.length === participants.length ||
+                      selectAll
+                    }
+                    onChange={handleCheckAll}
+                  />
+                }
+                label="Select all"
+              />
+            </FormGroup>
             <ul>{listParticipants}</ul>
           </div>
         </div>

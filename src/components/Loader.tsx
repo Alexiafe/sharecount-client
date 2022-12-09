@@ -1,12 +1,11 @@
 // MUI
-import Box from "@mui/material/Box";
-import LinearProgress from "@mui/material/LinearProgress";
+import { CircularProgress } from "@mui/material";
 
 const Loader = () => {
   return (
-    <Box sx={{ width: "100%" }}>
-      <LinearProgress />
-    </Box>
+    <div className="p-5 text-center">
+      <CircularProgress />
+    </div>
   );
 };
 

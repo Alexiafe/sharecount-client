@@ -8,8 +8,8 @@ import {
 import AuthContext from "../context/auth.context";
 
 // Components
-import Loader from "../components/Loader";
 import Header from "../components/Header";
+import Loader from "../components/Loader";
 import NotLoggedIn from "../components/NotLoggedIn";
 
 // Servives
@@ -150,7 +150,9 @@ const ExpenseEdit = () => {
     setIsLoaded(false);
     editExpenseService(newExpense).then(() => {
       setIsLoaded(true);
-      navigate(`/sharecount/${params.sharecountID}`);
+      navigate(
+        `/sharecount/${params.sharecountID}/expense/${params.expenseID}`
+      );
     });
   };
 
@@ -212,7 +214,7 @@ const ExpenseEdit = () => {
   if (!isLoaded || userLoading) {
     return (
       <div>
-        <Header title={header}></Header>
+        <Header title={header} cancelButton={true} saveButton={true}></Header>
         <Loader></Loader>
       </div>
     );
@@ -310,9 +312,7 @@ const ExpenseEdit = () => {
           </div>
           <div className="py-2">
             From whom:
-            <div className="text-xs" style={{ color: "#d32f2f" }}>
-              {errorMissingPartakers}
-            </div>
+            <div className="text-xs text-red-600">{errorMissingPartakers}</div>
             <Checkbox
               checked={
                 selectedParticipantsIDs.length === participants.length ||

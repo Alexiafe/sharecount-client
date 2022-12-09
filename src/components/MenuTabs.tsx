@@ -8,9 +8,6 @@ import { useState } from "react";
 
 // MUI
 import { Tab, Tabs, Typography, Box } from "@mui/material";
-import ListIcon from "@mui/icons-material/List";
-import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
-import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -57,32 +54,32 @@ const MenuTabs = () => {
   };
 
   return (
-    <Box sx={{ width: "100%" }}>
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs value={value} onChange={handleChange} variant="fullWidth">
-          <Tab icon={<ListIcon />} label="Expenses" {...a11yProps(0)} />
-          <Tab
-            icon={<CompareArrowsIcon />}
-            label="Balances"
-            {...a11yProps(1)}
-          />
-          <Tab
-            icon={<CurrencyExchangeIcon />}
-            label="Refund"
-            {...a11yProps(2)}
-          />
+    <div className="flex flex-1 overflow-auto h-full">
+      <Box className="fixed bg-white w-full z-10" sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          variant="fullWidth"
+          textColor="secondary"
+          indicatorColor="secondary"
+        >
+          <Tab label="Expenses" {...a11yProps(0)} />
+          <Tab label="Balances" {...a11yProps(1)} />
+          <Tab label="Refund" {...a11yProps(2)} />
         </Tabs>
       </Box>
-      <TabPanel value={value} index={0}>
-        <ExpensesList />
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        <BalanceList />
-      </TabPanel>
-      <TabPanel value={value} index={2}>
-        <RefundList />
-      </TabPanel>
-    </Box>
+      <div className="w-full mt-12">
+        <TabPanel value={value} index={0}>
+          <ExpensesList />
+        </TabPanel>
+        <TabPanel value={value} index={1}>
+          <BalanceList />
+        </TabPanel>
+        <TabPanel value={value} index={2}>
+          <RefundList />
+        </TabPanel>
+      </div>
+    </div>
   );
 };
 

@@ -1,8 +1,16 @@
+// Interfaces
+import {
+  IParticipantResponse,
+  ISharecountResponse,
+} from "../interfaces/interfaces";
+
 // Context
 import AuthContext from "../context/auth.context";
 
 // Components
+import Loader from "../components/Loader";
 import Header from "../components/Header";
+import NotLoggedIn from "../components/NotLoggedIn";
 
 // Services
 import {
@@ -23,14 +31,6 @@ import {
   Radio,
   RadioGroup,
 } from "@mui/material/";
-
-// Firebase
-import NotLoggedIn from "../components/NotLoggedIn";
-import {
-  IParticipantResponse,
-  ISharecountResponse,
-} from "../interfaces/interfaces";
-import Loader from "../components/Loader";
 
 const SharecountConnect = () => {
   const { userSession, userLoading } = useContext(AuthContext);

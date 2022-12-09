@@ -106,8 +106,8 @@ const ExpensesDetails = () => {
           onClick={edit}
         ></Header>
         <div className="items-center p-3">
-          <div className="border-b border-grey-500">
-            <div className="justify-center h-20 flex items-center text-xl py-3">
+          <div className="border-b border-grey-500 text-text">
+            <div className="justify-center h-20 flex items-center text-xl font-medium py-3">
               {expense?.amount_total} {sharecount?.currency}
             </div>
             <div className="flex text-center py-3">
@@ -117,7 +117,7 @@ const ExpensesDetails = () => {
               <div className="flex-1 text-right">{date}</div>
             </div>
           </div>
-          <div className="py-3">
+          <div className="py-3 text-text">
             For whom:<ul>{listExpenseParticipants}</ul>
           </div>
         </div>

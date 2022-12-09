@@ -5,8 +5,8 @@ import { IParticipantResponse } from "../interfaces/interfaces";
 import AuthContext from "../context/auth.context";
 
 // Components
-import Loader from "../components/Loader";
 import Header from "../components/Header";
+import Loader from "../components/Loader";
 import NotLoggedIn from "../components/NotLoggedIn";
 
 // Services
@@ -106,7 +106,7 @@ const SharecountEdit = () => {
     setIsLoaded(false);
     editSharecountService(newSharecount).then(() => {
       setIsLoaded(true);
-      navigate("/");
+      navigate(`/sharecount/${params.sharecountID}`);
     });
   };
 
@@ -154,7 +154,7 @@ const SharecountEdit = () => {
   if (!isLoaded || userLoading) {
     return (
       <div>
-        <Header title={header}></Header>
+        <Header title={header} cancelButton={true} saveButton={true}></Header>
         <Loader></Loader>
       </div>
     );
@@ -218,7 +218,7 @@ const SharecountEdit = () => {
               />
             </div>
           </form>
-          <div className="py-2">
+          <div className="py-2 text-text">
             Participants:
             <ul>{listParticipants}</ul>
             <div className="flex">

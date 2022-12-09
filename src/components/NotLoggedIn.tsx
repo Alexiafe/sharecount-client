@@ -13,14 +13,14 @@ const NotLoggedIn = () => {
   return (
     <div>
       <Header title="Sharecount"></Header>
-      <div className="p-3">You are not logged in.</div>
-      <div className="text-center">
+      <div className="p-3 flex flex-col items-center text-text">
+        You are not logged in.
         <Button
           variant="contained"
-          sx={{ width: 200, margin: 2 }}
+          sx={{ width: 200, margin: 2, borderRadius: 30 }}
           onClick={() => navigate("/login")}
         >
-          Login
+          Profile
         </Button>
       </div>
     </div>
