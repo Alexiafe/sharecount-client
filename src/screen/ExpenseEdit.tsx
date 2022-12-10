@@ -253,12 +253,14 @@ const ExpenseEdit = () => {
 
   let modalContent = (
     <Box sx={style}>
-      <Typography sx={{ mt: 2 }}>Confirm delete?</Typography>
-      <div className="flex justify-center ">
+      <Typography variant="h6" sx={{ m: 2 }}>
+        Confirm delete?
+      </Typography>
+      <div className="flex justify-around">
         <div>
           <Button
             variant="outlined"
-            sx={{ width: 100, margin: 2 }}
+            sx={{ width: 100, margin: 0 }}
             onClick={() => setDisplayModal(false)}
           >
             Cancel
@@ -267,7 +269,7 @@ const ExpenseEdit = () => {
         <div>
           <Button
             variant="outlined"
-            sx={{ width: 100, margin: 2 }}
+            sx={{ width: 100, margin: 0 }}
             onClick={() => confirmDelete()}
           >
             Delete
@@ -393,6 +395,7 @@ const ExpenseEdit = () => {
         <footer className="flex w-full pb-6 justify-center">
           <Button
             variant="outlined"
+            color="error"
             sx={{ width: 200, margin: 2 }}
             onClick={() => setDisplayModal(true)}
           >

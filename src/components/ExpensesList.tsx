@@ -156,11 +156,11 @@ const ExpensesList = () => {
     <Box sx={style}>
       <Typography variant="h6">{selectedExpense.name}</Typography>
       <Typography sx={{ mt: 2 }}>Confirm delete?</Typography>
-      <div className="flex justify-center">
+      <div className="flex justify-around">
         <div>
           <Button
             variant="outlined"
-            sx={{ width: 100, margin: 2 }}
+            sx={{ width: 100, margin: 0 }}
             onClick={() => setDisplayModal(false)}
           >
             Cancel
@@ -169,7 +169,7 @@ const ExpensesList = () => {
         <div>
           <Button
             variant="outlined"
-            sx={{ width: 100, margin: 2 }}
+            sx={{ width: 100, margin: 0 }}
             onClick={() => confirmDelete()}
           >
             Delete

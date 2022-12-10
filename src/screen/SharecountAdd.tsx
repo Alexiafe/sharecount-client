@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 
 // MUI
 import {
+  Button,
   IconButton,
   List,
   ListItem,
@@ -35,15 +36,22 @@ const SharecountAdd = () => {
   const [participantsNameArray, setParticipantsNameArray] = useState<string[]>(
     []
   );
+  const [participantError, setParticipantError] = useState<boolean>(false);
+
   const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession?.email;
   const header = `New sharecount`;
 
   const addParticipants = () => {
+    if (participantTextField.trim().length === 0) {
+      setParticipantError(true);
+      return;
+    }
     let newParticipants = [...participantsNameArray];
     newParticipants.push(participantTextField);
     setParticipantsNameArray(newParticipants);
     setParticipantTextField("");
+    setParticipantError(false);
   };
 
   const deleteParticipant = (participant: string) => {
@@ -184,15 +192,16 @@ const SharecountAdd = () => {
                 InputLabelProps={{
                   shrink: true,
                 }}
+                error={"Name is required" && participantError}
                 InputProps={{
                   endAdornment: (
-                    <IconButton
-                      size="large"
-                      edge="end"
+                    <Button
+                      variant="contained"
+                      sx={{ margin: 0, borderRadius: "4px", width: "30px" }}
                       onClick={() => addParticipants()}
                     >
-                      <AddIcon />
-                    </IconButton>
+                      ADD
+                    </Button>
                   ),
                 }}
               />

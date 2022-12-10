@@ -48,6 +48,8 @@ const SharecountEdit = () => {
     []
   );
   const [error, setError] = useState<any>(null);
+  const [participantError, setParticipantError] = useState<boolean>(false);
+
   const [oldparticipantsNameArray, setOldParticipantsNameArray] = useState<
     string[]
   >([]);
@@ -115,10 +117,15 @@ const SharecountEdit = () => {
   const handleCloseModal = () => setDisplayModal(false);
 
   const addParticipants = () => {
+    if (participantTextField.trim().length === 0) {
+      setParticipantError(true);
+      return;
+    }
     let newParticipants = [...participantsNameArray];
     newParticipants.push(participantTextField);
     setParticipantsNameArray(newParticipants);
     setParticipantTextField("");
+    setParticipantError(false);
   };
 
   const deleteParticipant = (participant: string) => {
@@ -196,12 +203,14 @@ const SharecountEdit = () => {
 
   let modalContent = (
     <Box sx={style}>
-      <Typography sx={{ mt: 2 }}>Confirm delete?</Typography>
-      <div className="flex justify-center">
+      <Typography variant="h6" sx={{ m: 2 }}>
+        Confirm delete?
+      </Typography>
+      <div className="flex justify-around">
         <div>
           <Button
             variant="outlined"
-            sx={{ width: 100, margin: 2 }}
+            sx={{ width: 100, margin: 0 }}
             onClick={() => setDisplayModal(false)}
           >
             Cancel
@@ -210,7 +219,7 @@ const SharecountEdit = () => {
         <div>
           <Button
             variant="outlined"
-            sx={{ width: 100, margin: 2 }}
+            sx={{ width: 100, margin: 0 }}
             onClick={() => confirmDelete()}
           >
             Delete
@@ -303,15 +312,16 @@ const SharecountEdit = () => {
                 InputLabelProps={{
                   shrink: true,
                 }}
+                error={"Name is required" && participantError}
                 InputProps={{
                   endAdornment: (
-                    <IconButton
-                      size="large"
-                      edge="end"
+                    <Button
+                      variant="contained"
+                      sx={{ margin: 0, borderRadius: "4px", width: "30px" }}
                       onClick={() => addParticipants()}
                     >
-                      <AddIcon />
-                    </IconButton>
+                      ADD
+                    </Button>
                   ),
                 }}
               />
@@ -321,6 +331,7 @@ const SharecountEdit = () => {
         <footer className="flex w-full pb-6 justify-center">
           <Button
             variant="outlined"
+            color="error"
             sx={{ width: 200, margin: 2 }}
             onClick={() => setDisplayModal(true)}
           >

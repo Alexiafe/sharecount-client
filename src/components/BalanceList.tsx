@@ -55,10 +55,14 @@ const BalanceList = () => {
               textAlign: "right",
             }}
             primary={
-              p.balance > 0 ? (
+              p.balance === 0 ? (
                 <Typography
-                  sx={{ color: "green", fontSize: "20px" }}
-                >{`+${p.balance.toFixed(2)}`}</Typography>
+                  sx={{ fontSize: "20px" }}
+                >{p.balance.toFixed(2)}</Typography>
+              ) : p.balance > 0 ? (
+                <Typography sx={{ color: "green", fontSize: "20px" }}>
+                  {`+${p.balance.toFixed(2)}`}
+                </Typography>
               ) : (
                 <Typography sx={{ color: "#E53935", fontSize: "20px" }}>
                   {p.balance.toFixed(2)}

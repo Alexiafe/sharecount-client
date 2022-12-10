@@ -143,14 +143,21 @@ const SharecountsList = () => {
             secondary={
               <React.Fragment>
                 Balance:
-                {s.balance > 0 ? (
+                {s.balance === 0 && (
+                  <Typography component="span">
+                    {` ${s.balance} ${s.currency} `}
+                  </Typography>
+                )}
+                {s.balance > 0 && (
                   <Typography sx={{ color: "green" }} component="span">
                     {` +${s.balance} ${s.currency}
                   `}
                   </Typography>
-                ) : (
+                )}
+                {s.balance < 0 && (
                   <Typography sx={{ color: "#E53935" }} component="span">
-                    {` ${s.balance} ${s.currency} `}
+                    {` ${s.balance} ${s.currency}
+                  `}
                   </Typography>
                 )}
               </React.Fragment>
@@ -172,11 +179,11 @@ const SharecountsList = () => {
     <Box sx={style}>
       <Typography variant="h6">{selectedSharecount.name}</Typography>
       <Typography sx={{ mt: 2 }}>Confirm delete?</Typography>
-      <div className="flex justify-center">
+      <div className="flex justify-around">
         <div>
           <Button
             variant="outlined"
-            sx={{ width: 100, margin: 2 }}
+            sx={{ width: 100, margin: 0 }}
             onClick={() => setDisplayModal(false)}
           >
             Cancel
@@ -185,7 +192,7 @@ const SharecountsList = () => {
         <div>
           <Button
             variant="outlined"
-            sx={{ width: 100, margin: 2 }}
+            sx={{ width: 100, margin: 0 }}
             onClick={() => confirmDelete()}
           >
             Delete
