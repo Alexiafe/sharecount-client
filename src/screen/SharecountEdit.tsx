@@ -33,7 +33,6 @@ import {
 } from "@mui/material";
 import { Box } from "@mui/system";
 import ClearIcon from "@mui/icons-material/Clear";
-import AddIcon from "@mui/icons-material/Add";
 
 // Other
 import { useFormik } from "formik";
@@ -299,7 +298,7 @@ const SharecountEdit = () => {
           <div className="py-2 text-text">
             Participants:
             <ul>{listParticipants}</ul>
-            <div className="flex">
+            <div className="flex py-4">
               <TextField
                 fullWidth
                 required
@@ -313,18 +312,16 @@ const SharecountEdit = () => {
                   shrink: true,
                 }}
                 error={"Name is required" && participantError}
-                InputProps={{
-                  endAdornment: (
-                    <Button
-                      variant="contained"
-                      sx={{ margin: 0, borderRadius: "4px", width: "30px" }}
-                      onClick={() => addParticipants()}
-                    >
-                      ADD
-                    </Button>
-                  ),
-                }}
               />
+              <Button
+                className="self-end"
+                style={{ marginLeft: "8px" }}
+                variant="contained"
+                sx={{ margin: 0, borderRadius: "4px", height: "30px" }}
+                onClick={() => addParticipants()}
+              >
+                ADD
+              </Button>
             </div>
           </div>
         </div>
