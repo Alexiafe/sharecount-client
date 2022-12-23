@@ -34,7 +34,7 @@ const theme = createTheme({
     },
   },
   shape: {
-    borderRadius: 30,
+    borderRadius: 15,
   },
   typography: {
     allVariants: {

@@ -131,6 +131,7 @@ const SharecountAdd = () => {
           title={header}
           cancelButton={true}
           saveButton={true}
+          onReturn={() => navigate(`/`)}
           onClick={() => formik.handleSubmit()}
         ></Header>
         <div className="flex flex-col p-4">
@@ -139,6 +140,7 @@ const SharecountAdd = () => {
               <TextField
                 fullWidth
                 required
+                autoFocus
                 id="sharecountName"
                 name="sharecountName"
                 label="Name"
@@ -197,7 +199,7 @@ const SharecountAdd = () => {
                 className="self-end"
                 style={{ marginLeft: "8px" }}
                 variant="contained"
-                sx={{ margin: 0, borderRadius: "4px", height: "30px" }}
+                sx={{ margin: 0, height: "30px" }}
                 onClick={() => addParticipants()}
               >
                 ADD

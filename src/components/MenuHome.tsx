@@ -17,31 +17,35 @@ const MenuHome = (props: IPropsMenuHome) => {
   return (
     <div
       className="flex w-full bg-white text-center"
-      style={{ height: "100px" }}
+      style={{ height: "120px" }}
     >
-      <div className="flex-1 self-center" onClick={() => navigate("/")}>
-        <IconButton size="large">
-          <GridViewIcon
-            className={`${screen === "home" ? "text-secondary" : "text-text"}`}
-          />
-        </IconButton>
-      </div>
-      <div
-        className="flex-1 self-center"
-        onClick={() => navigate("/sharecount-add")}
-      >
-        <IconButton>
-          <AddCircleIcon className="text-text" sx={{ fontSize: 55 }} />
-        </IconButton>
-      </div>
-      <div className="flex-1 self-center" onClick={() => navigate("/login")}>
-        <IconButton size="large">
-          <PersonIcon
-            className={`${
-              screen === "profile" ? "text-secondary" : "text-text"
-            }`}
-          />
-        </IconButton>
+      <div className="flex w-full" style={{ height: "100px" }}>
+        <div className="flex-1 self-center" onClick={() => navigate("/")}>
+          <IconButton size="large">
+            <GridViewIcon
+              className={`${
+                screen === "home" ? "text-secondary" : "text-text"
+              }`}
+            />
+          </IconButton>
+        </div>
+        <div
+          className="flex-1 self-center"
+          onClick={() => navigate("/sharecount-add")}
+        >
+          <IconButton>
+            <AddCircleIcon className="text-text" sx={{ fontSize: 55 }} />
+          </IconButton>
+        </div>
+        <div className="flex-1 self-center" onClick={() => navigate("/login")}>
+          <IconButton size="large">
+            <PersonIcon
+              className={`${
+                screen === "profile" ? "text-secondary" : "text-text"
+              }`}
+            />
+          </IconButton>
+        </div>
       </div>
     </div>
   );

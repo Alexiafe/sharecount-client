@@ -205,6 +205,11 @@ const ExpensesList = () => {
                       <div className="text-secondary">
                         {moment(date).isSame(moment(), "day")
                           ? "Today"
+                          : moment(date).isSame(
+                              moment().subtract(1, "days"),
+                              "day"
+                            )
+                          ? "Yesterday"
                           : moment(date).format("DD/MM/YYYY")}
                       </div>
                     ) : (

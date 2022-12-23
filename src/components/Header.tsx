@@ -25,6 +25,7 @@ interface IPropsHeader {
   cancelButton?: boolean;
   shareButton?: boolean;
   onClick?: () => void;
+  onReturn?: () => void;
 }
 
 const Header = (props: IPropsHeader) => {
@@ -55,7 +56,7 @@ const Header = (props: IPropsHeader) => {
     return (
       <header
         className="flex flex-col bg-primary text-white justify-center p-4"
-        style={{ height: "150px", borderRadius: "0 0 30px 30px" }}
+        style={{ height: "150px", borderRadius: "0 0 15px 15px" }}
       >
         <div className="flex justify-between">
           <div className="flex">
@@ -65,13 +66,9 @@ const Header = (props: IPropsHeader) => {
                   size="large"
                   edge="start"
                   color="inherit"
-                  onClick={() => {
-                    if (screen === "Expenses" || screen === "Profile")
-                      navigate("/");
-                    else navigate(-1);
-                  }}
+                  onClick={() => props.onReturn?.()}
                 >
-                  <ArrowBackIosIcon />
+                  <ArrowBackIosIcon sx={{ fontSize: 27 }} />
                 </IconButton>
               )}
             </div>
@@ -81,9 +78,9 @@ const Header = (props: IPropsHeader) => {
                   size="large"
                   edge="start"
                   color="inherit"
-                  onClick={() => navigate(-1)}
+                  onClick={() => props.onReturn?.()}
                 >
-                  <CloseIcon />
+                  <CloseIcon sx={{ fontSize: 27 }} />
                 </IconButton>
               )}
             </div>
@@ -97,7 +94,7 @@ const Header = (props: IPropsHeader) => {
                   color="inherit"
                   onClick={() => props.onClick?.()}
                 >
-                  <EditIcon />
+                  <EditIcon sx={{ fontSize: 27 }} />
                 </IconButton>
               )}
             </div>
@@ -114,7 +111,7 @@ const Header = (props: IPropsHeader) => {
                     })
                   }
                 >
-                  <ShareIcon />
+                  <ShareIcon sx={{ fontSize: 27 }} />
                 </IconButton>
               )}
             </div>
@@ -126,7 +123,7 @@ const Header = (props: IPropsHeader) => {
                   color="inherit"
                   onClick={() => props.onClick?.()}
                 >
-                  <DoneIcon />
+                  <DoneIcon sx={{ fontSize: 27 }} />
                 </IconButton>
               )}
             </div>

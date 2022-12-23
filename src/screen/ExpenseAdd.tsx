@@ -202,7 +202,11 @@ const ExpenseAdd = () => {
   } else if (error) {
     return (
       <div>
-        <Header title={header} backButton={true}></Header>
+        <Header
+          title={header}
+          backButton={true}
+          onReturn={() => navigate(`/sharecount/${params.sharecountID}`)}
+        ></Header>
         Please try again later
       </div>
     );
@@ -215,14 +219,16 @@ const ExpenseAdd = () => {
           title={header}
           cancelButton={true}
           saveButton={true}
+          onReturn={() => navigate(`/sharecount/${params.sharecountID}`)}
           onClick={() => formik.handleSubmit()}
         ></Header>
         <div className="flex flex-col p-4">
           <form className="flex flex-col" onSubmit={formik.handleSubmit}>
             <div className="py-2">
               <TextField
-                required
                 fullWidth
+                required
+                autoFocus
                 id="expenseName"
                 name="expenseName"
                 label="Name"

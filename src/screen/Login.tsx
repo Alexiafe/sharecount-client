@@ -53,10 +53,7 @@ const Login = () => {
             </Button>
           </div>
         )}
-        <footer
-          className="flex bg-gray-200 bottom-0 absolute w-full"
-          style={{ height: "100px" }}
-        >
+        <footer className="flex bottom-0 absolute w-full">
           <MenuHome screen="profile"></MenuHome>
         </footer>
       </div>

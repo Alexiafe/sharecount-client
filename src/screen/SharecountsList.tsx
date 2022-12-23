@@ -25,11 +25,11 @@ import {
   IconButton,
   List,
   ListItem,
+  ListItemButton,
   ListItemText,
   Modal,
   Typography,
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 interface ISharecountList {
@@ -125,11 +125,10 @@ const SharecountsList = () => {
   const listSharecounts = sharecounts.map((s: ISharecountList) => (
     <li key={s.id} className="py-2 px-5">
       <List disablePadding>
-        <ListItem
-          button
+        <ListItemButton
           sx={{
             bgcolor: "white",
-            borderRadius: "20px",
+            borderRadius: "15px",
           }}
         >
           <ListItemText
@@ -168,9 +167,9 @@ const SharecountsList = () => {
             size="large"
             onClick={() => navigate(`/sharecount/${s.id}`)}
           >
-            <ChevronRightIcon />
+            <ChevronRightIcon sx={{ fontSize: 30 }} />
           </IconButton>
-        </ListItem>
+        </ListItemButton>
       </List>
     </li>
   ));

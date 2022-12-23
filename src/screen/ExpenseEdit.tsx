@@ -289,7 +289,15 @@ const ExpenseEdit = () => {
   } else if (error) {
     return (
       <div>
-        <Header title={header} backButton={true}></Header>
+        <Header
+          title={header}
+          backButton={true}
+          onReturn={() =>
+            navigate(
+              `/sharecount/${params.sharecountID}/expense/${params.expenseID}`
+            )
+          }
+        ></Header>
         Please try again later
       </div>
     );
@@ -302,6 +310,11 @@ const ExpenseEdit = () => {
           title={header}
           cancelButton={true}
           saveButton={true}
+          onReturn={() =>
+            navigate(
+              `/sharecount/${params.sharecountID}/expense/${params.expenseID}`
+            )
+          }
           onClick={() => formik.handleSubmit()}
         ></Header>
         <div className="flex flex-1 flex-col p-4 overflow-auto">

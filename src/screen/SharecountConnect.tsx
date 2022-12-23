@@ -108,7 +108,11 @@ const SharecountConnect = () => {
   } else if (error) {
     return (
       <div>
-        <Header title={header} backButton={true}></Header>
+        <Header
+          title={header}
+          cancelButton={true}
+          onReturn={() => navigate(`/`)}
+        ></Header>
         Please try again later
       </div>
     );

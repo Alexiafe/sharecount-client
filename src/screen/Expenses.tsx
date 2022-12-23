@@ -73,6 +73,7 @@ const Expenses = () => {
           editButton={true}
           shareButton={true}
           screen="Expenses"
+          onReturn={() => navigate(`/`)}
           onClick={edit}
         ></Header>
         <MenuTabs></MenuTabs>

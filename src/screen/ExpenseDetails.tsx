@@ -106,6 +106,11 @@ const ExpensesDetails = () => {
           backButton={true}
           editButton={true}
           screen="Details"
+          onReturn={() =>
+            navigate(
+              `/sharecount/${params.sharecountID}`
+            )
+          }
           onClick={edit}
         ></Header>
         <div className="items-center p-4">
