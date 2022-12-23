@@ -1,5 +1,6 @@
 // Context
 import AuthContext from "../context/auth.context";
+import SharecountsContext from "../context/sharecounts.context";
 
 // Components
 import Header from "../components/Header";
@@ -39,6 +40,8 @@ const SharecountAdd = () => {
 
   const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession?.email;
+  const { sharecountsContext, setSharecountsContext } =
+    useContext(SharecountsContext);
   const header = `New sharecount`;
 
   const addParticipants = () => {
@@ -66,11 +69,21 @@ const SharecountAdd = () => {
       name: sharecount.sharecountName,
       currency: sharecount.currency,
       participantsToAdd: participantsNameArray,
+      balance: 0,
     };
 
     setIsLoaded(false);
     addSharecountService(newSharecount).then((sharecount) => {
       navigate(`/sharecount-connect/${sharecount.id}`);
+      setSharecountsContext([
+        ...sharecountsContext,
+        {
+          id: sharecount.id,
+          name: sharecount.name,
+          currency: sharecount.currency,
+          balance: 0,
+        },
+      ]);
     });
   };
 

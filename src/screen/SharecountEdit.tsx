@@ -3,6 +3,7 @@ import { IParticipantResponse } from "../interfaces/interfaces";
 
 // Context
 import AuthContext from "../context/auth.context";
+import SharecountsContext from "../context/sharecounts.context";
 
 // Components
 import Header from "../components/Header";
@@ -55,6 +56,8 @@ const SharecountEdit = () => {
   const [displayModal, setDisplayModal] = useState<boolean>(false);
   const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession?.email;
+  const { sharecountsContext, setSharecountsContext } =
+    useContext(SharecountsContext);
 
   const header = `Edit sharecount`;
 
@@ -105,6 +108,11 @@ const SharecountEdit = () => {
       () => {
         setIsLoaded(true);
         navigate("/");
+        setSharecountsContext(
+          sharecountsContext.filter((s) => {
+            return s.id !== sharecount_id;
+          })
+        );
       },
       (error) => {
         setIsLoaded(true);
@@ -153,9 +161,24 @@ const SharecountEdit = () => {
     };
 
     setIsLoaded(false);
-    editSharecountService(newSharecount).then(() => {
+    editSharecountService(newSharecount).then((sharecount) => {
       setIsLoaded(true);
       navigate(`/sharecount/${params.sharecountID}`);
+      let filteredSharecounts = sharecountsContext.filter((s) => {
+        return s.id !== newSharecount.id;
+      });
+      let oldBlance = sharecountsContext.find((s) => {
+        return s.id === newSharecount.id;
+      })?.balance;
+      setSharecountsContext([
+        ...filteredSharecounts,
+        {
+          id: sharecount.id,
+          name: sharecount.name,
+          currency: sharecount.currency,
+          balance: oldBlance!,
+        },
+      ]);
     });
   };
 

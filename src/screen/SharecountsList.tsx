@@ -3,6 +3,7 @@ import { IUserInSharecountResponse } from "../interfaces/interfaces";
 
 // Context
 import AuthContext from "../context/auth.context";
+import SharecountsContext from "../context/sharecounts.context";
 
 // Components
 import Loader from "../components/Loader";
@@ -49,6 +50,8 @@ const SharecountsList = () => {
   const [displayModal, setDisplayModal] = useState<boolean>(false);
   const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession?.email;
+  const { sharecountsContext, setSharecountsContext } =
+  useContext(SharecountsContext);
 
   const style = {
     position: "absolute" as "absolute",
@@ -65,25 +68,40 @@ const SharecountsList = () => {
   useEffect(() => {
     if (userEmail) {
       setIsLoaded(false);
-      getUserService(userEmail!).then(
-        (user) => {
-          setIsLoaded(true);
-          setSharecounts(
-            user.userInSharecount.map(
-              (userInSharecount: IUserInSharecountResponse) => ({
-                id: userInSharecount.sharecount?.id,
-                name: userInSharecount.sharecount?.name,
-                currency: userInSharecount.sharecount?.currency,
-                balance: userInSharecount.participant?.balance,
-              })
-            )
-          );
-        },
-        (error) => {
-          setIsLoaded(true);
-          setError(error);
-        }
-      );
+      if (sharecountsContext.length > 0) {
+        setSharecounts(sharecountsContext);
+        setIsLoaded(true);
+      } else {
+        getUserService(userEmail!).then(
+          (user) => {
+            setIsLoaded(true);
+            setSharecounts(
+              user.userInSharecount.map(
+                (userInSharecount: IUserInSharecountResponse) => ({
+                  id: userInSharecount.sharecount?.id,
+                  name: userInSharecount.sharecount?.name,
+                  currency: userInSharecount.sharecount?.currency,
+                  balance: userInSharecount.participant?.balance,
+                })
+              )
+            );
+            setSharecountsContext(
+              user.userInSharecount.map(
+                (userInSharecount: IUserInSharecountResponse) => ({
+                  id: userInSharecount.sharecount?.id,
+                  name: userInSharecount.sharecount?.name,
+                  currency: userInSharecount.sharecount?.currency,
+                  balance: userInSharecount.participant?.balance,
+                })
+              )
+            );
+          },
+          (error) => {
+            setIsLoaded(true);
+            setError(error);
+          }
+        );
+      }
     }
   }, [userEmail, userLoading]);
 
