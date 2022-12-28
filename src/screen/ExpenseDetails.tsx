@@ -3,10 +3,15 @@ import {
   ISharecountResponse,
   IExpenseResponse,
   IPartakerResponse,
+  ISharecountContext,
+  IExpenseContext,
+  IPartakersContext,
+  IParticipantResponse,
 } from "../interfaces/interfaces";
 
 // Context
 import AuthContext from "../context/auth.context";
+import SharecountsContext from "../context/sharecounts.context";
 
 // Components
 import Header from "../components/Header";
@@ -29,56 +34,68 @@ const ExpensesDetails = () => {
   const params = useParams();
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const [expense, setExpense] = useState<IExpenseResponse | undefined>(
-    undefined
-  );
-  const [partakers, setPartakers] = useState<IPartakerResponse[]>([]);
-  const [sharecount, setSharecount] = useState<ISharecountResponse | undefined>(
-    undefined
-  );
+  const [sharecount, setSharecount] = useState<ISharecountContext>();
+  const [expense, setExpense] = useState<IExpenseContext>();
   const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession?.email;
+
+  const { sharecountsContext, setSharecountsContext } =
+    useContext(SharecountsContext);
   const header = expense?.name;
   const date = moment(expense?.date).format("DD/MM/YYYY");
 
   useEffect(() => {
-    getSharecountService(parseInt(params.sharecountID!)).then(
-      (sharecount) => {
-        setIsLoaded(true);
-        setSharecount(sharecount);
-        let expense = sharecount.expenses.filter(
-          (expense: IExpenseResponse) =>
-            expense.id === parseInt(params.expenseID!)
-        )[0];
-        setExpense(expense);
-        setPartakers(expense.partakers);
-      },
-      (error) => {
-        setIsLoaded(true);
-        setError(error);
-      }
+    let currentSharecount = sharecountsContext.find(
+      (sharecount) => sharecount.id === parseInt(params.sharecountID!)
     );
+    let currentExpense = currentSharecount?.expenses?.find(
+      (expense) => expense.id === parseInt(params.expenseID!)
+    );
+    if (currentExpense) {
+      setSharecount(currentSharecount);
+      setExpense(currentExpense);
+      setIsLoaded(true);
+    } else {
+      getSharecountService(parseInt(params.sharecountID!)).then(
+        (sharecount: ISharecountContext) => {
+          // setSharecountsContext([...filteredSharecounts, parsedSharecount]); // TODO
+          setSharecount(sharecount);
+          setExpense(
+            sharecount?.expenses?.find(
+              (e) => e.id === parseInt(params.expenseID!)
+            )
+          );
+          setIsLoaded(true);
+        },
+        (error) => {
+          setError(error);
+          setIsLoaded(true);
+        }
+      );
+    }
   }, [params.expenseID, params.sharecountID]);
 
   const edit = () => {
     navigate(
-      `/sharecount/${expense?.sharecount_id}/expense-edit/${params.expenseID}`
+      `/sharecount/${params.sharecountID}/expense-edit/${params.expenseID}`
     );
   };
 
-  const listExpenseParticipants = partakers.map((e: IPartakerResponse) => (
-    <li key={e.participant_id}>
-      <List disablePadding>
-        <ListItem>
-          <ListItemText primary={e.participant.name} />
-          <ListItemText
-            style={{ textAlign: "right" }}
-            primary={`${e.amount.toFixed(2)} ${sharecount?.currency}`}
-          />
-        </ListItem>
-      </List>
-    </li>
-  ));
+  const listExpenseParticipants = expense?.partakers.map(
+    (p: IPartakersContext) => (
+      <li key={p.id}>
+        <List disablePadding>
+          <ListItem>
+            <ListItemText primary={p.name} />
+            <ListItemText
+              style={{ textAlign: "right" }}
+              primary={`${p.amount.toFixed(2)} ${sharecount?.currency}`}
+            />
+          </ListItem>
+        </List>
+      </li>
+    )
+  );
 
   if (!isLoaded || userLoading) {
     return (
@@ -104,13 +121,8 @@ const ExpensesDetails = () => {
           id={Number(params.sharecountID)}
           expense_id={Number(params.expenseID)}
           backButton={true}
-          editButton={true}
           screen="Details"
-          onReturn={() =>
-            navigate(
-              `/sharecount/${params.sharecountID}`
-            )
-          }
+          onReturn={() => navigate(`/sharecount/${params.sharecountID}`)}
           onClick={edit}
         ></Header>
         <div className="items-center p-4">

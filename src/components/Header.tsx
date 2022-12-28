@@ -9,7 +9,6 @@ import { IconButton } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
-import EditIcon from "@mui/icons-material/Edit";
 import ShareIcon from "@mui/icons-material/Share";
 
 interface IPropsHeader {
@@ -20,7 +19,6 @@ interface IPropsHeader {
   expense_id?: number;
   screen?: string;
   backButton?: boolean;
-  editButton?: boolean;
   saveButton?: boolean;
   cancelButton?: boolean;
   shareButton?: boolean;
@@ -36,7 +34,6 @@ const Header = (props: IPropsHeader) => {
   const expense_id = props.expense_id;
   const screen = props.screen;
   const backButton = props.backButton;
-  const editButton = props.editButton;
   const saveButton = props.saveButton;
   const cancelButton = props.cancelButton;
   const shareButton = props.shareButton;
@@ -86,18 +83,6 @@ const Header = (props: IPropsHeader) => {
             </div>
           </div>
           <div className="flex">
-            <div>
-              {editButton && (
-                <IconButton
-                  size="large"
-                  edge="start"
-                  color="inherit"
-                  onClick={() => props.onClick?.()}
-                >
-                  <EditIcon sx={{ fontSize: 27 }} />
-                </IconButton>
-              )}
-            </div>
             <div>
               {shareButton && (
                 <IconButton

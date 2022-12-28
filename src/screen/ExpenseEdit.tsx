@@ -1,11 +1,16 @@
 // Interfaces & configs
 import {
-  IParticipantResponse,
   IPartakerResponse,
+  ISharecountContext,
+  IParticipantsContext,
+  IExpenseContext,
+  IExpenseResponse,
+  IPartakersContext,
 } from "../interfaces/interfaces";
 
 // Context
 import AuthContext from "../context/auth.context";
+import SharecountsContext from "../context/sharecounts.context";
 
 // Components
 import Header from "../components/Header";
@@ -53,8 +58,9 @@ const ExpenseEdit = () => {
   const [expenseDate, setExpenseDate] = useState<moment.Moment | null>(
     moment()
   );
+  const [oldAmount, setOldAmount] = useState<number>(0);
   const [ownerID, setOwnerID] = useState<number>(0);
-  const [participants, setParticipants] = useState<IParticipantResponse[]>([]);
+  const [participants, setParticipants] = useState<IParticipantsContext[]>([]);
   const [selectedParticipantsIDs, setSelectedParticipantsIDs] = useState<
     number[]
   >([]);
@@ -65,6 +71,10 @@ const ExpenseEdit = () => {
 
   const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession?.email;
+
+  const { sharecountsContext, setSharecountsContext } =
+    useContext(SharecountsContext);
+
   const header = `Edit expense`;
 
   const style = {
@@ -80,34 +90,56 @@ const ExpenseEdit = () => {
   };
 
   useEffect(() => {
-    getSharecountService(parseInt(params.sharecountID!)).then(
-      (sharecount) => {
-        setIsLoaded(true);
-        setParticipants(sharecount.participants);
-      },
-      (error) => {
-        setIsLoaded(true);
-        setError(error);
-      }
+    let currentSharecount = sharecountsContext.find(
+      (sharecount) => sharecount.id === parseInt(params.sharecountID!)
     );
-    getExpenseService(parseInt(params.expenseID!)).then(
-      (expense) => {
-        formik.setFieldValue("expenseName", expense.name);
-        formik.setFieldValue("expenseAmount", expense.amount_total);
-        setExpenseDate(moment(expense.date));
-        setOwnerID(expense.owner_id);
-        setSelectedParticipantsIDs(
-          expense.partakers.map(
-            (partaker: IPartakerResponse) => partaker.participant_id
-          )
-        );
-        setIsLoaded(true);
-      },
-      (error) => {
-        setIsLoaded(true);
-        setError(error);
-      }
+    let currentExpense = currentSharecount?.expenses?.find(
+      (expense) => expense.id === parseInt(params.expenseID!)
     );
+    if (currentSharecount?.participants && currentExpense) {
+      setParticipants(currentSharecount.participants!);
+      setOldAmount(currentExpense.amount_total);
+      formik.setFieldValue("expenseName", currentExpense.name);
+      formik.setFieldValue("expenseAmount", currentExpense.amount_total);
+      setExpenseDate(moment(currentExpense.date));
+      setOwnerID(currentExpense.owner.id);
+      setSelectedParticipantsIDs(
+        currentExpense.partakers.map(
+          (partaker: IPartakersContext) => partaker.id
+        )
+      );
+      setIsLoaded(true);
+    } else {
+      getSharecountService(parseInt(params.sharecountID!)).then(
+        (sharecount: ISharecountContext) => {
+          setParticipants(sharecount.participants!);
+          setIsLoaded(true);
+        },
+        (error) => {
+          setError(error);
+          setIsLoaded(true);
+        }
+      );
+      getExpenseService(parseInt(params.expenseID!)).then(
+        (expense) => {
+          setOldAmount(expense.amount_total);
+          formik.setFieldValue("expenseName", expense.name);
+          formik.setFieldValue("expenseAmount", expense.amount_total);
+          setExpenseDate(moment(expense.date));
+          setOwnerID(expense.owner_id);
+          setSelectedParticipantsIDs(
+            expense.partakers.map(
+              (partaker: IPartakerResponse) => partaker.participant_id
+            )
+          );
+          setIsLoaded(true);
+        },
+        (error) => {
+          setError(error);
+          setIsLoaded(true);
+        }
+      );
+    }
   }, [params.expenseID, params.sharecountID]);
 
   const handleCloseModal = () => setDisplayModal(false);
@@ -121,12 +153,19 @@ const ExpenseEdit = () => {
     setIsLoaded(false);
     deleteExpenseService(expense_id).then(
       () => {
-        setIsLoaded(true);
         navigate(`/sharecount/${params.sharecountID}`);
+        let currentSharecount = sharecountsContext.find(
+          (s) => s.id === parseInt(params.sharecountID!)
+        );
+        currentSharecount!.total = currentSharecount!.total - oldAmount;
+        currentSharecount!.expenses = currentSharecount!.expenses!.filter(
+          (e) => e.id !== expense_id
+        );
+        setIsLoaded(true);
       },
       (error) => {
-        setIsLoaded(true);
         setError(error);
+        setIsLoaded(true);
       }
     );
   };
@@ -171,32 +210,58 @@ const ExpenseEdit = () => {
     }
   };
 
-  const save = (expense: { expenseName: string; expenseAmount: string }) => {
+  const save = (expenseNew: { expenseName: string; expenseAmount: string }) => {
+    setIsLoaded(false);
+
     const newExpense = {
       id: parseInt(params.expenseID!),
-      name: expense.expenseName,
-      amount_total: parseInt(expense.expenseAmount),
+      name: expenseNew.expenseName,
+      amount_total: parseInt(expenseNew.expenseAmount),
       date: moment(expenseDate).format(),
       owner_id: ownerID,
       partakers: selectedParticipantsIDs.map((p: number) => {
         return {
           amount:
-            parseInt(expense.expenseAmount) / selectedParticipantsIDs.length,
+            parseInt(expenseNew.expenseAmount) / selectedParticipantsIDs.length,
           participant_id: p,
         };
       }),
     };
 
-    setIsLoaded(false);
-    editExpenseService(newExpense).then(() => {
-      setIsLoaded(true);
+    editExpenseService(newExpense).then((expense: IExpenseResponse) => {
       navigate(
         `/sharecount/${params.sharecountID}/expense/${params.expenseID}`
       );
+      let currentSharecount = sharecountsContext.find(
+        (s) => s.id === parseInt(params.sharecountID!)
+      );
+
+      let newExpenses: IExpenseContext = {
+        id: expense.id,
+        name: expense.name,
+        amount_total: expense.amount_total,
+        date: expense.date,
+        owner: {
+          id: expense.owner.id,
+          name: expense.owner.name,
+        },
+        partakers: expense.partakers.map((partaker: IPartakerResponse) => ({
+          id: partaker.participant_id,
+          name: partaker.participant.name,
+          amount: partaker.amount,
+        })),
+      };
+      currentSharecount!.total =
+        currentSharecount!.total - oldAmount + expense.amount_total;
+      currentSharecount!.expenses = currentSharecount!.expenses!.filter(
+        (e) => e.id !== expense.id
+      );
+      currentSharecount?.expenses?.push(newExpenses);
+      setIsLoaded(true);
     });
   };
 
-  const listParticipants = participants.map((p: IParticipantResponse) => (
+  const listParticipants = participants.map((p: IParticipantsContext) => (
     <li key={p.id}>
       <FormGroup>
         <FormControlLabel

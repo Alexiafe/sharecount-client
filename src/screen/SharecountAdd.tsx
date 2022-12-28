@@ -28,10 +28,15 @@ import ClearIcon from "@mui/icons-material/Clear";
 // Other
 import { useFormik } from "formik";
 import * as yup from "yup";
+import {
+  IParticipantResponse,
+  ISharecountResponse,
+} from "../interfaces/interfaces";
 
 const SharecountAdd = () => {
   const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState<boolean>(true);
+
   const [participantTextField, setParticipantTextField] = useState<string>("");
   const [participantsNameArray, setParticipantsNameArray] = useState<string[]>(
     []
@@ -39,9 +44,11 @@ const SharecountAdd = () => {
   const [participantError, setParticipantError] = useState<boolean>(false);
 
   const { userSession, userLoading } = useContext(AuthContext);
-  const userEmail = userSession?.email;
+  const userEmail = userSession.email;
+
   const { sharecountsContext, setSharecountsContext } =
     useContext(SharecountsContext);
+
   const header = `New sharecount`;
 
   const addParticipants = () => {
@@ -65,26 +72,37 @@ const SharecountAdd = () => {
   };
 
   const save = (sharecount: { sharecountName: string; currency: string }) => {
+    setIsLoaded(false);
     const newSharecount = {
       name: sharecount.sharecountName,
       currency: sharecount.currency,
       participantsToAdd: participantsNameArray,
       balance: 0,
     };
-
-    setIsLoaded(false);
-    addSharecountService(newSharecount).then((sharecount) => {
-      navigate(`/sharecount-connect/${sharecount.id}`);
-      setSharecountsContext([
-        ...sharecountsContext,
-        {
-          id: sharecount.id,
-          name: sharecount.name,
-          currency: sharecount.currency,
-          balance: 0,
-        },
-      ]);
-    });
+    addSharecountService(newSharecount).then(
+      (sharecount: ISharecountResponse) => {
+        setSharecountsContext([
+          ...sharecountsContext,
+          {
+            id: sharecount.id,
+            name: sharecount.name,
+            currency: sharecount.currency,
+            total: sharecount.total,
+            user: "", // It's done after user connect to the sharecount
+            balance: 0,
+            participants: sharecount.participants!.map(
+              (participant: IParticipantResponse) => ({
+                id: participant.id,
+                name: participant.name,
+                balance: participant.balance,
+              })
+            ),
+          },
+        ]);
+        navigate(`/sharecount-connect/${sharecount.id}`);
+        setIsLoaded(true);
+      }
+    );
   };
 
   const listParticipants = participantsNameArray.map((p: string) => (

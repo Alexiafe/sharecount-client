@@ -1,8 +1,15 @@
 // Interfaces
-import { IParticipantResponse } from "../interfaces/interfaces";
+import {
+  ISharecountContext,
+  IExpenseContext,
+  IExpenseResponse,
+  IPartakerResponse,
+  IParticipantsContext,
+} from "../interfaces/interfaces";
 
 // Context
 import AuthContext from "../context/auth.context";
+import SharecountsContext from "../context/sharecounts.context";
 
 // Components
 import Header from "../components/Header";
@@ -43,7 +50,7 @@ const ExpenseAdd = () => {
     moment()
   );
   const [ownerID, setOwnerID] = useState<number>(0);
-  const [participants, setParticipants] = useState<IParticipantResponse[]>([]);
+  const [participants, setParticipants] = useState<IParticipantsContext[]>([]);
   const [selectedParticipantsIDs, setSelectedParticipantsIDs] = useState<
     number[]
   >([]);
@@ -52,23 +59,37 @@ const ExpenseAdd = () => {
     useState<string>("");
   const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession?.email;
+  const { sharecountsContext, setSharecountsContext } =
+    useContext(SharecountsContext);
   const header = `New expense`;
 
   useEffect(() => {
-    getSharecountService(parseInt(params.sharecountID!)).then(
-      (sharecount) => {
-        setIsLoaded(true);
-        setParticipants(sharecount.participants);
-        setOwnerID(sharecount.participants[0].id);
-        setSelectedParticipantsIDs(
-          sharecount.participants.map((p: IParticipantResponse) => p.id)
-        );
-      },
-      (error) => {
-        setIsLoaded(true);
-        setError(error);
-      }
+    let currentSharecount = sharecountsContext.find(
+      (sharecount) => sharecount.id === parseInt(params.sharecountID!)
     );
+    if (currentSharecount?.participants) {
+      setParticipants(currentSharecount.participants);
+      setOwnerID(currentSharecount.participants[0].id);
+      setSelectedParticipantsIDs(
+        currentSharecount.participants.map((p: IParticipantsContext) => p.id)
+      );
+      setIsLoaded(true);
+    } else {
+      getSharecountService(parseInt(params.sharecountID!)).then(
+        (sharecount: ISharecountContext) => {
+          setParticipants(sharecount.participants!);
+          setOwnerID(sharecount.participants![0].id);
+          setSelectedParticipantsIDs(
+            sharecount.participants!.map((p: IParticipantsContext) => p.id)
+          );
+          setIsLoaded(true);
+        },
+        (error) => {
+          setError(error);
+          setIsLoaded(true);
+        }
+      );
+    }
   }, [params.sharecountID]);
 
   const handleDateChange = (newDate: moment.Moment | null) => {
@@ -112,6 +133,8 @@ const ExpenseAdd = () => {
   };
 
   const save = (expense: { expenseName: string; expenseAmount: string }) => {
+    setIsLoaded(false);
+
     const newExpense = {
       name: expense.expenseName,
       amount_total: parseInt(expense.expenseAmount),
@@ -130,14 +153,35 @@ const ExpenseAdd = () => {
       }),
     };
 
-    setIsLoaded(false);
-    addExpenseService(newExpense).then(() => {
-      setIsLoaded(true);
+    addExpenseService(newExpense).then((expense: IExpenseResponse) => {
       navigate(`/sharecount/${params.sharecountID}`);
+      let currentSharecount = sharecountsContext.find(
+        (s) => s.id === parseInt(params.sharecountID!)
+      );
+      let newExpenses: IExpenseContext = {
+        id: expense.id,
+        name: expense.name,
+        amount_total: expense.amount_total,
+        date: expense.date,
+        owner: {
+          id: expense.owner.id,
+          name: expense.owner.name,
+        },
+        partakers: expense.partakers.map((partaker: IPartakerResponse) => ({
+          id: partaker.participant_id,
+          name: partaker.participant.name,
+          amount: partaker.amount,
+        })),
+      };
+      console.log(currentSharecount)
+      console.log(expense)  
+      currentSharecount!.total = expense.sharecount.total;
+      currentSharecount?.expenses?.push(newExpenses);
+      setIsLoaded(true);
     });
   };
 
-  const listParticipants = participants.map((p: IParticipantResponse) => (
+  const listParticipants = participants.map((p: IParticipantsContext) => (
     <li key={p.id}>
       <FormGroup>
         <FormControlLabel

@@ -1,23 +1,17 @@
+// Interfaces
+import { ISharecountContext } from "../interfaces/interfaces";
+
 import { createContext, useEffect, useState } from "react";
 
-interface ISharecountList {
-  id: number;
-  name: string;
-  currency: string;
-  balance: number;
-}
-
 interface ISharecountsContext {
-  sharecountsContext: ISharecountList[];
-  setSharecountsContext: (sharecounts: ISharecountList[]) => void;
+  sharecountsContext: ISharecountContext[];
+  setSharecountsContext: (sharecounts: ISharecountContext[]) => void;
 }
 
 const SharecountsContext = createContext({} as ISharecountsContext);
 
 export function SharecountsContextProvider({ children }: any) {
-  const [sharecountsContext, setSharecountsContext] = useState<
-    ISharecountList[]
-  >([]);
+  const [sharecountsContext, setSharecountsContext] = useState<ISharecountContext[]>([]);
 
   useEffect(() => {}, []);
 

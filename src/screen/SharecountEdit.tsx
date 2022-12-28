@@ -1,5 +1,12 @@
 // Interfaces
-import { IParticipantResponse } from "../interfaces/interfaces";
+import {
+  ISharecountContext,
+  IExpenseResponse,
+  IPartakerResponse,
+  IParticipantResponse,
+  IParticipantsContext,
+  ISharecountResponse,
+} from "../interfaces/interfaces";
 
 // Context
 import AuthContext from "../context/auth.context";
@@ -54,8 +61,10 @@ const SharecountEdit = () => {
     string[]
   >([]);
   const [displayModal, setDisplayModal] = useState<boolean>(false);
+
   const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession?.email;
+
   const { sharecountsContext, setSharecountsContext } =
     useContext(SharecountsContext);
 
@@ -74,23 +83,39 @@ const SharecountEdit = () => {
   };
 
   useEffect(() => {
-    getSharecountService(parseInt(params.sharecountID!)).then(
-      (sharecount) => {
-        setIsLoaded(true);
-        formik.setFieldValue("sharecountName", sharecount.name);
-        formik.setFieldValue("currency", sharecount.currency);
-        setParticipantsNameArray(
-          sharecount.participants.map((p: IParticipantResponse) => p.name)
-        );
-        setOldParticipantsNameArray(
-          sharecount.participants.map((p: IParticipantResponse) => p.name)
-        );
-      },
-      (error) => {
-        setIsLoaded(true);
-        setError(error);
-      }
+    let currentSharecount = sharecountsContext.find(
+      (sharecount) => sharecount.id === parseInt(params.sharecountID!)
     );
+    if (currentSharecount) {
+      formik.setFieldValue("sharecountName", currentSharecount.name);
+      formik.setFieldValue("currency", currentSharecount.currency);
+      setParticipantsNameArray(
+        currentSharecount.participants!.map((p: IParticipantsContext) => p.name)
+      );
+      setOldParticipantsNameArray(
+        currentSharecount.participants!.map((p: IParticipantsContext) => p.name)
+      );
+      setIsLoaded(true);
+    } else {
+      getSharecountService(parseInt(params.sharecountID!)).then(
+        (sharecount: ISharecountContext) => {
+          formik.setFieldValue("sharecountName", sharecount.name);
+          formik.setFieldValue("currency", sharecount.currency);
+          let participantsName = sharecount.participants?.map(
+            (p: IParticipantsContext) => {
+              return p.name;
+            }
+          );
+          setParticipantsNameArray(participantsName!);
+          setOldParticipantsNameArray(participantsName!);
+          setIsLoaded(true);
+        },
+        (error) => {
+          setError(error);
+          setIsLoaded(true);
+        }
+      );
+    }
   }, [params.sharecountID]);
 
   const confirmDelete = () => {
@@ -106,17 +131,17 @@ const SharecountEdit = () => {
     };
     removeUserFromSharecount(userInSharecountData).then(
       () => {
-        setIsLoaded(true);
         navigate("/");
         setSharecountsContext(
           sharecountsContext.filter((s) => {
             return s.id !== sharecount_id;
           })
         );
+        setIsLoaded(true);
       },
       (error) => {
-        setIsLoaded(true);
         setError(error);
+        setIsLoaded(true);
       }
     );
   };
@@ -144,6 +169,8 @@ const SharecountEdit = () => {
   };
 
   const save = (sharecount: { sharecountName: string; currency: string }) => {
+    setIsLoaded(false);
+
     const participantsToAdd = participantsNameArray.filter(
       (p: string) => !oldparticipantsNameArray.includes(p)
     );
@@ -160,26 +187,41 @@ const SharecountEdit = () => {
       participantsToDelete: participantsToDelete,
     };
 
-    setIsLoaded(false);
-    editSharecountService(newSharecount).then((sharecount) => {
-      setIsLoaded(true);
-      navigate(`/sharecount/${params.sharecountID}`);
-      let filteredSharecounts = sharecountsContext.filter((s) => {
-        return s.id !== newSharecount.id;
-      });
-      let oldBlance = sharecountsContext.find((s) => {
-        return s.id === newSharecount.id;
-      })?.balance;
-      setSharecountsContext([
-        ...filteredSharecounts,
-        {
-          id: sharecount.id,
-          name: sharecount.name,
-          currency: sharecount.currency,
-          balance: oldBlance!,
-        },
-      ]);
-    });
+    editSharecountService(newSharecount).then(
+      (sharecount: ISharecountResponse) => {
+        let currentSharecount: ISharecountContext = sharecountsContext.find(
+          (sharecount) => sharecount.id === parseInt(params.sharecountID!)
+        )!;
+        currentSharecount.name = sharecount.name;
+        currentSharecount.currency = sharecount.currency;
+        currentSharecount.participants = sharecount.participants!.map(
+          (participant: IParticipantResponse) => ({
+            id: participant.id,
+            name: participant.name,
+            balance: participant.balance,
+          })
+        );
+        currentSharecount.expenses = sharecount.expenses!.map(
+          (expense: IExpenseResponse) => ({
+            id: expense.id,
+            name: expense.name,
+            amount_total: expense.amount_total,
+            date: expense.date,
+            owner: {
+              id: expense.owner.id,
+              name: expense.owner.name,
+            },
+            partakers: expense.partakers.map((partaker: IPartakerResponse) => ({
+              id: partaker.participant_id,
+              name: partaker.participant.name,
+              amount: partaker.amount,
+            })),
+          })
+        );
+        navigate(`/sharecount/${params.sharecountID}`);
+        setIsLoaded(true);
+      }
+    );
   };
 
   const listParticipants = participantsNameArray.map((p: string) => (

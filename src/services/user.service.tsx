@@ -1,7 +1,12 @@
 // Interfaces & configs
 import { serverUrl } from "../constants/config";
+import {
+  IUserInSharecountResponse,
+  IUserResponse,
+} from "../interfaces/interfaces";
 
 export const getUserService = (userEmail: string) => {
+  console.log("getUserService");
   return fetch(`${serverUrl}/user/${userEmail}`)
     .then((res) => {
       return res.text();
@@ -10,8 +15,18 @@ export const getUserService = (userEmail: string) => {
       return data ? JSON.parse(data) : null;
     })
     .then(
-      (user) => {
-        return user;
+      (user: IUserResponse) => {
+        let parsedSharecounts = user?.userInSharecount.map(
+          (userInSharecount: IUserInSharecountResponse) => ({
+            id: userInSharecount.sharecount.id,
+            name: userInSharecount.sharecount.name,
+            currency: userInSharecount.sharecount.currency,
+            total: userInSharecount.sharecount.total,
+            user: userInSharecount.participant.name,
+            balance: userInSharecount.participant.balance,
+          })
+        );
+        return parsedSharecounts;
       },
       (error) => {
         return error;
@@ -20,6 +35,7 @@ export const getUserService = (userEmail: string) => {
 };
 
 export const addUserService = (userEmail: string) => {
+  console.log("addUserService");
   return fetch(`${serverUrl}/user`, {
     method: "POST",
     headers: {

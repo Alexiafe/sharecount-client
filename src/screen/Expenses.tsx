@@ -1,8 +1,9 @@
 // Interfaces
-import { ISharecountResponse } from "../interfaces/interfaces";
+import { ISharecountContext } from "../interfaces/interfaces";
 
 // Context
 import AuthContext from "../context/auth.context";
+import SharecountsContext from "../context/sharecounts.context";
 
 // Components
 import Header from "../components/Header";
@@ -22,23 +23,46 @@ const Expenses = () => {
   const params = useParams();
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const [sharecount, setSharecount] = useState<ISharecountResponse | undefined>(
-    undefined
-  );
+
+  const [sharecount, setSharecount] = useState<ISharecountContext>();
+  const { sharecountsContext, setSharecountsContext } =
+    useContext(SharecountsContext);
+
   const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession?.email;
 
   useEffect(() => {
-    getSharecountService(parseInt(params.sharecountID!)).then(
-      (sharecount) => {
-        setIsLoaded(true);
-        setSharecount(sharecount);
-      },
-      (error) => {
-        setIsLoaded(true);
-        setError(error);
-      }
+    let currentSharecount = sharecountsContext.find(
+      (sharecount) => sharecount.id === parseInt(params.sharecountID!)
     );
+    if (currentSharecount?.expenses && currentSharecount?.participants) {
+      setSharecount({
+        id: currentSharecount.id,
+        name: currentSharecount.name,
+        currency: currentSharecount.currency,
+        total: currentSharecount.total,
+        user: currentSharecount.user,
+        balance: currentSharecount.balance,
+        participants: currentSharecount.participants,
+        expenses: currentSharecount.expenses,
+      });
+      setIsLoaded(true);
+    } else {
+      getSharecountService(parseInt(params.sharecountID!)).then(
+        (sharecount: ISharecountContext) => {
+          setSharecount(sharecount);
+          let filteredSharecounts = sharecountsContext.filter(
+            (sharecount) => sharecount.id !== sharecount.id
+          );
+          setSharecountsContext([...filteredSharecounts, sharecount]);
+          setIsLoaded(true);
+        },
+        (error) => {
+          setError(error);
+          setIsLoaded(true);
+        }
+      );
+    }
   }, [params.sharecountID]);
 
   const edit = () => {
@@ -70,13 +94,12 @@ const Expenses = () => {
           total={sharecount?.total}
           currency={sharecount?.currency}
           backButton={true}
-          editButton={true}
           shareButton={true}
           screen="Expenses"
           onReturn={() => navigate(`/`)}
           onClick={edit}
         ></Header>
-        <MenuTabs></MenuTabs>
+        <MenuTabs sharecount={sharecount}></MenuTabs>
       </div>
     );
   }

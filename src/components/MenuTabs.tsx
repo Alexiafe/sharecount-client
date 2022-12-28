@@ -8,6 +8,7 @@ import { useState } from "react";
 
 // MUI
 import { Tab, Tabs, Typography, Box } from "@mui/material";
+import { ISharecountContext } from "../interfaces/interfaces";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -46,7 +47,12 @@ function a11yProps(index: number) {
   };
 }
 
-const MenuTabs = () => {
+interface IPropsMenuTabs {
+  sharecount?: ISharecountContext;
+}
+
+const MenuTabs = (props: IPropsMenuTabs) => {
+  const sharecount = props.sharecount;
   const [value, setValue] = useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -55,7 +61,10 @@ const MenuTabs = () => {
 
   return (
     <div className="flex flex-1 overflow-auto h-full">
-      <Box className="fixed bg-white w-full z-10" sx={{ borderBottom: 1, borderColor: "divider" }}>
+      <Box
+        className="fixed bg-white w-full z-10"
+        sx={{ borderBottom: 1, borderColor: "divider" }}
+      >
         <Tabs
           value={value}
           onChange={handleChange}
@@ -70,10 +79,10 @@ const MenuTabs = () => {
       </Box>
       <div className="w-full mt-12">
         <TabPanel value={value} index={0}>
-          <ExpensesList />
+          <ExpensesList sharecount={sharecount} />
         </TabPanel>
         <TabPanel value={value} index={1}>
-          <BalanceList />
+          <BalanceList sharecount={sharecount} />
         </TabPanel>
         <TabPanel value={value} index={2}>
           <RefundList />

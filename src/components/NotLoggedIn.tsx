@@ -1,9 +1,6 @@
 // Components
 import { Button } from "@mui/material";
 
-// React
-import { useNavigate } from "react-router-dom";
-
 // MUI
 import Header from "./Header";
 
@@ -14,7 +11,7 @@ import { auth } from "../firebase-config";
 const NotLoggedIn = () => {
   return (
     <div>
-      <Header title="Sharecount" ></Header>
+      <Header title="Sharecount"></Header>
       <div className="p-4 flex flex-col items-center text-text">
         <Button
           variant="contained"
