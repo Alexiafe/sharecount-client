@@ -1,5 +1,8 @@
 // Interfaces
-import { IExpenseContext, ISharecountContext } from "../../interfaces/interfaces";
+import {
+  IExpenseContext,
+  ISharecountContext,
+} from "../../interfaces/interfaces";
 
 // Components
 import SearchBar from "./SearchBar";
@@ -23,11 +26,7 @@ interface IPropsExpensesList {
 const ExpensesList = (props: IPropsExpensesList) => {
   const navigate = useNavigate();
   const params = useParams();
-
   const [filter, setFilter] = useState<string>("");
-
-  const sharecount = props.sharecount;
-  const expenses = props.sharecount?.expenses;
 
   const expensesGroupped = props.sharecount?.expenses?.reduce(
     (group: any, expense: any) => {
@@ -45,7 +44,7 @@ const ExpensesList = (props: IPropsExpensesList) => {
 
   return (
     <div>
-      {expenses!.length ? (
+      {props.sharecount?.expenses!.length ? (
         <div>
           <SearchBar onClick={filterExpenses}></SearchBar>
           <div className="p-4">
@@ -78,7 +77,7 @@ const ExpensesList = (props: IPropsExpensesList) => {
                       .map((e: IExpenseContext) => (
                         <div key={e.id}>
                           <ExpenseItem
-                            sharecount={sharecount}
+                            sharecount={props.sharecount}
                             expense={e}
                           ></ExpenseItem>
                         </div>

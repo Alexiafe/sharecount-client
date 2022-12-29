@@ -17,7 +17,7 @@ const SearchBar = (props: IPropsSearchBar) => {
           props.onClick(e.target.value);
         }}
         sx={{
-          "& fieldset": { border: 'none' },
+          "& fieldset": { border: "none" },
         }}
         InputProps={{
           className: "bg-gray-100",

@@ -36,7 +36,6 @@ const ExpensesDetails = () => {
   const [expense, setExpense] = useState<IExpenseContext>();
   const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession?.email;
-
   const { sharecountsContext, setSharecountsContext } =
     useContext(SharecountsContext);
   const header = expense?.name;

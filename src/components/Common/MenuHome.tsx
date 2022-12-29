@@ -11,7 +11,6 @@ interface IPropsMenuHome {
 }
 
 const MenuHome = (props: IPropsMenuHome) => {
-  const screen = props.screen;
   const navigate = useNavigate();
 
   return (
@@ -24,7 +23,7 @@ const MenuHome = (props: IPropsMenuHome) => {
           <IconButton size="large">
             <GridViewIcon
               className={`${
-                screen === "home" ? "text-secondary" : "text-text"
+                props.screen === "home" ? "text-secondary" : "text-text"
               }`}
             />
           </IconButton>
@@ -41,7 +40,7 @@ const MenuHome = (props: IPropsMenuHome) => {
           <IconButton size="large">
             <PersonIcon
               className={`${
-                screen === "profile" ? "text-secondary" : "text-text"
+                props.screen === "profile" ? "text-secondary" : "text-text"
               }`}
             />
           </IconButton>

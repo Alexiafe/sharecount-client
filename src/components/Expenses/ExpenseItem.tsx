@@ -20,9 +20,6 @@ interface IPropsExpenseItem {
 }
 
 const ExpenseItem = (props: IPropsExpenseItem) => {
-  const sharecount = props.sharecount;
-  const expense = props.expense;
-
   const navigate = useNavigate();
 
   return (
@@ -32,7 +29,7 @@ const ExpenseItem = (props: IPropsExpenseItem) => {
           primaryTypographyProps={{
             variant: "h6",
           }}
-          primary={expense.name}
+          primary={props.expense.name}
           secondaryTypographyProps={{
             variant: "subtitle1",
           }}
@@ -41,13 +38,19 @@ const ExpenseItem = (props: IPropsExpenseItem) => {
               Paid by
               <Typography component="span">
                 {`
-                ${expense.owner.name}
-                ${expense.owner.name === sharecount?.user ? "(me)" : ""}`}
+                ${props.expense.owner.name}
+                ${
+                  props.expense.owner.name === props.sharecount?.user
+                    ? "(me)"
+                    : ""
+                }`}
               </Typography>
             </React.Fragment>
           }
           onClick={() =>
-            navigate(`/sharecount/${sharecount?.id}/expense/${expense.id}`)
+            navigate(
+              `/sharecount/${props.sharecount?.id}/expense/${props.expense.id}`
+            )
           }
         />
         <ListItemText
@@ -55,12 +58,14 @@ const ExpenseItem = (props: IPropsExpenseItem) => {
           primaryTypographyProps={{
             variant: "h6",
           }}
-          primary={`${expense.amount_total} ${sharecount?.currency}`}
+          primary={`${props.expense.amount_total} ${props.sharecount?.currency}`}
           secondaryTypographyProps={{
             variant: "subtitle1",
           }}
           onClick={() =>
-            navigate(`/sharecount/${sharecount?.id}/expense/${expense.id}`)
+            navigate(
+              `/sharecount/${props.sharecount?.id}/expense/${props.expense.id}`
+            )
           }
         />
       </ListItemButton>

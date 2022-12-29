@@ -52,7 +52,6 @@ interface IPropsMenuTabs {
 }
 
 const MenuTabs = (props: IPropsMenuTabs) => {
-  const sharecount = props.sharecount;
   const [value, setValue] = useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -79,10 +78,10 @@ const MenuTabs = (props: IPropsMenuTabs) => {
       </Box>
       <div className="w-full mt-12">
         <TabPanel value={value} index={0}>
-          <ExpensesList sharecount={sharecount} />
+          <ExpensesList sharecount={props.sharecount} />
         </TabPanel>
         <TabPanel value={value} index={1}>
-          <BalanceList sharecount={sharecount} />
+          <BalanceList sharecount={props.sharecount} />
         </TabPanel>
         <TabPanel value={value} index={2}>
           <RefundList />

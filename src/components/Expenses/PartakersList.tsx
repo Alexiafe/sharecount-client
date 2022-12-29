@@ -14,26 +14,20 @@ interface IPropsPartakersList {
 }
 
 const PartakersList = (props: IPropsPartakersList) => {
-  const errorMissingPartakers = props.errorMissingPartakers;
-  const selectedParticipantsIDs = props.selectedParticipantsIDs;
-  const participants = props.participants;
-  const selectAll = props.selectAll;
-  const onHandleCheckAll = props.onHandleCheckAll;
-  const onHandleCheckChange = props.onHandleCheckAll;
-
   return (
     <div className="py-2">
       From whom:
-      <div className="text-xs text-red-600">{errorMissingPartakers}</div>
+      <div className="text-xs text-red-600">{props.errorMissingPartakers}</div>
       <Checkbox
         checked={
-          selectedParticipantsIDs.length === participants.length || selectAll
+          props.selectedParticipantsIDs.length === props.participants.length ||
+          props.selectAll
         }
-        onChange={onHandleCheckAll}
+        onChange={props.onHandleCheckAll}
         style={{ width: "20px", padding: 0 }}
       />
       <ul>
-        {participants.map((p: IParticipantsContext) => (
+        {props.participants.map((p: IParticipantsContext) => (
           <li key={p.id}>
             <FormGroup>
               <FormControlLabel
@@ -41,9 +35,11 @@ const PartakersList = (props: IPropsPartakersList) => {
                   <Checkbox
                     value={p.id}
                     checked={
-                      selectAll ? true : selectedParticipantsIDs.includes(p.id)
+                      props.selectAll
+                        ? true
+                        : props.selectedParticipantsIDs.includes(p.id)
                     }
-                    onChange={onHandleCheckChange}
+                    onChange={props.onHandleCheckChange}
                   />
                 }
                 label={p.name}

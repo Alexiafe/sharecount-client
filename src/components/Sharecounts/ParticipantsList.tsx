@@ -19,7 +19,6 @@ interface IPropsParticipantsList {
 }
 
 const ParticipantsList = (props: IPropsParticipantsList) => {
-  const participantsNameArray = props.participantsNameArray;
   const [nameError, setNameError] = useState<boolean>(false);
   const [participantTextField, setParticipantTextField] = useState<string>("");
 
@@ -28,7 +27,7 @@ const ParticipantsList = (props: IPropsParticipantsList) => {
       setNameError(true);
       return;
     }
-    let newParticipants = [...participantsNameArray];
+    let newParticipants = [...props.participantsNameArray];
     newParticipants.push(participantTextField);
     props.onSetParticipantsNameArray(newParticipants);
     setParticipantTextField("");
@@ -37,7 +36,7 @@ const ParticipantsList = (props: IPropsParticipantsList) => {
 
   const deleteParticipant = (participant: string) => {
     props.onSetParticipantsNameArray(
-      participantsNameArray.filter((p: string) => {
+      props.participantsNameArray.filter((p: string) => {
         return p !== participant;
       })
     );
@@ -46,11 +45,11 @@ const ParticipantsList = (props: IPropsParticipantsList) => {
   return (
     <div className="py-2 text-text">
       Participants:
-      {participantsNameArray.length === 0 && (
+      {props.participantsNameArray.length === 0 && (
         <div className="text-xs text-red-600">{props.participantError}</div>
       )}
       <ul>
-        {participantsNameArray.map((p: string) => (
+        {props.participantsNameArray.map((p: string) => (
           <li key={p}>
             <List disablePadding>
               <ListItem>

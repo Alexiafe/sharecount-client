@@ -7,10 +7,8 @@ interface IPropsSharecountInfoForm {
 }
 
 const SharecountInfoForm = (props: IPropsSharecountInfoForm) => {
-  const formik = props.formik;
-
   return (
-    <form className="flex flex-col" onSubmit={formik.handleSubmit}>
+    <form className="flex flex-col" onSubmit={props.formik.handleSubmit}>
       <div className="py-2">
         <TextField
           fullWidth
@@ -19,17 +17,18 @@ const SharecountInfoForm = (props: IPropsSharecountInfoForm) => {
           id="sharecountName"
           name="sharecountName"
           label="Name"
-          value={formik.values.sharecountName}
-          onChange={formik.handleChange}
+          value={props.formik.values.sharecountName}
+          onChange={props.formik.handleChange}
           InputLabelProps={{
             shrink: true,
           }}
           error={
-            formik.touched.sharecountName &&
-            Boolean(formik.errors.sharecountName)
+            props.formik.touched.sharecountName &&
+            Boolean(props.formik.errors.sharecountName)
           }
           helperText={
-            formik.touched.sharecountName && formik.errors.sharecountName
+            props.formik.touched.sharecountName &&
+            props.formik.errors.sharecountName
           }
         />
       </div>
@@ -40,13 +39,18 @@ const SharecountInfoForm = (props: IPropsSharecountInfoForm) => {
           id="currency"
           name="currency"
           label="Currency"
-          value={formik.values.currency}
-          onChange={formik.handleChange}
+          value={props.formik.values.currency}
+          onChange={props.formik.handleChange}
           InputLabelProps={{
             shrink: true,
           }}
-          error={formik.touched.currency && Boolean(formik.errors.currency)}
-          helperText={formik.touched.currency && formik.errors.currency}
+          error={
+            props.formik.touched.currency &&
+            Boolean(props.formik.errors.currency)
+          }
+          helperText={
+            props.formik.touched.currency && props.formik.errors.currency
+          }
         />
       </div>
     </form>

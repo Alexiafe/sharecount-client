@@ -21,11 +21,9 @@ import { useContext, useEffect, useState } from "react";
 const SharecountsList = () => {
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(true);
-
   const [sharecounts, setSharecounts] = useState<ISharecountContext[]>([]);
   const { sharecountsContext, setSharecountsContext } =
     useContext(SharecountsContext);
-
   const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession.email;
 

@@ -20,7 +20,6 @@ interface IPropsSharecountItem {
 }
 
 const SharecountItem = (props: IPropsSharecountItem) => {
-  const sharecount = props.sharecount;
   const navigate = useNavigate();
 
   return (
@@ -35,37 +34,43 @@ const SharecountItem = (props: IPropsSharecountItem) => {
           primaryTypographyProps={{
             variant: "h6",
           }}
-          primary={sharecount.name}
+          primary={props.sharecount.name}
           secondaryTypographyProps={{
             variant: "subtitle1",
           }}
           secondary={
             <React.Fragment>
               Balance:
-              {sharecount.balance === 0 && (
+              {props.sharecount.balance === 0 && (
                 <Typography component="span">
-                  {` ${sharecount.balance.toFixed(2)} ${sharecount.currency} `}
+                  {` ${props.sharecount.balance.toFixed(2)} ${
+                    props.sharecount.currency
+                  } `}
                 </Typography>
               )}
-              {sharecount.balance > 0 && (
+              {props.sharecount.balance > 0 && (
                 <Typography sx={{ color: "green" }} component="span">
-                  {` +${sharecount.balance.toFixed(2)} ${sharecount.currency}
+                  {` +${props.sharecount.balance.toFixed(2)} ${
+                    props.sharecount.currency
+                  }
                   `}
                 </Typography>
               )}
-              {sharecount.balance < 0 && (
+              {props.sharecount.balance < 0 && (
                 <Typography sx={{ color: "#E53935" }} component="span">
-                  {` ${sharecount.balance.toFixed(2)} ${sharecount.currency}
+                  {` ${props.sharecount.balance.toFixed(2)} ${
+                    props.sharecount.currency
+                  }
                   `}
                 </Typography>
               )}
             </React.Fragment>
           }
-          onClick={() => navigate(`/sharecount/${sharecount.id}`)}
+          onClick={() => navigate(`/sharecount/${props.sharecount.id}`)}
         />
         <IconButton
           size="large"
-          onClick={() => navigate(`/sharecount/${sharecount.id}`)}
+          onClick={() => navigate(`/sharecount/${props.sharecount.id}`)}
         >
           <ChevronRightIcon sx={{ fontSize: 30 }} />
         </IconButton>

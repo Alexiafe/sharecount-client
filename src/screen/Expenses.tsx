@@ -23,11 +23,9 @@ const Expenses = () => {
   const params = useParams();
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-
   const [sharecount, setSharecount] = useState<ISharecountContext>();
   const { sharecountsContext, setSharecountsContext } =
     useContext(SharecountsContext);
-
   const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession?.email;
 

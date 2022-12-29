@@ -59,13 +59,10 @@ const ExpenseEdit = () => {
   const [errorMissingPartakers, setErrorMissingPartakers] =
     useState<string>("");
   const [displayModal, setDisplayModal] = useState<boolean>(false);
-
   const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession?.email;
-
   const { sharecountsContext, setSharecountsContext } =
     useContext(SharecountsContext);
-
   const header = `Edit expense`;
 
   useEffect(() => {

@@ -18,14 +18,9 @@ interface IPropsExpenseInfoForm {
 }
 
 const ExpenseInfoForm = (props: IPropsExpenseInfoForm) => {
-  const formik = props.formik;
-  const expenseDate = props.expenseDate;
-  const ownerID = props.ownerID;
-  const participants = props.participants;
-
   return (
     <div>
-      <form className="flex flex-col" onSubmit={formik.handleSubmit}>
+      <form className="flex flex-col" onSubmit={props.formik.handleSubmit}>
         <div className="py-2">
           <TextField
             fullWidth
@@ -34,15 +29,19 @@ const ExpenseInfoForm = (props: IPropsExpenseInfoForm) => {
             id="expenseName"
             name="expenseName"
             label="Name"
-            value={formik.values.expenseName}
-            onChange={formik.handleChange}
+            value={props.formik.values.expenseName}
+            onChange={props.formik.handleChange}
             InputLabelProps={{
               shrink: true,
             }}
             error={
-              formik.touched.expenseName && Boolean(formik.errors.expenseName)
+              props.formik.touched.expenseName &&
+              Boolean(props.formik.errors.expenseName)
             }
-            helperText={formik.touched.expenseName && formik.errors.expenseName}
+            helperText={
+              props.formik.touched.expenseName &&
+              props.formik.errors.expenseName
+            }
           />
         </div>
         <div className="py-2">
@@ -53,17 +52,18 @@ const ExpenseInfoForm = (props: IPropsExpenseInfoForm) => {
             name="expenseAmount"
             label="Amount"
             inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-            value={formik.values.expenseAmount}
-            onChange={formik.handleChange}
+            value={props.formik.values.expenseAmount}
+            onChange={props.formik.handleChange}
             InputLabelProps={{
               shrink: true,
             }}
             error={
-              formik.touched.expenseAmount &&
-              Boolean(formik.errors.expenseAmount)
+              props.formik.touched.expenseAmount &&
+              Boolean(props.formik.errors.expenseAmount)
             }
             helperText={
-              formik.touched.expenseAmount && formik.errors.expenseAmount
+              props.formik.touched.expenseAmount &&
+              props.formik.errors.expenseAmount
             }
           />
         </div>
@@ -73,7 +73,7 @@ const ExpenseInfoForm = (props: IPropsExpenseInfoForm) => {
           <MobileDatePicker
             label="Date"
             inputFormat="DD/MM/YYYY"
-            value={expenseDate}
+            value={props.expenseDate}
             onChange={props.onHandleDateChange}
             renderInput={(params) => (
               <TextField required fullWidth {...params} />
@@ -86,10 +86,10 @@ const ExpenseInfoForm = (props: IPropsExpenseInfoForm) => {
           fullWidth
           select
           label="Paid by:"
-          value={ownerID || 0}
+          value={props.ownerID || 0}
           onChange={props.onHandleOwnerChange}
         >
-          {participants.map((p) => (
+          {props.participants.map((p) => (
             <MenuItem key={p.id} value={p.id}>
               {p.name}
             </MenuItem>

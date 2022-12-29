@@ -48,10 +48,8 @@ const SharecountConnect = () => {
   const [participants, setParticipants] = useState<IParticipantsContext[]>([]);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [value, setValue] = useState<number | null>(null);
-
   const { sharecountsContext, setSharecountsContext } =
     useContext(SharecountsContext);
-
   const header = sharecount?.name;
 
   useEffect(() => {

@@ -48,20 +48,15 @@ const SharecountEdit = () => {
     []
   );
   const [participantError, setParticipantError] = useState<string>("");
-
   const [error, setError] = useState<any>(null);
-
   const [oldparticipantsNameArray, setOldParticipantsNameArray] = useState<
     string[]
   >([]);
   const [displayModal, setDisplayModal] = useState<boolean>(false);
-
   const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession?.email;
-
   const { sharecountsContext, setSharecountsContext } =
     useContext(SharecountsContext);
-
   const header = `Edit sharecount`;
 
   useEffect(() => {

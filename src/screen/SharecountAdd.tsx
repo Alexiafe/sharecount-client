@@ -30,18 +30,14 @@ import * as yup from "yup";
 const SharecountAdd = () => {
   const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState<boolean>(true);
-
   const [participantsNameArray, setParticipantsNameArray] = useState<string[]>(
     []
   );
   const [participantError, setParticipantError] = useState<string>("");
-
   const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession.email;
-
   const { sharecountsContext, setSharecountsContext } =
     useContext(SharecountsContext);
-
   const header = `New sharecount`;
 
   const save = (sharecount: { sharecountName: string; currency: string }) => {

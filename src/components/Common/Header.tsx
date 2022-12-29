@@ -28,25 +28,15 @@ interface IPropsHeader {
 
 const Header = (props: IPropsHeader) => {
   const title = props.title;
-  const total = props.total;
-  const currency = props.currency;
-  const id = props.id;
-  const expense_id = props.expense_id;
-  const screen = props.screen;
-  const backButton = props.backButton;
-  const saveButton = props.saveButton;
-  const cancelButton = props.cancelButton;
-  const shareButton = props.shareButton;
-
   const navigate = useNavigate();
 
-  if (screen === "Home") {
+  if (props.screen === "Home") {
     return (
       <header
         className="flex bg-primary text-white justify-center"
         style={{ height: "150px" }}
       >
-        <div className="self-center text-2xl font-bold">{title}</div>
+        <div className="self-center text-2xl font-bold">{props.title}</div>
       </header>
     );
   } else {
@@ -58,7 +48,7 @@ const Header = (props: IPropsHeader) => {
         <div className="flex justify-between">
           <div className="flex">
             <div>
-              {backButton && (
+              {props.backButton && (
                 <IconButton
                   size="large"
                   edge="start"
@@ -70,7 +60,7 @@ const Header = (props: IPropsHeader) => {
               )}
             </div>
             <div>
-              {cancelButton && (
+              {props.cancelButton && (
                 <IconButton
                   size="large"
                   edge="start"
@@ -84,7 +74,7 @@ const Header = (props: IPropsHeader) => {
           </div>
           <div className="flex">
             <div>
-              {shareButton && (
+              {props.shareButton && (
                 <IconButton
                   size="large"
                   edge="start"
@@ -92,7 +82,7 @@ const Header = (props: IPropsHeader) => {
                   onClick={() =>
                     navigator.share({
                       title,
-                      url: `${clientUrl}/sharecount-connect/${id}`,
+                      url: `${clientUrl}/sharecount-connect/${props.id}`,
                     })
                   }
                 >
@@ -101,7 +91,7 @@ const Header = (props: IPropsHeader) => {
               )}
             </div>
             <div>
-              {saveButton && (
+              {props.saveButton && (
                 <IconButton
                   size="large"
                   edge="start"
@@ -117,18 +107,21 @@ const Header = (props: IPropsHeader) => {
         <div
           className="flex flex-col"
           onClick={() => {
-            if (screen === "Expenses") navigate(`/sharecount-edit/${id}`);
-            else if (screen === "Details")
-              navigate(`/sharecount/${id}/expense-edit/${expense_id}`);
+            if (props.screen === "Expenses")
+              navigate(`/sharecount-edit/${props.id}`);
+            else if (props.screen === "Details")
+              navigate(
+                `/sharecount/${props.id}/expense-edit/${props.expense_id}`
+              );
           }}
         >
-          <div className="self-center text-2xl font-bold">{title}</div>
+          <div className="self-center text-2xl font-bold">{props.title}</div>
           <div
             className={`self-center pt-2 ${
-              screen === "Expenses" ? "" : "opacity-0"
+              props.screen === "Expenses" ? "" : "opacity-0"
             }`}
           >
-            Total: {total} {currency}
+            Total: {props.total} {props.currency}
           </div>
         </div>
       </header>
