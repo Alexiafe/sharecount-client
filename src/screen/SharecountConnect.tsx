@@ -6,6 +6,7 @@ import {
   IParticipantResponse,
   IExpenseResponse,
   IPartakerResponse,
+  ISharecountForm,
 } from "../interfaces/interfaces";
 
 // Context
@@ -13,9 +14,9 @@ import AuthContext from "../context/auth.context";
 import SharecountsContext from "../context/sharecounts.context";
 
 // Components
-import Loader from "../components/Loader";
-import Header from "../components/Header";
-import NotLoggedIn from "../components/NotLoggedIn";
+import Loader from "../components/Common/Loader";
+import Header from "../components/Common/Header";
+import NotLoggedIn from "../components/Common/NotLoggedIn";
 
 // Services
 import {
@@ -55,7 +56,7 @@ const SharecountConnect = () => {
 
   useEffect(() => {
     let currentSharecount = sharecountsContext.find(
-      (sharecount) => sharecount.id === parseInt(params.sharecountID!)
+      (s) => s.id === parseInt(params.sharecountID!)
     );
     if (currentSharecount?.participants?.length) {
       setSharecount(currentSharecount);
@@ -79,7 +80,7 @@ const SharecountConnect = () => {
   const save = () => {
     setIsLoaded(false);
 
-    const newSharecount = {
+    const newSharecount: ISharecountForm = {
       id: parseInt(params.sharecountID!),
       user_email: userEmail!,
       participant_id: value!,
@@ -88,31 +89,31 @@ const SharecountConnect = () => {
     editSharecountService(newSharecount).then(
       (sharecount: ISharecountResponse) => {
         let currentSharecount: ISharecountContext = sharecountsContext.find(
-          (sharecount) => sharecount.id === parseInt(params.sharecountID!)
+          (s) => s.id === parseInt(params.sharecountID!)
         )!;
         currentSharecount.name = sharecount.name;
         currentSharecount.currency = sharecount.currency;
         currentSharecount.participants = sharecount.participants!.map(
-          (participant: IParticipantResponse) => ({
-            id: participant.id,
-            name: participant.name,
-            balance: participant.balance,
+          (p: IParticipantResponse) => ({
+            id: p.id,
+            name: p.name,
+            balance: p.balance,
           })
         );
         currentSharecount.expenses = sharecount.expenses!.map(
-          (expense: IExpenseResponse) => ({
-            id: expense.id,
-            name: expense.name,
-            amount_total: expense.amount_total,
-            date: expense.date,
+          (e: IExpenseResponse) => ({
+            id: e.id,
+            name: e.name,
+            amount_total: e.amount_total,
+            date: e.date,
             owner: {
-              id: expense.owner.id,
-              name: expense.owner.name,
+              id: e.owner.id,
+              name: e.owner.name,
             },
-            partakers: expense.partakers.map((partaker: IPartakerResponse) => ({
-              id: partaker.participant_id,
-              name: partaker.participant.name,
-              amount: partaker.amount,
+            partakers: e.partakers.map((p: IPartakerResponse) => ({
+              id: p.participant_id,
+              name: p.participant.name,
+              amount: p.amount,
             })),
           })
         );
@@ -125,25 +126,6 @@ const SharecountConnect = () => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(parseInt(event.target.value));
   };
-
-  const listSharecountParticipants = (
-    <RadioGroup
-      aria-labelledby="demo-radio-buttons-group-label"
-      defaultValue="female"
-      name="radio-buttons-group"
-      value={value}
-      onChange={handleChange}
-    >
-      {participants.map((p: IParticipantsContext) => (
-        <FormControlLabel
-          key={p.id}
-          value={p.id}
-          control={<Radio />}
-          label={p.name}
-        />
-      ))}
-    </RadioGroup>
-  );
 
   if (!isLoaded || userLoading) {
     return (
@@ -174,7 +156,22 @@ const SharecountConnect = () => {
             <FormLabel id="demo-radio-buttons-group-label">
               Select who you are:
             </FormLabel>
-            {listSharecountParticipants}
+            <RadioGroup
+              aria-labelledby="demo-radio-buttons-group-label"
+              defaultValue="female"
+              name="radio-buttons-group"
+              value={value}
+              onChange={handleChange}
+            >
+              {participants.map((p: IParticipantsContext) => (
+                <FormControlLabel
+                  key={p.id}
+                  value={p.id}
+                  control={<Radio />}
+                  label={p.name}
+                />
+              ))}
+            </RadioGroup>
           </FormControl>
           <Button
             variant="contained"

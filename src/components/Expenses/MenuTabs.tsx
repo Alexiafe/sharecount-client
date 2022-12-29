@@ -8,7 +8,7 @@ import { useState } from "react";
 
 // MUI
 import { Tab, Tabs, Typography, Box } from "@mui/material";
-import { ISharecountContext } from "../interfaces/interfaces";
+import { ISharecountContext } from "../../interfaces/interfaces";
 
 interface TabPanelProps {
   children?: React.ReactNode;

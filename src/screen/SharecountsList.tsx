@@ -6,11 +6,11 @@ import AuthContext from "../context/auth.context";
 import SharecountsContext from "../context/sharecounts.context";
 
 // Components
-import Loader from "../components/Loader";
-import MenuHome from "../components/MenuHome";
-import NotLoggedIn from "../components/NotLoggedIn";
-import Header from "../components/Header";
-import SharecountItem from "../components/SharecountItem";
+import Loader from "../components/Common/Loader";
+import MenuHome from "../components/Common/MenuHome";
+import NotLoggedIn from "../components/Common/NotLoggedIn";
+import Header from "../components/Common/Header";
+import SharecountItem from "../components/Sharecounts/SharecountItem";
 
 // Services
 import { getUserService } from "../services/user.service";

@@ -1,9 +1,9 @@
 // Interfaces
-import { IExpenseContext, ISharecountContext } from "../interfaces/interfaces";
+import { IExpenseContext, ISharecountContext } from "../../interfaces/interfaces";
 
 // Components
 import SearchBar from "./SearchBar";
-import ExpenseItem from "../components/ExpenseItem";
+import ExpenseItem from "./ExpenseItem";
 
 // React
 import { useState } from "react";

@@ -1,5 +1,5 @@
 // Interfaces & configs
-import { clientUrl } from "../constants/config";
+import { clientUrl } from "../../constants/config";
 
 // React
 import { useNavigate } from "react-router-dom";

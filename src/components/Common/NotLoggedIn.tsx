@@ -5,8 +5,8 @@ import { Button } from "@mui/material";
 import Header from "./Header";
 
 // Firebase
-import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
-import { auth } from "../firebase-config";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "../../firebase-config";
 
 const NotLoggedIn = () => {
   return (

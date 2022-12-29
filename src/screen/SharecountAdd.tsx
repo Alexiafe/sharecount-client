@@ -1,11 +1,20 @@
+// Interfaces
+import {
+  IParticipantResponse,
+  ISharecountForm,
+  ISharecountResponse,
+} from "../interfaces/interfaces";
+
 // Context
 import AuthContext from "../context/auth.context";
 import SharecountsContext from "../context/sharecounts.context";
 
 // Components
-import Header from "../components/Header";
-import NotLoggedIn from "../components/NotLoggedIn";
-import Loader from "../components/Loader";
+import Header from "../components/Common/Header";
+import NotLoggedIn from "../components/Common/NotLoggedIn";
+import Loader from "../components/Common/Loader";
+import ParticipantsList from "../components/Sharecounts/ParticipantsList";
+import SharecountInfoForm from "../components/Sharecounts/SharecountInfoForm";
 
 // Services
 import { addSharecountService } from "../services/sharecount.service";
@@ -14,34 +23,18 @@ import { addSharecountService } from "../services/sharecount.service";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-// MUI
-import {
-  Button,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  TextField,
-} from "@mui/material";
-import ClearIcon from "@mui/icons-material/Clear";
-
 // Other
 import { useFormik } from "formik";
 import * as yup from "yup";
-import {
-  IParticipantResponse,
-  ISharecountResponse,
-} from "../interfaces/interfaces";
 
 const SharecountAdd = () => {
   const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState<boolean>(true);
 
-  const [participantTextField, setParticipantTextField] = useState<string>("");
   const [participantsNameArray, setParticipantsNameArray] = useState<string[]>(
     []
   );
-  const [participantError, setParticipantError] = useState<boolean>(false);
+  const [participantError, setParticipantError] = useState<string>("");
 
   const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession.email;
@@ -51,33 +44,12 @@ const SharecountAdd = () => {
 
   const header = `New sharecount`;
 
-  const addParticipants = () => {
-    if (participantTextField.trim().length === 0) {
-      setParticipantError(true);
-      return;
-    }
-    let newParticipants = [...participantsNameArray];
-    newParticipants.push(participantTextField);
-    setParticipantsNameArray(newParticipants);
-    setParticipantTextField("");
-    setParticipantError(false);
-  };
-
-  const deleteParticipant = (participant: string) => {
-    setParticipantsNameArray(
-      participantsNameArray.filter((p: string) => {
-        return p !== participant;
-      })
-    );
-  };
-
   const save = (sharecount: { sharecountName: string; currency: string }) => {
     setIsLoaded(false);
-    const newSharecount = {
+    const newSharecount: ISharecountForm = {
       name: sharecount.sharecountName,
       currency: sharecount.currency,
       participantsToAdd: participantsNameArray,
-      balance: 0,
     };
     addSharecountService(newSharecount).then(
       (sharecount: ISharecountResponse) => {
@@ -91,10 +63,10 @@ const SharecountAdd = () => {
             user: "", // It's done after user connect to the sharecount
             balance: 0,
             participants: sharecount.participants!.map(
-              (participant: IParticipantResponse) => ({
-                id: participant.id,
-                name: participant.name,
-                balance: participant.balance,
+              (p: IParticipantResponse) => ({
+                id: p.id,
+                name: p.name,
+                balance: p.balance,
               })
             ),
           },
@@ -104,19 +76,6 @@ const SharecountAdd = () => {
       }
     );
   };
-
-  const listParticipants = participantsNameArray.map((p: string) => (
-    <li key={p}>
-      <List disablePadding>
-        <ListItem>
-          <ListItemText primary={p} />
-          <IconButton size="large" onClick={() => deleteParticipant(p)}>
-            <ClearIcon />
-          </IconButton>
-        </ListItem>
-      </List>
-    </li>
-  ));
 
   const validationSchema = yup.object({
     sharecountName: yup.string().required(),
@@ -141,8 +100,12 @@ const SharecountAdd = () => {
       return errors;
     },
     onSubmit: (sharecount) => {
-      save(sharecount);
-      formik.resetForm();
+      if (participantsNameArray.length === 0)
+        setParticipantError("Select at least one participant");
+      else {
+        save(sharecount);
+        formik.resetForm();
+      }
     },
   });
 
@@ -166,77 +129,20 @@ const SharecountAdd = () => {
           onClick={() => formik.handleSubmit()}
         ></Header>
         <div className="flex flex-col p-4">
-          <form className="flex flex-col" onSubmit={formik.handleSubmit}>
-            <div className="py-2">
-              <TextField
-                fullWidth
-                required
-                autoFocus
-                id="sharecountName"
-                name="sharecountName"
-                label="Name"
-                value={formik.values.sharecountName}
-                onChange={formik.handleChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                error={
-                  formik.touched.sharecountName &&
-                  Boolean(formik.errors.sharecountName)
-                }
-                helperText={
-                  formik.touched.sharecountName && formik.errors.sharecountName
-                }
-              />
-            </div>
-            <div className="py-2">
-              <TextField
-                fullWidth
-                required
-                id="currency"
-                name="currency"
-                label="Currency"
-                value={formik.values.currency}
-                onChange={formik.handleChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                error={
-                  formik.touched.currency && Boolean(formik.errors.currency)
-                }
-                helperText={formik.touched.currency && formik.errors.currency}
-              />
-            </div>
-          </form>
-          <div className="py-2 text-text">
-            Participants:
-            <ul>{listParticipants}</ul>
-            <div className="flex py-4">
-              <TextField
-                fullWidth
-                required
-                label="New participant"
-                variant="standard"
-                value={participantTextField}
-                onChange={(e) => {
-                  setParticipantTextField(e.target.value);
-                }}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                error={"Name is required" && participantError}
-              />
-              <Button
-                className="self-end"
-                style={{ marginLeft: "8px" }}
-                variant="contained"
-                sx={{ margin: 0, height: "30px" }}
-                onClick={() => addParticipants()}
-              >
-                ADD
-              </Button>
-            </div>
-          </div>
+          <SharecountInfoForm
+            formik={formik}
+            onSave={(sharecount: {
+              sharecountName: string;
+              currency: string;
+            }) => save(sharecount)}
+          ></SharecountInfoForm>
+          <ParticipantsList
+            participantsNameArray={participantsNameArray}
+            onSetParticipantsNameArray={(p: string[]) =>
+              setParticipantsNameArray(p)
+            }
+            participantError={participantError}
+          ></ParticipantsList>
         </div>
       </div>
     );

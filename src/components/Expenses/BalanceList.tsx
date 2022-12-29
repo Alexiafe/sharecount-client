@@ -1,5 +1,5 @@
 // Interfaces
-import { ISharecountContext, IParticipantsContext } from "../interfaces/interfaces";
+import { ISharecountContext, IParticipantsContext } from "../../interfaces/interfaces";
 
 // MUI
 import { List, ListItemButton, ListItemText, Typography } from "@mui/material";

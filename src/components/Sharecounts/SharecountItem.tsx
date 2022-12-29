@@ -1,5 +1,5 @@
 // Interfaces
-import { ISharecountContext } from "../interfaces/interfaces";
+import { ISharecountContext } from "../../interfaces/interfaces";
 
 // React
 import React from "react";

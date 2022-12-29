@@ -2,9 +2,9 @@
 import AuthContext from "../context/auth.context";
 
 // Components
-import Header from "../components/Header";
-import MenuHome from "../components/MenuHome";
-import Loader from "../components/Loader";
+import Header from "../components/Common/Header";
+import MenuHome from "../components/Common/MenuHome";
+import Loader from "../components/Common/Loader";
 
 // React
 import { useContext } from "react";

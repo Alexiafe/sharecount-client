@@ -1,5 +1,5 @@
 // Interfaces
-import { IExpenseContext } from "../interfaces/interfaces";
+import { IExpenseContext } from "../../interfaces/interfaces";
 
 // React
 import React from "react";

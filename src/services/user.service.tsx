@@ -17,13 +17,13 @@ export const getUserService = (userEmail: string) => {
     .then(
       (user: IUserResponse) => {
         let parsedSharecounts = user?.userInSharecount.map(
-          (userInSharecount: IUserInSharecountResponse) => ({
-            id: userInSharecount.sharecount.id,
-            name: userInSharecount.sharecount.name,
-            currency: userInSharecount.sharecount.currency,
-            total: userInSharecount.sharecount.total,
-            user: userInSharecount.participant.name,
-            balance: userInSharecount.participant.balance,
+          (u: IUserInSharecountResponse) => ({
+            id: u.sharecount.id,
+            name: u.sharecount.name,
+            currency: u.sharecount.currency,
+            total: u.sharecount.total,
+            user: u.participant.name,
+            balance: u.participant.balance,
           })
         );
         return parsedSharecounts;

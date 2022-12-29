@@ -1,12 +1,8 @@
 // Interfaces & configs
 import {
-  ISharecountResponse,
-  IExpenseResponse,
-  IPartakerResponse,
   ISharecountContext,
   IExpenseContext,
   IPartakersContext,
-  IParticipantResponse,
 } from "../interfaces/interfaces";
 
 // Context
@@ -14,9 +10,9 @@ import AuthContext from "../context/auth.context";
 import SharecountsContext from "../context/sharecounts.context";
 
 // Components
-import Header from "../components/Header";
-import Loader from "../components/Loader";
-import NotLoggedIn from "../components/NotLoggedIn";
+import Header from "../components/Common/Header";
+import Loader from "../components/Common/Loader";
+import NotLoggedIn from "../components/Common/NotLoggedIn";
 
 // Services
 import { getSharecountService } from "../services/sharecount.service";
@@ -25,9 +21,11 @@ import { getSharecountService } from "../services/sharecount.service";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
+// MUI
+import { List, ListItem, ListItemText } from "@mui/material";
+
 // Other
 import moment from "moment";
-import { List, ListItem, ListItemText } from "@mui/material";
 
 const ExpensesDetails = () => {
   const navigate = useNavigate();
@@ -46,10 +44,10 @@ const ExpensesDetails = () => {
 
   useEffect(() => {
     let currentSharecount = sharecountsContext.find(
-      (sharecount) => sharecount.id === parseInt(params.sharecountID!)
+      (s) => s.id === parseInt(params.sharecountID!)
     );
     let currentExpense = currentSharecount?.expenses?.find(
-      (expense) => expense.id === parseInt(params.expenseID!)
+      (e) => e.id === parseInt(params.expenseID!)
     );
     if (currentExpense) {
       setSharecount(currentSharecount);

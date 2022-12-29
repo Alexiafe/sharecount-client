@@ -50,18 +50,18 @@ export interface ISharecountResponse {
   name: string;
   currency: string;
   total: number;
-  userInSharecount: IUserInSharecountResponse[];
-  participants: IParticipantResponse[];
-  expenses: IExpenseResponse[];
+  userInSharecount?: IUserInSharecountResponse[];
+  participants?: IParticipantResponse[];
+  expenses?: IExpenseResponse[];
   created_at: Date;
   updated_at: Date;
 }
 
 export interface IUserInSharecountResponse {
+  user_email: string;
   sharecount_id: number;
   sharecount: ISharecountResponse;
-  user_email: string;
-  participantId: number;
+  participant_id: number;
   participant: IParticipantResponse;
   created_at: Date;
   updated_at: Date;
@@ -112,31 +112,19 @@ export interface ISharecountForm {
   participant_id?: number;
 }
 
-export interface IParticipantForm {
-  id?: number;
-  name: string;
-  sharecount?: ISharecountResponse;
-  sharecount_id: number;
-}
-
 export interface IExpenseForm {
   id?: number;
   name: string;
   amount_total: number;
   date: string;
-  sharecount?: ISharecountForm;
   sharecount_id?: number;
-  owner?: IParticipantForm;
   owner_id: number;
-  participants?: IParticipantForm[];
-  partakers?: IPartakerForm[];
+  partakers: IPartakerForm[];
 }
 
 export interface IPartakerForm {
-  expense_id?: number;
   participant_id: number;
   amount: number;
-  participant?: IParticipantResponse;
 }
 
 export interface IUserInSharecountDataForm {

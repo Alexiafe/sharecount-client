@@ -6,9 +6,10 @@ import AuthContext from "../context/auth.context";
 import SharecountsContext from "../context/sharecounts.context";
 
 // Components
-import Header from "../components/Header";
-import MenuTabs from "../components/MenuTabs";
-import NotLoggedIn from "../components/NotLoggedIn";
+import Header from "../components/Common/Header";
+import NotLoggedIn from "../components/Common/NotLoggedIn";
+import Loader from "../components/Common/Loader";
+import MenuTabs from "../components/Expenses/MenuTabs";
 
 // Services
 import { getSharecountService } from "../services/sharecount.service";
@@ -16,7 +17,6 @@ import { getSharecountService } from "../services/sharecount.service";
 // React
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Loader from "../components/Loader";
 
 const Expenses = () => {
   const navigate = useNavigate();
@@ -33,7 +33,7 @@ const Expenses = () => {
 
   useEffect(() => {
     let currentSharecount = sharecountsContext.find(
-      (sharecount) => sharecount.id === parseInt(params.sharecountID!)
+      (s) => s.id === parseInt(params.sharecountID!)
     );
     if (currentSharecount?.expenses && currentSharecount?.participants) {
       setSharecount({
@@ -52,7 +52,7 @@ const Expenses = () => {
         (sharecount: ISharecountContext) => {
           setSharecount(sharecount);
           let filteredSharecounts = sharecountsContext.filter(
-            (sharecount) => sharecount.id !== sharecount.id
+            (s) => s.id !== parseInt(params.sharecountID!)
           );
           setSharecountsContext([...filteredSharecounts, sharecount]);
           setIsLoaded(true);

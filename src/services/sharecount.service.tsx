@@ -21,28 +21,28 @@ export const getSharecountService = (sharecountID: number) => {
           name: sharecount.name,
           currency: sharecount.currency,
           total: sharecount.total,
-          user: sharecount.userInSharecount[0]?.participant?.name,
-          balance: sharecount.userInSharecount[0]?.participant?.balance,
+          user: sharecount.userInSharecount![0].participant?.name,
+          balance: sharecount.userInSharecount![0].participant?.balance,
           participants: sharecount.participants!.map(
-            (participant: IParticipantResponse) => ({
-              id: participant.id,
-              name: participant.name,
-              balance: participant.balance,
+            (p: IParticipantResponse) => ({
+              id: p.id,
+              name: p.name,
+              balance: p.balance,
             })
           ),
-          expenses: sharecount.expenses!.map((expense: IExpenseResponse) => ({
-            id: expense.id,
-            name: expense.name,
-            amount_total: expense.amount_total,
-            date: expense.date,
+          expenses: sharecount.expenses!.map((e: IExpenseResponse) => ({
+            id: e.id,
+            name: e.name,
+            amount_total: e.amount_total,
+            date: e.date,
             owner: {
-              id: expense.owner.id,
-              name: expense.owner.name,
+              id: e.owner.id,
+              name: e.owner.name,
             },
-            partakers: expense.partakers.map((partaker: IPartakerResponse) => ({
-              id: partaker.participant_id,
-              name: partaker.participant.name,
-              amount: partaker.amount,
+            partakers: e.partakers.map((p: IPartakerResponse) => ({
+              id: p.participant_id,
+              name: p.participant.name,
+              amount: p.amount,
             })),
           })),
         };

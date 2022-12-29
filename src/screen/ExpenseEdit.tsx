@@ -6,6 +6,7 @@ import {
   IExpenseContext,
   IExpenseResponse,
   IPartakersContext,
+  IExpenseForm,
 } from "../interfaces/interfaces";
 
 // Context
@@ -13,9 +14,12 @@ import AuthContext from "../context/auth.context";
 import SharecountsContext from "../context/sharecounts.context";
 
 // Components
-import Header from "../components/Header";
-import Loader from "../components/Loader";
-import NotLoggedIn from "../components/NotLoggedIn";
+import Header from "../components/Common/Header";
+import Loader from "../components/Common/Loader";
+import NotLoggedIn from "../components/Common/NotLoggedIn";
+import ModalContent from "../components/Common/ModalContent";
+import ExpenseInfoForm from "../components/Expenses/ExpenseInfoForm";
+import PartakersList from "../components/Expenses/PartakersList";
 
 // Servives
 import {
@@ -30,20 +34,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 // MUI
-import {
-  Box,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
-  MenuItem,
-  Modal,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { LocalizationProvider } from "@mui/x-date-pickers";
+import { Button, Modal } from "@mui/material";
 
 // Other
 import moment from "moment";
@@ -77,24 +68,12 @@ const ExpenseEdit = () => {
 
   const header = `Edit expense`;
 
-  const style = {
-    position: "absolute" as "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: "80%",
-    bgcolor: "background.paper",
-    boxShadow: 24,
-    textAlign: "center",
-    p: 4,
-  };
-
   useEffect(() => {
     let currentSharecount = sharecountsContext.find(
-      (sharecount) => sharecount.id === parseInt(params.sharecountID!)
+      (s) => s.id === parseInt(params.sharecountID!)
     );
     let currentExpense = currentSharecount?.expenses?.find(
-      (expense) => expense.id === parseInt(params.expenseID!)
+      (e) => e.id === parseInt(params.expenseID!)
     );
     if (currentSharecount?.participants && currentExpense) {
       setParticipants(currentSharecount.participants!);
@@ -104,9 +83,7 @@ const ExpenseEdit = () => {
       setExpenseDate(moment(currentExpense.date));
       setOwnerID(currentExpense.owner.id);
       setSelectedParticipantsIDs(
-        currentExpense.partakers.map(
-          (partaker: IPartakersContext) => partaker.id
-        )
+        currentExpense.partakers.map((p: IPartakersContext) => p.id)
       );
       setIsLoaded(true);
     } else {
@@ -121,16 +98,14 @@ const ExpenseEdit = () => {
         }
       );
       getExpenseService(parseInt(params.expenseID!)).then(
-        (expense) => {
+        (expense: IExpenseResponse) => {
           setOldAmount(expense.amount_total);
           formik.setFieldValue("expenseName", expense.name);
           formik.setFieldValue("expenseAmount", expense.amount_total);
           setExpenseDate(moment(expense.date));
           setOwnerID(expense.owner_id);
           setSelectedParticipantsIDs(
-            expense.partakers.map(
-              (partaker: IPartakerResponse) => partaker.participant_id
-            )
+            expense.partakers.map((p: IPartakerResponse) => p.participant_id)
           );
           setIsLoaded(true);
         },
@@ -213,7 +188,7 @@ const ExpenseEdit = () => {
   const save = (expenseNew: { expenseName: string; expenseAmount: string }) => {
     setIsLoaded(false);
 
-    const newExpense = {
+    const newExpense: IExpenseForm = {
       id: parseInt(params.expenseID!),
       name: expenseNew.expenseName,
       amount_total: parseInt(expenseNew.expenseAmount),
@@ -221,9 +196,9 @@ const ExpenseEdit = () => {
       owner_id: ownerID,
       partakers: selectedParticipantsIDs.map((p: number) => {
         return {
+          participant_id: p,
           amount:
             parseInt(expenseNew.expenseAmount) / selectedParticipantsIDs.length,
-          participant_id: p,
         };
       }),
     };
@@ -245,10 +220,10 @@ const ExpenseEdit = () => {
           id: expense.owner.id,
           name: expense.owner.name,
         },
-        partakers: expense.partakers.map((partaker: IPartakerResponse) => ({
-          id: partaker.participant_id,
-          name: partaker.participant.name,
-          amount: partaker.amount,
+        partakers: expense.partakers.map((p: IPartakerResponse) => ({
+          id: p.participant_id,
+          name: p.participant.name,
+          amount: p.amount,
         })),
       };
       currentSharecount!.total =
@@ -260,25 +235,6 @@ const ExpenseEdit = () => {
       setIsLoaded(true);
     });
   };
-
-  const listParticipants = participants.map((p: IParticipantsContext) => (
-    <li key={p.id}>
-      <FormGroup>
-        <FormControlLabel
-          control={
-            <Checkbox
-              value={p.id}
-              checked={
-                selectAll ? true : selectedParticipantsIDs.includes(p.id)
-              }
-              onChange={handleCheckChange}
-            />
-          }
-          label={p.name}
-        />
-      </FormGroup>
-    </li>
-  ));
 
   const validationSchema = yup.object({
     expenseName: yup.string().required(),
@@ -315,34 +271,6 @@ const ExpenseEdit = () => {
       }
     },
   });
-
-  let modalContent = (
-    <Box sx={style}>
-      <Typography variant="h6" sx={{ m: 2 }}>
-        Confirm delete?
-      </Typography>
-      <div className="flex justify-around">
-        <div>
-          <Button
-            variant="outlined"
-            sx={{ width: 100, margin: 0 }}
-            onClick={() => setDisplayModal(false)}
-          >
-            Cancel
-          </Button>
-        </div>
-        <div>
-          <Button
-            variant="outlined"
-            sx={{ width: 100, margin: 0 }}
-            onClick={() => confirmDelete()}
-          >
-            Delete
-          </Button>
-        </div>
-      </div>
-    </Box>
-  );
 
   if (!isLoaded || userLoading) {
     return (
@@ -383,92 +311,25 @@ const ExpenseEdit = () => {
           onClick={() => formik.handleSubmit()}
         ></Header>
         <div className="flex flex-1 flex-col p-4 overflow-auto">
-          <form className="flex flex-col" onSubmit={formik.handleSubmit}>
-            <div className="py-2">
-              <TextField
-                required
-                fullWidth
-                id="expenseName"
-                name="expenseName"
-                label="Name"
-                value={formik.values.expenseName}
-                onChange={formik.handleChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                error={
-                  formik.touched.expenseName &&
-                  Boolean(formik.errors.expenseName)
-                }
-                helperText={
-                  formik.touched.expenseName && formik.errors.expenseName
-                }
-              />
-            </div>
-            <div className="py-2">
-              <TextField
-                required
-                fullWidth
-                id="expenseAmount"
-                name="expenseAmount"
-                label="Amount"
-                inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-                value={formik.values.expenseAmount}
-                onChange={formik.handleChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                error={
-                  formik.touched.expenseAmount &&
-                  Boolean(formik.errors.expenseAmount)
-                }
-                helperText={
-                  formik.touched.expenseAmount && formik.errors.expenseAmount
-                }
-              />
-            </div>
-          </form>
-          <div className="py-2">
-            <LocalizationProvider dateAdapter={AdapterMoment}>
-              <MobileDatePicker
-                label="Date"
-                inputFormat="DD/MM/YYYY"
-                value={expenseDate}
-                onChange={handleDateChange}
-                renderInput={(params) => (
-                  <TextField required fullWidth {...params} />
-                )}
-              />
-            </LocalizationProvider>
-          </div>
-          <div className="py-2">
-            <TextField
-              fullWidth
-              select
-              label="Paid by:"
-              value={ownerID || 0}
-              onChange={handleOwnerChange}
-            >
-              {participants.map((p) => (
-                <MenuItem key={p.id} value={p.id}>
-                  {p.name}
-                </MenuItem>
-              ))}
-            </TextField>
-          </div>
-          <div className="py-2">
-            From whom:
-            <div className="text-xs text-red-600">{errorMissingPartakers}</div>
-            <Checkbox
-              checked={
-                selectedParticipantsIDs.length === participants.length ||
-                selectAll
-              }
-              onChange={handleCheckAll}
-              style={{ width: "20px", padding: 0 }}
-            />
-            <ul>{listParticipants}</ul>
-          </div>
+          <ExpenseInfoForm
+            formik={formik}
+            onSave={(expense: { expenseName: string; expenseAmount: string }) =>
+              save(expense)
+            }
+            expenseDate={expenseDate}
+            onHandleDateChange={handleDateChange}
+            ownerID={ownerID}
+            onHandleOwnerChange={handleOwnerChange}
+            participants={participants}
+          ></ExpenseInfoForm>
+          <PartakersList
+            errorMissingPartakers={errorMissingPartakers}
+            selectedParticipantsIDs={selectedParticipantsIDs}
+            participants={participants}
+            selectAll={selectAll}
+            onHandleCheckAll={handleCheckAll}
+            onHandleCheckChange={handleCheckChange}
+          ></PartakersList>
         </div>
         <footer className="flex w-full pb-6 justify-center">
           <Button
@@ -481,7 +342,12 @@ const ExpenseEdit = () => {
           </Button>
         </footer>
         <Modal open={displayModal} onClose={handleCloseModal}>
-          {modalContent}
+          <div>
+            <ModalContent
+              onSetDisplayModal={(bool: boolean) => setDisplayModal(bool)}
+              onConfirmDelete={() => confirmDelete()}
+            ></ModalContent>
+          </div>
         </Modal>
       </div>
     );

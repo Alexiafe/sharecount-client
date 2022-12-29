@@ -6,6 +6,8 @@ import {
   IParticipantResponse,
   IParticipantsContext,
   ISharecountResponse,
+  IUserInSharecountDataForm,
+  ISharecountForm,
 } from "../interfaces/interfaces";
 
 // Context
@@ -13,9 +15,12 @@ import AuthContext from "../context/auth.context";
 import SharecountsContext from "../context/sharecounts.context";
 
 // Components
-import Header from "../components/Header";
-import Loader from "../components/Loader";
-import NotLoggedIn from "../components/NotLoggedIn";
+import Header from "../components/Common/Header";
+import Loader from "../components/Common/Loader";
+import NotLoggedIn from "../components/Common/NotLoggedIn";
+import ModalContent from "../components/Common/ModalContent";
+import ParticipantsList from "../components/Sharecounts/ParticipantsList";
+import SharecountInfoForm from "../components/Sharecounts/SharecountInfoForm";
 
 // Services
 import {
@@ -29,18 +34,7 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 // MUI
-import {
-  Button,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  Modal,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { Box } from "@mui/system";
-import ClearIcon from "@mui/icons-material/Clear";
+import { Button, Modal } from "@mui/material";
 
 // Other
 import { useFormik } from "formik";
@@ -50,12 +44,12 @@ const SharecountEdit = () => {
   const navigate = useNavigate();
   const params = useParams();
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const [participantTextField, setParticipantTextField] = useState<string>("");
   const [participantsNameArray, setParticipantsNameArray] = useState<string[]>(
     []
   );
+  const [participantError, setParticipantError] = useState<string>("");
+
   const [error, setError] = useState<any>(null);
-  const [participantError, setParticipantError] = useState<boolean>(false);
 
   const [oldparticipantsNameArray, setOldParticipantsNameArray] = useState<
     string[]
@@ -70,21 +64,9 @@ const SharecountEdit = () => {
 
   const header = `Edit sharecount`;
 
-  const style = {
-    position: "absolute" as "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: "80%",
-    bgcolor: "background.paper",
-    boxShadow: 24,
-    textAlign: "center",
-    p: 4,
-  };
-
   useEffect(() => {
     let currentSharecount = sharecountsContext.find(
-      (sharecount) => sharecount.id === parseInt(params.sharecountID!)
+      (s) => s.id === parseInt(params.sharecountID!)
     );
     if (currentSharecount) {
       formik.setFieldValue("sharecountName", currentSharecount.name);
@@ -125,7 +107,7 @@ const SharecountEdit = () => {
 
   const deleteSharecount = (sharecount_id: number) => {
     setIsLoaded(false);
-    let userInSharecountData = {
+    let userInSharecountData: IUserInSharecountDataForm = {
       sharecount_id: sharecount_id,
       user_email: userEmail!,
     };
@@ -148,26 +130,6 @@ const SharecountEdit = () => {
 
   const handleCloseModal = () => setDisplayModal(false);
 
-  const addParticipants = () => {
-    if (participantTextField.trim().length === 0) {
-      setParticipantError(true);
-      return;
-    }
-    let newParticipants = [...participantsNameArray];
-    newParticipants.push(participantTextField);
-    setParticipantsNameArray(newParticipants);
-    setParticipantTextField("");
-    setParticipantError(false);
-  };
-
-  const deleteParticipant = (participant: string) => {
-    setParticipantsNameArray(
-      participantsNameArray.filter((p: string) => {
-        return p !== participant;
-      })
-    );
-  };
-
   const save = (sharecount: { sharecountName: string; currency: string }) => {
     setIsLoaded(false);
 
@@ -179,7 +141,7 @@ const SharecountEdit = () => {
       (p: string) => !participantsNameArray.includes(p)
     );
 
-    const newSharecount = {
+    const newSharecount: ISharecountForm = {
       id: parseInt(params.sharecountID!),
       name: sharecount.sharecountName,
       currency: sharecount.currency,
@@ -190,31 +152,31 @@ const SharecountEdit = () => {
     editSharecountService(newSharecount).then(
       (sharecount: ISharecountResponse) => {
         let currentSharecount: ISharecountContext = sharecountsContext.find(
-          (sharecount) => sharecount.id === parseInt(params.sharecountID!)
+          (s) => s.id === parseInt(params.sharecountID!)
         )!;
         currentSharecount.name = sharecount.name;
         currentSharecount.currency = sharecount.currency;
         currentSharecount.participants = sharecount.participants!.map(
-          (participant: IParticipantResponse) => ({
-            id: participant.id,
-            name: participant.name,
-            balance: participant.balance,
+          (p: IParticipantResponse) => ({
+            id: p.id,
+            name: p.name,
+            balance: p.balance,
           })
         );
         currentSharecount.expenses = sharecount.expenses!.map(
-          (expense: IExpenseResponse) => ({
-            id: expense.id,
-            name: expense.name,
-            amount_total: expense.amount_total,
-            date: expense.date,
+          (e: IExpenseResponse) => ({
+            id: e.id,
+            name: e.name,
+            amount_total: e.amount_total,
+            date: e.date,
             owner: {
-              id: expense.owner.id,
-              name: expense.owner.name,
+              id: e.owner.id,
+              name: e.owner.name,
             },
-            partakers: expense.partakers.map((partaker: IPartakerResponse) => ({
-              id: partaker.participant_id,
-              name: partaker.participant.name,
-              amount: partaker.amount,
+            partakers: e.partakers.map((p: IPartakerResponse) => ({
+              id: p.participant_id,
+              name: p.participant.name,
+              amount: p.amount,
             })),
           })
         );
@@ -223,19 +185,6 @@ const SharecountEdit = () => {
       }
     );
   };
-
-  const listParticipants = participantsNameArray.map((p: string) => (
-    <li key={p}>
-      <List disablePadding>
-        <ListItem>
-          <ListItemText primary={p} />
-          <IconButton size="large" onClick={() => deleteParticipant(p)}>
-            <ClearIcon />
-          </IconButton>
-        </ListItem>
-      </List>
-    </li>
-  ));
 
   const validationSchema = yup.object({
     sharecountName: yup.string().required(),
@@ -260,38 +209,14 @@ const SharecountEdit = () => {
       return errors;
     },
     onSubmit: (sharecount) => {
-      save(sharecount);
-      formik.resetForm();
+      if (participantsNameArray.length === 0)
+        setParticipantError("Select at least one participant");
+      else {
+        save(sharecount);
+        formik.resetForm();
+      }
     },
   });
-
-  let modalContent = (
-    <Box sx={style}>
-      <Typography variant="h6" sx={{ m: 2 }}>
-        Confirm delete?
-      </Typography>
-      <div className="flex justify-around">
-        <div>
-          <Button
-            variant="outlined"
-            sx={{ width: 100, margin: 0 }}
-            onClick={() => setDisplayModal(false)}
-          >
-            Cancel
-          </Button>
-        </div>
-        <div>
-          <Button
-            variant="outlined"
-            sx={{ width: 100, margin: 0 }}
-            onClick={() => confirmDelete()}
-          >
-            Delete
-          </Button>
-        </div>
-      </div>
-    </Box>
-  );
 
   if (!isLoaded || userLoading) {
     return (
@@ -324,76 +249,20 @@ const SharecountEdit = () => {
           onClick={() => formik.handleSubmit()}
         ></Header>
         <div className="flex flex-1 flex-col p-4 overflow-auto">
-          <form className="flex flex-col" onSubmit={formik.handleSubmit}>
-            <div className="py-2">
-              <TextField
-                required
-                fullWidth
-                id="sharecountName"
-                name="sharecountName"
-                label="Name"
-                value={formik.values.sharecountName}
-                onChange={formik.handleChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                error={
-                  formik.touched.sharecountName &&
-                  Boolean(formik.errors.sharecountName)
-                }
-                helperText={
-                  formik.touched.sharecountName && formik.errors.sharecountName
-                }
-              />
-            </div>
-            <div className="py-2">
-              <TextField
-                required
-                fullWidth
-                id="currency"
-                name="currency"
-                label="Currency"
-                value={formik.values.currency}
-                onChange={formik.handleChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                error={
-                  formik.touched.currency && Boolean(formik.errors.currency)
-                }
-                helperText={formik.touched.currency && formik.errors.currency}
-              />
-            </div>
-          </form>
-          <div className="py-2 text-text">
-            Participants:
-            <ul>{listParticipants}</ul>
-            <div className="flex py-4">
-              <TextField
-                fullWidth
-                required
-                label="New participant"
-                variant="standard"
-                value={participantTextField}
-                onChange={(e) => {
-                  setParticipantTextField(e.target.value);
-                }}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                error={"Name is required" && participantError}
-              />
-              <Button
-                className="self-end"
-                style={{ marginLeft: "8px" }}
-                variant="contained"
-                sx={{ margin: 0, borderRadius: "4px", height: "30px" }}
-                onClick={() => addParticipants()}
-              >
-                ADD
-              </Button>
-            </div>
-          </div>
+          <SharecountInfoForm
+            formik={formik}
+            onSave={(sharecount: {
+              sharecountName: string;
+              currency: string;
+            }) => save(sharecount)}
+          ></SharecountInfoForm>
+          <ParticipantsList
+            participantsNameArray={participantsNameArray}
+            onSetParticipantsNameArray={(p: string[]) =>
+              setParticipantsNameArray(p)
+            }
+            participantError={participantError}
+          ></ParticipantsList>
         </div>
         <footer className="flex w-full pb-6 justify-center">
           <Button
@@ -406,7 +275,12 @@ const SharecountEdit = () => {
           </Button>
         </footer>
         <Modal open={displayModal} onClose={handleCloseModal}>
-          {modalContent}
+          <div>
+            <ModalContent
+              onSetDisplayModal={(bool: boolean) => setDisplayModal(bool)}
+              onConfirmDelete={() => confirmDelete()}
+            ></ModalContent>
+          </div>
         </Modal>
       </div>
     );

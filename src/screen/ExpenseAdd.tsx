@@ -5,6 +5,7 @@ import {
   IExpenseResponse,
   IPartakerResponse,
   IParticipantsContext,
+  IExpenseForm,
 } from "../interfaces/interfaces";
 
 // Context
@@ -12,9 +13,11 @@ import AuthContext from "../context/auth.context";
 import SharecountsContext from "../context/sharecounts.context";
 
 // Components
-import Header from "../components/Header";
-import Loader from "../components/Loader";
-import NotLoggedIn from "../components/NotLoggedIn";
+import Header from "../components/Common/Header";
+import Loader from "../components/Common/Loader";
+import NotLoggedIn from "../components/Common/NotLoggedIn";
+import ExpenseInfoForm from "../components/Expenses/ExpenseInfoForm";
+import PartakersList from "../components/Expenses/PartakersList";
 
 // Services
 import { getSharecountService } from "../services/sharecount.service";
@@ -23,18 +26,6 @@ import { addExpenseService } from "../services/expense.service";
 // React
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
-// MUI
-import {
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
-  MenuItem,
-  TextField,
-} from "@mui/material";
-import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { LocalizationProvider } from "@mui/x-date-pickers";
 
 // Other
 import moment from "moment";
@@ -65,7 +56,7 @@ const ExpenseAdd = () => {
 
   useEffect(() => {
     let currentSharecount = sharecountsContext.find(
-      (sharecount) => sharecount.id === parseInt(params.sharecountID!)
+      (s) => s.id === parseInt(params.sharecountID!)
     );
     if (currentSharecount?.participants) {
       setParticipants(currentSharecount.participants);
@@ -135,7 +126,7 @@ const ExpenseAdd = () => {
   const save = (expense: { expenseName: string; expenseAmount: string }) => {
     setIsLoaded(false);
 
-    const newExpense = {
+    const newExpense: IExpenseForm = {
       name: expense.expenseName,
       amount_total: parseInt(expense.expenseAmount),
       date: moment(expenseDate)
@@ -146,9 +137,9 @@ const ExpenseAdd = () => {
       owner_id: ownerID,
       partakers: selectedParticipantsIDs.map((p: number) => {
         return {
+          participant_id: p,
           amount:
             parseInt(expense.expenseAmount) / selectedParticipantsIDs.length,
-          participant_id: p,
         };
       }),
     };
@@ -167,38 +158,17 @@ const ExpenseAdd = () => {
           id: expense.owner.id,
           name: expense.owner.name,
         },
-        partakers: expense.partakers.map((partaker: IPartakerResponse) => ({
-          id: partaker.participant_id,
-          name: partaker.participant.name,
-          amount: partaker.amount,
+        partakers: expense.partakers.map((p: IPartakerResponse) => ({
+          id: p.participant_id,
+          name: p.participant.name,
+          amount: p.amount,
         })),
       };
-      console.log(currentSharecount)
-      console.log(expense)  
       currentSharecount!.total = expense.sharecount.total;
       currentSharecount?.expenses?.push(newExpenses);
       setIsLoaded(true);
     });
   };
-
-  const listParticipants = participants.map((p: IParticipantsContext) => (
-    <li key={p.id}>
-      <FormGroup>
-        <FormControlLabel
-          control={
-            <Checkbox
-              value={p.id}
-              checked={
-                selectAll ? true : selectedParticipantsIDs.includes(p.id)
-              }
-              onChange={handleCheckChange}
-            />
-          }
-          label={p.name}
-        />
-      </FormGroup>
-    </li>
-  ));
 
   const validationSchema = yup.object({
     expenseName: yup.string().required(),
@@ -267,99 +237,25 @@ const ExpenseAdd = () => {
           onClick={() => formik.handleSubmit()}
         ></Header>
         <div className="flex flex-col p-4">
-          <form className="flex flex-col" onSubmit={formik.handleSubmit}>
-            <div className="py-2">
-              <TextField
-                fullWidth
-                required
-                autoFocus
-                id="expenseName"
-                name="expenseName"
-                label="Name"
-                value={formik.values.expenseName}
-                onChange={formik.handleChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                error={
-                  formik.touched.expenseName &&
-                  Boolean(formik.errors.expenseName)
-                }
-                helperText={
-                  formik.touched.expenseName && formik.errors.expenseName
-                }
-              />
-            </div>
-            <div className="py-2">
-              <TextField
-                required
-                fullWidth
-                id="expenseAmount"
-                name="expenseAmount"
-                label="Amount"
-                inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-                value={formik.values.expenseAmount}
-                onChange={formik.handleChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                error={
-                  formik.touched.expenseAmount &&
-                  Boolean(formik.errors.expenseAmount)
-                }
-                helperText={
-                  formik.touched.expenseAmount && formik.errors.expenseAmount
-                }
-              />
-            </div>
-          </form>
-          <div className="py-2">
-            <LocalizationProvider dateAdapter={AdapterMoment}>
-              <MobileDatePicker
-                label="Date"
-                inputFormat="DD/MM/YYYY"
-                value={expenseDate}
-                onChange={handleDateChange}
-                renderInput={(params) => (
-                  <TextField required fullWidth {...params} />
-                )}
-              />
-            </LocalizationProvider>
-          </div>
-          <div className="py-2">
-            <TextField
-              fullWidth
-              select
-              label="Paid by:"
-              value={ownerID || 0}
-              onChange={handleOwnerChange}
-            >
-              {participants.map((p) => (
-                <MenuItem key={p.id} value={p.id}>
-                  {p.name}
-                </MenuItem>
-              ))}
-            </TextField>
-          </div>
-          <div className="py-2">
-            From whom:
-            <div className="text-xs text-red-600">{errorMissingPartakers}</div>
-            <FormGroup>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={
-                      selectedParticipantsIDs.length === participants.length ||
-                      selectAll
-                    }
-                    onChange={handleCheckAll}
-                  />
-                }
-                label="Select all"
-              />
-            </FormGroup>
-            <ul>{listParticipants}</ul>
-          </div>
+          <ExpenseInfoForm
+            formik={formik}
+            onSave={(expense: { expenseName: string; expenseAmount: string }) =>
+              save(expense)
+            }
+            expenseDate={expenseDate}
+            onHandleDateChange={handleDateChange}
+            ownerID={ownerID}
+            onHandleOwnerChange={handleOwnerChange}
+            participants={participants}
+          ></ExpenseInfoForm>
+          <PartakersList
+            errorMissingPartakers={errorMissingPartakers}
+            selectedParticipantsIDs={selectedParticipantsIDs}
+            participants={participants}
+            selectAll={selectAll}
+            onHandleCheckAll={handleCheckAll}
+            onHandleCheckChange={handleCheckChange}
+          ></PartakersList>
         </div>
       </div>
     );
