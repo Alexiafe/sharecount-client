@@ -13,6 +13,19 @@ const parseExpense = (expense: IExpenseResponse) => {
     name: expense.name,
     amount_total: expense.amount_total,
     date: expense.date,
+    sharecount: {
+      id: expense.sharecount?.id,
+      name: expense.sharecount?.name,
+      currency: expense.sharecount?.currency,
+      total: expense.sharecount?.total,
+      user: "",
+      balance: 0,
+      participants: expense.sharecount?.participants?.map((p) => ({
+        id: p.id,
+        name: p.name,
+        balance: p.balance,
+      })),
+    },
     owner: {
       id: expense.owner?.id,
       name: expense.owner?.name,
