@@ -1,11 +1,7 @@
 // Interfaces
 import {
   ISharecountContext,
-  IExpenseResponse,
-  IPartakerResponse,
-  IParticipantResponse,
   IParticipantsContext,
-  ISharecountResponse,
   IUserInSharecountDataForm,
   ISharecountForm,
 } from "../interfaces/interfaces";
@@ -76,6 +72,7 @@ const SharecountEdit = () => {
     } else {
       getSharecountService(parseInt(params.sharecountID!)).then(
         (sharecount: ISharecountContext) => {
+          currentSharecount = sharecount;
           formik.setFieldValue("sharecountName", sharecount.name);
           formik.setFieldValue("currency", sharecount.currency);
           let participantsName = sharecount.participants?.map(
@@ -88,6 +85,7 @@ const SharecountEdit = () => {
           setIsLoaded(true);
         },
         (error) => {
+          console.log(error)
           setError(error);
           setIsLoaded(true);
         }
@@ -117,6 +115,7 @@ const SharecountEdit = () => {
         setIsLoaded(true);
       },
       (error) => {
+        console.log(error)
         setError(error);
         setIsLoaded(true);
       }
@@ -145,36 +144,11 @@ const SharecountEdit = () => {
     };
 
     editSharecountService(newSharecount).then(
-      (sharecount: ISharecountResponse) => {
+      (sharecount: ISharecountContext) => {
         let currentSharecount: ISharecountContext = sharecountsContext.find(
           (s) => s.id === parseInt(params.sharecountID!)
         )!;
-        currentSharecount.name = sharecount.name;
-        currentSharecount.currency = sharecount.currency;
-        currentSharecount.participants = sharecount.participants!.map(
-          (p: IParticipantResponse) => ({
-            id: p.id,
-            name: p.name,
-            balance: p.balance,
-          })
-        );
-        currentSharecount.expenses = sharecount.expenses!.map(
-          (e: IExpenseResponse) => ({
-            id: e.id,
-            name: e.name,
-            amount_total: e.amount_total,
-            date: e.date,
-            owner: {
-              id: e.owner.id,
-              name: e.owner.name,
-            },
-            partakers: e.partakers.map((p: IPartakerResponse) => ({
-              id: p.participant_id,
-              name: p.participant.name,
-              amount: p.amount,
-            })),
-          })
-        );
+        currentSharecount = sharecount;
         navigate(`/sharecount/${params.sharecountID}`);
         setIsLoaded(true);
       }

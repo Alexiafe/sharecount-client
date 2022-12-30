@@ -41,6 +41,7 @@ const SharecountsList = () => {
             setIsLoaded(true);
           },
           (error) => {
+            console.log(error)
             setError(error);
             setIsLoaded(true);
           }

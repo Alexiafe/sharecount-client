@@ -1,14 +1,38 @@
 // Interfaces & configs
 import { serverUrl } from "../constants/config";
-import { IExpenseForm } from "../interfaces/interfaces";
+import {
+  IExpenseContext,
+  IExpenseForm,
+  IExpenseResponse,
+  IPartakerResponse,
+} from "../interfaces/interfaces";
+
+const parseExpense = (expense: IExpenseResponse) => {
+  let newExpenses: IExpenseContext = {
+    id: expense.id,
+    name: expense.name,
+    amount_total: expense.amount_total,
+    date: expense.date,
+    owner: {
+      id: expense.owner?.id,
+      name: expense.owner?.name,
+    },
+    partakers: expense.partakers?.map((p: IPartakerResponse) => ({
+      id: p.participant_id,
+      name: p.participant.name,
+      amount: p.amount,
+    })),
+  };
+  return newExpenses;
+};
 
 export const getExpenseService = (expenseID: number) => {
   console.log("getExpenseService");
   return fetch(`${serverUrl}/expense/${expenseID}`)
     .then((res) => res.json())
     .then(
-      (expense) => {
-        return expense;
+      (expense: IExpenseResponse) => {
+        return parseExpense(expense);
       },
       (error) => {
         return error;
@@ -26,8 +50,8 @@ export const deleteExpenseService = (expenseID: number) => {
   })
     .then((res) => res.json())
     .then(
-      (expense) => {
-        return expense;
+      (expense: IExpenseResponse) => {
+        return parseExpense(expense);
       },
       (error) => {
         return error;
@@ -46,8 +70,8 @@ export const addExpenseService = (expense: IExpenseForm) => {
   })
     .then((res) => res.json())
     .then(
-      (expense) => {
-        return expense;
+      (expense: IExpenseResponse) => {
+        return parseExpense(expense);
       },
       (error) => {
         return error;
@@ -66,8 +90,8 @@ export const editExpenseService = (expense: IExpenseForm) => {
   })
     .then((res) => res.json())
     .then(
-      (expense) => {
-        return expense;
+      (expense: IExpenseResponse) => {
+        return parseExpense(expense);
       },
       (error) => {
         return error;

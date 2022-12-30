@@ -1,9 +1,5 @@
 // Interfaces
-import {
-  IParticipantResponse,
-  ISharecountForm,
-  ISharecountResponse,
-} from "../interfaces/interfaces";
+import { ISharecountContext, ISharecountForm } from "../interfaces/interfaces";
 
 // Context
 import AuthContext from "../context/auth.context";
@@ -48,25 +44,8 @@ const SharecountAdd = () => {
       participantsToAdd: participantsNameArray,
     };
     addSharecountService(newSharecount).then(
-      (sharecount: ISharecountResponse) => {
-        setSharecountsContext([
-          ...sharecountsContext,
-          {
-            id: sharecount.id,
-            name: sharecount.name,
-            currency: sharecount.currency,
-            total: sharecount.total,
-            user: "", // It's done after user connect to the sharecount
-            balance: 0,
-            participants: sharecount.participants!.map(
-              (p: IParticipantResponse) => ({
-                id: p.id,
-                name: p.name,
-                balance: p.balance,
-              })
-            ),
-          },
-        ]);
+      (sharecount: ISharecountContext) => {
+        setSharecountsContext([...sharecountsContext, sharecount]);
         navigate(`/sharecount-connect/${sharecount.id}`);
         setIsLoaded(true);
       }

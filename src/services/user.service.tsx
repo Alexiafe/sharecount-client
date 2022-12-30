@@ -5,6 +5,20 @@ import {
   IUserResponse,
 } from "../interfaces/interfaces";
 
+const parseUser = (user: IUserResponse) => {
+  let parsedSharecounts = user?.userInSharecount.map(
+    (u: IUserInSharecountResponse) => ({
+      id: u.sharecount.id,
+      name: u.sharecount.name,
+      currency: u.sharecount.currency,
+      total: u.sharecount.total,
+      user: u.participant.name,
+      balance: u.participant.balance,
+    })
+  );
+  return parsedSharecounts;
+};
+
 export const getUserService = (userEmail: string) => {
   console.log("getUserService");
   return fetch(`${serverUrl}/user/${userEmail}`)
@@ -16,17 +30,7 @@ export const getUserService = (userEmail: string) => {
     })
     .then(
       (user: IUserResponse) => {
-        let parsedSharecounts = user?.userInSharecount.map(
-          (u: IUserInSharecountResponse) => ({
-            id: u.sharecount.id,
-            name: u.sharecount.name,
-            currency: u.sharecount.currency,
-            total: u.sharecount.total,
-            user: u.participant.name,
-            balance: u.participant.balance,
-          })
-        );
-        return parsedSharecounts;
+        return parseUser(user);
       },
       (error) => {
         return error;

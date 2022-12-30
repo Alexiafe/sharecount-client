@@ -34,16 +34,7 @@ const Expenses = () => {
       (s) => s.id === parseInt(params.sharecountID!)
     );
     if (currentSharecount?.expenses && currentSharecount?.participants) {
-      setSharecount({
-        id: currentSharecount.id,
-        name: currentSharecount.name,
-        currency: currentSharecount.currency,
-        total: currentSharecount.total,
-        user: currentSharecount.user,
-        balance: currentSharecount.balance,
-        participants: currentSharecount.participants,
-        expenses: currentSharecount.expenses,
-      });
+      setSharecount(currentSharecount);
       setIsLoaded(true);
     } else {
       getSharecountService(parseInt(params.sharecountID!)).then(
@@ -56,6 +47,7 @@ const Expenses = () => {
           setIsLoaded(true);
         },
         (error) => {
+          console.log(error)
           setError(error);
           setIsLoaded(true);
         }

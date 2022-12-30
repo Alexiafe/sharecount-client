@@ -1,10 +1,8 @@
 // Interfaces & configs
 import {
-  IPartakerResponse,
   ISharecountContext,
   IParticipantsContext,
   IExpenseContext,
-  IExpenseResponse,
   IPartakersContext,
   IExpenseForm,
 } from "../interfaces/interfaces";
@@ -90,23 +88,25 @@ const ExpenseEdit = () => {
           setIsLoaded(true);
         },
         (error) => {
+          console.log(error);
           setError(error);
           setIsLoaded(true);
         }
       );
       getExpenseService(parseInt(params.expenseID!)).then(
-        (expense: IExpenseResponse) => {
+        (expense: IExpenseContext) => {
           setOldAmount(expense.amount_total);
           formik.setFieldValue("expenseName", expense.name);
           formik.setFieldValue("expenseAmount", expense.amount_total);
           setExpenseDate(moment(expense.date));
-          setOwnerID(expense.owner_id);
+          setOwnerID(expense.owner.id);
           setSelectedParticipantsIDs(
-            expense.partakers.map((p: IPartakerResponse) => p.participant_id)
+            expense.partakers.map((p: IPartakersContext) => p.id)
           );
           setIsLoaded(true);
         },
         (error) => {
+          console.log(error);
           setError(error);
           setIsLoaded(true);
         }
@@ -129,13 +129,17 @@ const ExpenseEdit = () => {
         let currentSharecount = sharecountsContext.find(
           (s) => s.id === parseInt(params.sharecountID!)
         );
-        currentSharecount!.total = currentSharecount!.total - oldAmount;
         currentSharecount!.expenses = currentSharecount!.expenses!.filter(
           (e) => e.id !== expense_id
         );
+        // Update sharecount total
+        currentSharecount!.total = currentSharecount!.total - oldAmount;
+        // TODO => update sharecount balance + participant's balance
+        // currentSharecount!.total = currentSharecount!.total - oldAmount;
         setIsLoaded(true);
       },
       (error) => {
+        console.log(error);
         setError(error);
         setIsLoaded(true);
       }
@@ -200,35 +204,25 @@ const ExpenseEdit = () => {
       }),
     };
 
-    editExpenseService(newExpense).then((expense: IExpenseResponse) => {
+    editExpenseService(newExpense).then((expense: IExpenseContext) => {
       navigate(
         `/sharecount/${params.sharecountID}/expense/${params.expenseID}`
       );
       let currentSharecount = sharecountsContext.find(
         (s) => s.id === parseInt(params.sharecountID!)
       );
-
-      let newExpenses: IExpenseContext = {
-        id: expense.id,
-        name: expense.name,
-        amount_total: expense.amount_total,
-        date: expense.date,
-        owner: {
-          id: expense.owner.id,
-          name: expense.owner.name,
-        },
-        partakers: expense.partakers.map((p: IPartakerResponse) => ({
-          id: p.participant_id,
-          name: p.participant.name,
-          amount: p.amount,
-        })),
-      };
-      currentSharecount!.total =
-        currentSharecount!.total - oldAmount + expense.amount_total;
       currentSharecount!.expenses = currentSharecount!.expenses!.filter(
         (e) => e.id !== expense.id
       );
-      currentSharecount?.expenses?.push(newExpenses);
+      currentSharecount?.expenses?.push(expense);
+      // Update sharecount total
+      currentSharecount!.total =
+        currentSharecount!.total - oldAmount + expense.amount_total;
+
+      // TODO => update sharecount balance + participant's balance
+      // currentSharecount!.expenses = currentSharecount!.expenses!.filter(
+      //   (e) => e.id !== expense.id
+      // );
       setIsLoaded(true);
     });
   };

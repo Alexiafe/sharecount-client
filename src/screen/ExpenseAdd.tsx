@@ -2,8 +2,6 @@
 import {
   ISharecountContext,
   IExpenseContext,
-  IExpenseResponse,
-  IPartakerResponse,
   IParticipantsContext,
   IExpenseForm,
 } from "../interfaces/interfaces";
@@ -76,6 +74,7 @@ const ExpenseAdd = () => {
           setIsLoaded(true);
         },
         (error) => {
+          console.log(error);
           setError(error);
           setIsLoaded(true);
         }
@@ -144,28 +143,25 @@ const ExpenseAdd = () => {
       }),
     };
 
-    addExpenseService(newExpense).then((expense: IExpenseResponse) => {
+    addExpenseService(newExpense).then((expense: IExpenseContext) => {
       navigate(`/sharecount/${params.sharecountID}`);
       let currentSharecount = sharecountsContext.find(
         (s) => s.id === parseInt(params.sharecountID!)
       );
-      let newExpenses: IExpenseContext = {
-        id: expense.id,
-        name: expense.name,
-        amount_total: expense.amount_total,
-        date: expense.date,
-        owner: {
-          id: expense.owner.id,
-          name: expense.owner.name,
-        },
-        partakers: expense.partakers.map((p: IPartakerResponse) => ({
-          id: p.participant_id,
-          name: p.participant.name,
-          amount: p.amount,
-        })),
-      };
-      currentSharecount!.total = expense.sharecount.total;
-      currentSharecount?.expenses?.push(newExpenses);
+      currentSharecount?.expenses?.push(expense);
+      // Update sharecount total
+      currentSharecount!.total =
+        currentSharecount!.total + expense.amount_total;
+
+      // TODO => update sharecount balance + participant's balance
+      // let test =
+      //   expense.owner.name === currentSharecount?.user
+      //     ? expense.amount_total
+      //     : -expense.amount_total;
+
+      // currentSharecount!.balance =
+      //   currentSharecount!.balance + test / expense.partakers.length;
+
       setIsLoaded(true);
     });
   };

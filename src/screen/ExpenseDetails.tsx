@@ -55,7 +55,7 @@ const ExpensesDetails = () => {
     } else {
       getSharecountService(parseInt(params.sharecountID!)).then(
         (sharecount: ISharecountContext) => {
-          // setSharecountsContext([...filteredSharecounts, parsedSharecount]); // TODO
+          setSharecountsContext([...sharecountsContext, sharecount]);
           setSharecount(sharecount);
           setExpense(
             sharecount?.expenses?.find(
@@ -65,6 +65,7 @@ const ExpensesDetails = () => {
           setIsLoaded(true);
         },
         (error) => {
+          console.log(error)
           setError(error);
           setIsLoaded(true);
         }
