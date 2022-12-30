@@ -124,7 +124,7 @@ const ExpenseEdit = () => {
   const deleteExpense = (expense_id: number) => {
     setIsLoaded(false);
     deleteExpenseService(expense_id).then(
-      () => {
+      (expense: IExpenseContext) => {
         navigate(`/sharecount/${params.sharecountID}`);
         let currentSharecount = sharecountsContext.find(
           (s) => s.id === parseInt(params.sharecountID!)
@@ -132,10 +132,13 @@ const ExpenseEdit = () => {
         currentSharecount!.expenses = currentSharecount!.expenses!.filter(
           (e) => e.id !== expense_id
         );
-        // Update sharecount total
-        currentSharecount!.total = currentSharecount!.total - oldAmount;
-        // TODO => update sharecount balance + participant's balance
-        // currentSharecount!.total = currentSharecount!.total - oldAmount;
+        currentSharecount!.total = expense.sharecount!.total;
+        currentSharecount!.participants = expense.sharecount!.participants;
+        let me = currentSharecount!.participants?.find(
+          (p) => p?.name === currentSharecount!.user
+        );
+        currentSharecount!.balance = me!.balance;
+
         setIsLoaded(true);
       },
       (error) => {
@@ -215,14 +218,12 @@ const ExpenseEdit = () => {
         (e) => e.id !== expense.id
       );
       currentSharecount?.expenses?.push(expense);
-      // Update sharecount total
-      currentSharecount!.total =
-        currentSharecount!.total - oldAmount + expense.amount_total;
-
-      // TODO => update sharecount balance + participant's balance
-      // currentSharecount!.expenses = currentSharecount!.expenses!.filter(
-      //   (e) => e.id !== expense.id
-      // );
+      currentSharecount!.total = expense.sharecount!.total;
+      currentSharecount!.participants = expense.sharecount!.participants;
+      let me = currentSharecount!.participants?.find(
+        (p) => p?.name === currentSharecount!.user
+      );
+      currentSharecount!.balance = me!.balance;
       setIsLoaded(true);
     });
   };

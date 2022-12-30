@@ -23,6 +23,7 @@ export interface IExpenseContext {
   name: string;
   amount_total: number;
   date: string;
+  sharecount?: ISharecountContext;
   owner: {
     id: number;
     name: string;

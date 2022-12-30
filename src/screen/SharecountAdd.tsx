@@ -45,6 +45,7 @@ const SharecountAdd = () => {
     };
     addSharecountService(newSharecount).then(
       (sharecount: ISharecountContext) => {
+        sharecount.balance = 0;
         setSharecountsContext([...sharecountsContext, sharecount]);
         navigate(`/sharecount-connect/${sharecount.id}`);
         setIsLoaded(true);

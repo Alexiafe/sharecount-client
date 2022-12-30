@@ -149,18 +149,12 @@ const ExpenseAdd = () => {
         (s) => s.id === parseInt(params.sharecountID!)
       );
       currentSharecount?.expenses?.push(expense);
-      // Update sharecount total
-      currentSharecount!.total =
-        currentSharecount!.total + expense.amount_total;
-
-      // TODO => update sharecount balance + participant's balance
-      // let test =
-      //   expense.owner.name === currentSharecount?.user
-      //     ? expense.amount_total
-      //     : -expense.amount_total;
-
-      // currentSharecount!.balance =
-      //   currentSharecount!.balance + test / expense.partakers.length;
+      currentSharecount!.total = expense.sharecount!.total;
+      currentSharecount!.participants = expense.sharecount!.participants;
+      let me = currentSharecount!.participants?.find(
+        (p) => p?.name === currentSharecount!.user
+      );
+      currentSharecount!.balance = me!.balance;
 
       setIsLoaded(true);
     });
