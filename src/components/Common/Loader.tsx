@@ -1,10 +1,18 @@
 // MUI
 import { CircularProgress } from "@mui/material";
 
-const Loader = () => {
+interface IPropsLoader {
+  color?: string;
+}
+
+const Loader = (props: IPropsLoader) => {
   return (
     <div className="p-4 text-center">
-      <CircularProgress />
+      {props.color === "white" ? (
+        <CircularProgress sx={{ color: "white" }} />
+      ) : (
+        <CircularProgress />
+      )}
     </div>
   );
 };

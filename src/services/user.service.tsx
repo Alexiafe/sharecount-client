@@ -19,9 +19,9 @@ const parseUser = (user: IUserResponse) => {
   return parsedSharecounts;
 };
 
-export const getUserService = (userEmail: string) => {
-  console.log("getUserService");
-  return fetch(`${serverUrl}/user/${userEmail}`)
+export const getUserService = (userEmail: string, page?: number) => {
+  console.log("getUserService", page ? page : 0);
+  return fetch(`${serverUrl}/user/${userEmail}?page=${page ? page : 0}`)
     .then((res) => {
       return res.text();
     })

@@ -53,6 +53,21 @@ export const getExpenseService = (expenseID: number) => {
     );
 };
 
+export const getAllExpenses = (sharecountID: number, page?: number) => {
+  console.log("getAllExpenses", page ? page : 0);
+  return fetch(`${serverUrl}/expenses/${sharecountID}?page=${page ? page : 0}`)
+    .then((res) => res.json())
+    .then(
+      (expenses: IExpenseResponse[]) => {
+        console.log(expenses);
+        return expenses.map((expense) => parseExpense(expense));
+      },
+      (error) => {
+        return error;
+      }
+    );
+};
+
 export const deleteExpenseService = (expenseID: number) => {
   console.log("deleteExpenseService");
   return fetch(`${serverUrl}/expense/${expenseID}`, {

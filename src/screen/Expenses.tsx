@@ -33,7 +33,7 @@ const Expenses = () => {
     let currentSharecount = sharecountsContext.find(
       (s) => s.id === parseInt(params.sharecountID!)
     );
-    if (currentSharecount?.expenses && currentSharecount?.participants) {
+    if (currentSharecount?.participants) {
       setSharecount(currentSharecount);
       setIsLoaded(true);
     } else {
@@ -47,7 +47,7 @@ const Expenses = () => {
           setIsLoaded(true);
         },
         (error) => {
-          console.log(error)
+          console.log(error);
           setError(error);
           setIsLoaded(true);
         }

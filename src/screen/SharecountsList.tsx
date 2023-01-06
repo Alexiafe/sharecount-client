@@ -18,6 +18,9 @@ import { getUserService } from "../services/user.service";
 // React
 import { useContext, useEffect, useState } from "react";
 
+// Other
+import InfiniteScroll from "react-infinite-scroller";
+
 const SharecountsList = () => {
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(true);
@@ -26,6 +29,8 @@ const SharecountsList = () => {
     useContext(SharecountsContext);
   const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession.email;
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
     if (userEmail) {
@@ -41,7 +46,7 @@ const SharecountsList = () => {
             setIsLoaded(true);
           },
           (error) => {
-            console.log(error)
+            console.log(error);
             setError(error);
             setIsLoaded(true);
           }
@@ -49,6 +54,28 @@ const SharecountsList = () => {
       }
     }
   }, [userEmail, userLoading]);
+
+  const handleLoadMore = async () => {
+    console.log("handleLoadMore", page);
+    if (isLoaded) {
+      const response: ISharecountContext[] = await getUserService(
+        userEmail!,
+        page
+      );
+      if (response.length) {
+        let alreadyExist = sharecounts.find(
+          (sharecount) => sharecount.id === response[0].id
+        );
+        if (!alreadyExist) {
+          setSharecounts([...sharecounts, ...response]);
+          setSharecountsContext([...sharecounts, ...response]);
+        }
+        setPage(page + 1);
+      } else {
+        setHasMore(false);
+      }
+    }
+  };
 
   if (!isLoaded || userLoading) {
     return (
@@ -73,24 +100,31 @@ const SharecountsList = () => {
           title={`Hi ${userSession.displayName!} !`}
           screen={"Home"}
         ></Header>
-        <div className="flex flex-1 bg-primary overflow-auto">
-          {sharecounts.length ? (
-            <ul className="w-full">
-              {sharecounts
-                .sort((s1, s2) => s2.id - s1.id)
-                .map((s: ISharecountContext) => (
+        {sharecounts.length ? (
+          <div className="flex flex-1 bg-primary overflow-auto w-full">
+            <InfiniteScroll
+              pageStart={page}
+              loadMore={handleLoadMore}
+              hasMore={hasMore}
+              loader={<Loader key={0} color="white"></Loader>}
+              useWindow={false}
+              style={{ width: "100%" }}
+            >
+              <ul className="w-full">
+                {sharecounts.map((s: ISharecountContext) => (
                   <li key={s.id} className="py-2 px-5">
                     <SharecountItem sharecount={s}></SharecountItem>
                   </li>
                 ))}
-            </ul>
-          ) : (
-            <div className="p-4 text-center w-full text-white">
-              <p>No sharecounts yet.</p>
-              <p>Click the " + " button to create one</p>
-            </div>
-          )}
-        </div>
+              </ul>
+            </InfiniteScroll>
+          </div>
+        ) : (
+          <div className="p-4 text-center w-full text-white">
+            <p>No sharecounts yet.</p>
+            <p>Click the " + " button to create one</p>
+          </div>
+        )}
         <footer className="flex w-full">
           <MenuHome screen="home"></MenuHome>
         </footer>
