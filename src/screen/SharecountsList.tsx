@@ -19,7 +19,7 @@ import { getUserService } from "../services/user.service";
 import { useContext, useEffect, useState } from "react";
 
 // Other
-import InfiniteScroll from "react-infinite-scroller";
+import { useInView } from "react-cool-inview";
 
 const SharecountsList = () => {
   const [error, setError] = useState<any>(null);
@@ -29,6 +29,13 @@ const SharecountsList = () => {
     useContext(SharecountsContext);
   const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession.email;
+
+  const { observe } = useInView({
+    onEnter: () => {
+      handleLoadMore();
+    },
+  });
+
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
@@ -95,29 +102,23 @@ const SharecountsList = () => {
     return <NotLoggedIn></NotLoggedIn>;
   } else {
     return (
-      <div className="h-screen flex flex-col">
+      <div style={{ paddingTop: "150px", paddingBottom: "120px" }}>
         <Header
           title={`Hi ${userSession.displayName!} !`}
           screen={"Home"}
         ></Header>
         {sharecounts.length ? (
-          <div className="flex flex-1 bg-primary overflow-auto w-full">
-            <InfiniteScroll
-              pageStart={page}
-              loadMore={handleLoadMore}
-              hasMore={hasMore}
-              loader={<Loader key={0} color="white"></Loader>}
-              useWindow={false}
-              style={{ width: "100%" }}
-            >
-              <ul className="w-full">
-                {sharecounts.map((s: ISharecountContext) => (
-                  <li key={s.id} className="py-2 px-5">
-                    <SharecountItem sharecount={s}></SharecountItem>
-                  </li>
-                ))}
-              </ul>
-            </InfiniteScroll>
+          <div className="bg-primary relative w-full">
+            <ul className="w-full">
+              {sharecounts.map((s: ISharecountContext) => (
+                <li key={s.id} className="py-2 px-5">
+                  <SharecountItem sharecount={s}></SharecountItem>
+                </li>
+              ))}
+            </ul>
+            <div ref={observe}>
+              {hasMore ? <Loader key={0}></Loader> : <div></div>}
+            </div>
           </div>
         ) : (
           <div className="p-4 text-center w-full text-white">
@@ -125,7 +126,13 @@ const SharecountsList = () => {
             <p>Click the " + " button to create one</p>
           </div>
         )}
-        <footer className="flex w-full">
+        <footer
+          className="fixed bottom-0 w-full flex"
+          style={{
+            height: "120px",
+            zIndex: 101,
+          }}
+        >
           <MenuHome screen="home"></MenuHome>
         </footer>
       </div>

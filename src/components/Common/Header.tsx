@@ -33,8 +33,11 @@ const Header = (props: IPropsHeader) => {
   if (props.screen === "Home") {
     return (
       <header
-        className="flex bg-primary text-white justify-center"
-        style={{ height: "150px" }}
+        className="flex fixed top-0 bg-primary text-white justify-center w-full"
+        style={{
+          height: "150px",
+          zIndex: 100,
+        }}
       >
         <div className="self-center text-2xl font-bold">{props.title}</div>
       </header>

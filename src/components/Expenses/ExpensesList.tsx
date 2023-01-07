@@ -25,6 +25,7 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 // Other
 import moment from "moment";
+import { useInView } from "react-cool-inview";
 
 interface IPropsExpensesList {
   sharecount?: ISharecountContext;
@@ -41,6 +42,15 @@ const ExpensesList = (props: IPropsExpensesList) => {
   );
   const [filter, setFilter] = useState<string>("");
 
+  const { observe } = useInView({
+    onEnter: () => {
+      handleLoadMore();
+    },
+  });
+
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+
   const expensesGroupped: any = expenses.reduce((group: any, expense: any) => {
     const { date } = expense;
     group[date] = group[date] ?? [];
@@ -53,21 +63,56 @@ const ExpensesList = (props: IPropsExpensesList) => {
   };
 
   useEffect(() => {
-    if (!expenses.length) {
-      getAllExpenses(props.sharecount?.id!).then(
-        (response: IExpenseContext[]) => {
-          setExpenses(response);
-          // Update context
-          setIsLoaded(true);
-        },
-        (error: any) => {
-          console.log(error);
-          setError(error);
-          setIsLoaded(true);
-        }
-      );
+    let currentSharecount = sharecountsContext.find(
+      (s) => s.id === props.sharecount?.id!
+    );
+    if (currentSharecount?.expenses) {
+      setExpenses(currentSharecount?.expenses);
+      setIsLoaded(true);
+    } else {
+      if (!expenses.length) {
+        getAllExpenses(props.sharecount?.id!).then(
+          (response: IExpenseContext[]) => {
+            setExpenses(response);
+            let newSharecountsContext = [...sharecountsContext];
+            let newExpenses = [...expenses, ...response];
+            newSharecountsContext.find(
+              (s) => s.id === props.sharecount?.id
+            )!.expenses = newExpenses;
+            setSharecountsContext(newSharecountsContext);
+            setIsLoaded(true);
+          },
+          (error: any) => {
+            console.log(error);
+            setError(error);
+            setIsLoaded(true);
+          }
+        );
+      }
     }
   }, [props.sharecount?.id]);
+
+  const handleLoadMore = async () => {
+    console.log("handleLoadMore", page);
+    if (isLoaded) {
+      const response: IExpenseContext[] = await getAllExpenses(
+        props.sharecount?.id!!,
+        page
+      );
+      if (response.length) {
+        setExpenses([...expenses, ...response]);
+        let newSharecountsContext = [...sharecountsContext];
+        let newExpenses = [...expenses, ...response];
+        newSharecountsContext.find(
+          (s) => s.id === props.sharecount?.id
+        )!.expenses = newExpenses;
+        setSharecountsContext(newSharecountsContext);
+        setPage(page + 1);
+      } else {
+        setHasMore(false);
+      }
+    }
+  };
 
   if (!isLoaded) {
     return (
@@ -84,43 +129,19 @@ const ExpensesList = (props: IPropsExpensesList) => {
           <div>
             <SearchBar onClick={filterExpenses}></SearchBar>
             <div className="p-4">
-              {Object.keys(expensesGroupped)
-                .sort()
-                .reverse()
-                .map((date: any) => (
-                  <div key={date}>
-                    {expensesGroupped[date]?.filter((e: IExpenseContext) =>
-                      e.name.toLowerCase().includes(filter.toLowerCase())
-                    ).length ? (
-                      <div className="text-secondary">
-                        {moment(date).isSame(moment(), "day")
-                          ? "Today"
-                          : moment(date).isSame(
-                              moment().subtract(1, "days"),
-                              "day"
-                            )
-                          ? "Yesterday"
-                          : moment(date).format("DD/MM/YYYY")}
-                      </div>
-                    ) : (
-                      <div></div>
-                    )}
-                    <div>
-                      {expensesGroupped[date]
-                        ?.filter((e: IExpenseContext) =>
-                          e.name.toLowerCase().includes(filter.toLowerCase())
-                        )
-                        .map((e: IExpenseContext) => (
-                          <div key={e.id}>
-                            <ExpenseItem
-                              sharecount={props.sharecount}
-                              expense={e}
-                            ></ExpenseItem>
-                          </div>
-                        ))}
-                    </div>
-                  </div>
+              <ul className="w-full">
+                {expenses.map((e: IExpenseContext) => (
+                  <li key={e.id} className="py-2 px-5">
+                    <ExpenseItem
+                      sharecount={props.sharecount}
+                      expense={e}
+                    ></ExpenseItem>
+                  </li>
                 ))}
+              </ul>
+              <div ref={observe}>
+                {hasMore ? <Loader key={0}></Loader> : <div></div>}
+              </div>
             </div>
           </div>
         ) : (

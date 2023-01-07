@@ -40,10 +40,12 @@ const Expenses = () => {
       getSharecountService(parseInt(params.sharecountID!)).then(
         (sharecount: ISharecountContext) => {
           setSharecount(sharecount);
-          let filteredSharecounts = sharecountsContext.filter(
-            (s) => s.id !== parseInt(params.sharecountID!)
-          );
-          setSharecountsContext([...filteredSharecounts, sharecount]);
+          let newSharecountsContext = [...sharecountsContext];
+          newSharecountsContext.find(
+            (s) => s.id === parseInt(params.sharecountID!)
+          )!.participants = sharecount.participants;
+
+          setSharecountsContext(newSharecountsContext);
           setIsLoaded(true);
         },
         (error) => {
