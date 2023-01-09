@@ -76,10 +76,14 @@ const ExpensesList = (props: IPropsExpensesList) => {
             setExpenses(response);
             let newSharecountsContext = [...sharecountsContext];
             let newExpenses = [...expenses, ...response];
-            newSharecountsContext.find(
-              (s) => s.id === props.sharecount?.id
-            )!.expenses = newExpenses;
-            setSharecountsContext(newSharecountsContext);
+            if (
+              newSharecountsContext.find((s) => s.id === props.sharecount?.id)
+            ) {
+              newSharecountsContext.find(
+                (s) => s.id === props.sharecount?.id
+              )!.expenses = newExpenses;
+              setSharecountsContext(newSharecountsContext);
+            }
             setIsLoaded(true);
           },
           (error: any) => {
@@ -100,13 +104,22 @@ const ExpensesList = (props: IPropsExpensesList) => {
         page
       );
       if (response.length) {
-        setExpenses([...expenses, ...response]);
-        let newSharecountsContext = [...sharecountsContext];
-        let newExpenses = [...expenses, ...response];
-        newSharecountsContext.find(
-          (s) => s.id === props.sharecount?.id
-        )!.expenses = newExpenses;
-        setSharecountsContext(newSharecountsContext);
+        let alreadyExist = expenses.find(
+          (expense) => expense.id === response[0].id
+        );
+        if (!alreadyExist) {
+          setExpenses([...expenses, ...response]);
+          let newSharecountsContext = [...sharecountsContext];
+          let newExpenses = [...expenses, ...response];
+          if (
+            newSharecountsContext.find((s) => s.id === props.sharecount?.id)
+          ) {
+            newSharecountsContext.find(
+              (s) => s.id === props.sharecount?.id
+            )!.expenses = newExpenses;
+            setSharecountsContext(newSharecountsContext);
+          }
+        }
         setPage(page + 1);
       } else {
         setHasMore(false);
@@ -129,19 +142,46 @@ const ExpensesList = (props: IPropsExpensesList) => {
           <div>
             <SearchBar onClick={filterExpenses}></SearchBar>
             <div className="p-4">
-              <ul className="w-full">
-                {expenses.map((e: IExpenseContext) => (
-                  <li key={e.id} className="py-2 px-5">
-                    <ExpenseItem
-                      sharecount={props.sharecount}
-                      expense={e}
-                    ></ExpenseItem>
-                  </li>
+              {Object.keys(expensesGroupped)
+                .sort()
+                .reverse()
+                .map((date: any) => (
+                  <div key={date}>
+                    {expensesGroupped[date]?.filter((e: IExpenseContext) =>
+                      e.name.toLowerCase().includes(filter.toLowerCase())
+                    ).length ? (
+                      <div className="text-secondary">
+                        {moment(date).isSame(moment(), "day")
+                          ? "Today"
+                          : moment(date).isSame(
+                              moment().subtract(1, "days"),
+                              "day"
+                            )
+                          ? "Yesterday"
+                          : moment(date).format("DD/MM/YYYY")}
+                      </div>
+                    ) : (
+                      <div></div>
+                    )}
+                    <div>
+                      {expensesGroupped[date]
+                        ?.filter((e: IExpenseContext) =>
+                          e.name.toLowerCase().includes(filter.toLowerCase())
+                        )
+                        .map((e: IExpenseContext) => (
+                          <div key={e.id}>
+                            <ExpenseItem
+                              sharecount={props.sharecount}
+                              expense={e}
+                            ></ExpenseItem>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
                 ))}
-              </ul>
-              <div ref={observe}>
-                {hasMore ? <Loader key={0}></Loader> : <div></div>}
-              </div>
+            </div>
+            <div ref={observe}>
+              {hasMore ? <Loader key={0}></Loader> : <div></div>}
             </div>
           </div>
         ) : (

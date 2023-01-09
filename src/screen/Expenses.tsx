@@ -41,11 +41,16 @@ const Expenses = () => {
         (sharecount: ISharecountContext) => {
           setSharecount(sharecount);
           let newSharecountsContext = [...sharecountsContext];
-          newSharecountsContext.find(
-            (s) => s.id === parseInt(params.sharecountID!)
-          )!.participants = sharecount.participants;
-
-          setSharecountsContext(newSharecountsContext);
+          if (
+            newSharecountsContext.find(
+              (s) => s.id === parseInt(params.sharecountID!)
+            )
+          ) {
+            newSharecountsContext.find(
+              (s) => s.id === parseInt(params.sharecountID!)
+            )!.participants = sharecount.participants;
+            setSharecountsContext(newSharecountsContext);
+          }
           setIsLoaded(true);
         },
         (error) => {
