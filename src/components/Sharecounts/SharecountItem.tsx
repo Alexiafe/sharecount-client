@@ -1,8 +1,12 @@
 // Interfaces
 import { ISharecountContext } from "../../interfaces/interfaces";
 
+// Context
+import SharecountPositionContext from "../../context/sharecountposition.context";
+
 // React
 import React from "react";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 // MUI
@@ -21,9 +25,14 @@ interface IPropsSharecountItem {
 
 const SharecountItem = (props: IPropsSharecountItem) => {
   const navigate = useNavigate();
+  const id = `id${props.sharecount.id.toString()}`;
+
+  const { setSharecountIdContext, setPositionContext } = useContext(
+    SharecountPositionContext
+  );
 
   return (
-    <List disablePadding>
+    <List disablePadding id={id}>
       <ListItemButton
         sx={{
           bgcolor: "white",
@@ -66,7 +75,15 @@ const SharecountItem = (props: IPropsSharecountItem) => {
               )}
             </React.Fragment>
           }
-          onClick={() => navigate(`/sharecount/${props.sharecount.id}`)}
+          onClick={() => {
+            const element = document.getElementById(`${id}`);
+            const rect = element?.getBoundingClientRect();
+            if (rect) {
+              setSharecountIdContext(id);
+              setPositionContext(rect.top);
+            }
+            navigate(`/sharecount/${props.sharecount.id}`);
+          }}
         />
         <IconButton
           size="large"

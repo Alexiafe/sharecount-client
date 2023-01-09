@@ -6,6 +6,7 @@ import {
 
 // Context
 import SharecountsContext from "../../context/sharecounts.context";
+import ExpensePositionContext from "../../context/expenseposition.context";
 
 // Components
 import Loader from "../Common/Loader";
@@ -39,6 +40,9 @@ const ExpensesList = (props: IPropsExpensesList) => {
     useContext(SharecountsContext);
   const [expenses, setExpenses] = useState<IExpenseContext[]>(
     props.sharecount?.expenses || []
+  );
+  const { expenseIdContext, expensePositionContext } = useContext(
+    ExpensePositionContext
   );
   const [filter, setFilter] = useState<string>("");
 
@@ -93,7 +97,17 @@ const ExpensesList = (props: IPropsExpensesList) => {
         );
       }
     }
+    scrollDown();
   }, [props.sharecount?.id]);
+
+  const scrollDown = () => {
+    setTimeout(function () {
+      const element = document.getElementById(expenseIdContext);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }, 500);
+  };
 
   const handleLoadMore = async () => {
     let page = Math.round(expenses.length / 10);

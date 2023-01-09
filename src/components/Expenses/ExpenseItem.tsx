@@ -1,8 +1,12 @@
 // Interfaces
 import { IExpenseContext } from "../../interfaces/interfaces";
 
+// Context
+import ExpensePositionContext from "../../context/expenseposition.context";
+
 // React
 import React from "react";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 // MUI
@@ -21,9 +25,14 @@ interface IPropsExpenseItem {
 
 const ExpenseItem = (props: IPropsExpenseItem) => {
   const navigate = useNavigate();
+  const id = `id${props.expense.id.toString()}`;
+
+  const { setExpenseIdContext, setExpensePositionContext } = useContext(
+    ExpensePositionContext
+  );
 
   return (
-    <List disablePadding>
+    <List disablePadding id={id}>
       <ListItemButton>
         <ListItemText
           primaryTypographyProps={{
@@ -47,11 +56,17 @@ const ExpenseItem = (props: IPropsExpenseItem) => {
               </Typography>
             </React.Fragment>
           }
-          onClick={() =>
+          onClick={() => {
+            const element = document.getElementById(`${id}`);
+            const rect = element?.getBoundingClientRect();
+            if (rect) {
+              setExpenseIdContext(id);
+              setExpensePositionContext(rect.top);
+            }
             navigate(
               `/sharecount/${props.sharecount?.id}/expense/${props.expense.id}`
-            )
-          }
+            );
+          }}
         />
         <ListItemText
           style={{ textAlign: "right" }}

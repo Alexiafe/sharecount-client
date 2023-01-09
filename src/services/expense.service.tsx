@@ -59,7 +59,6 @@ export const getAllExpenses = (sharecountID: number, page?: number) => {
     .then((res) => res.json())
     .then(
       (expenses: IExpenseResponse[]) => {
-        console.log(expenses);
         return expenses.map((expense) => parseExpense(expense));
       },
       (error) => {

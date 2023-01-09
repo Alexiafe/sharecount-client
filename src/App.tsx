@@ -1,6 +1,8 @@
 // Context
 import { AuthContextProvider } from "./context/auth.context";
 import { SharecountsContextProvider } from "./context/sharecounts.context";
+import { SharecountPositionContextProvider } from "./context/sharecountposition.context";
+import { ExpensePositionContextProvider } from "./context/expenseposition.context";
 
 // Screen
 import Login from "./screen/Login";
@@ -49,41 +51,45 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <AuthContextProvider>
         <SharecountsContextProvider>
-          <div>
-            <Router>
-              <Routes>
-                <Route path="/login" element={<Login />} />
+          <SharecountPositionContextProvider>
+            <ExpensePositionContextProvider>
+              <div>
+                <Router>
+                  <Routes>
+                    <Route path="/login" element={<Login />} />
 
-                <Route path="/" element={<Sharecounts />} />
-                <Route
-                  path="/sharecount-edit/:sharecountID"
-                  element={<SharecountEdit />}
-                />
-                <Route path="/sharecount-add" element={<SharecountAdd />} />
-                <Route
-                  path="/sharecount-connect/:sharecountID"
-                  element={<SharecountConnect />}
-                />
+                    <Route path="/" element={<Sharecounts />} />
+                    <Route
+                      path="/sharecount-edit/:sharecountID"
+                      element={<SharecountEdit />}
+                    />
+                    <Route path="/sharecount-add" element={<SharecountAdd />} />
+                    <Route
+                      path="/sharecount-connect/:sharecountID"
+                      element={<SharecountConnect />}
+                    />
 
-                <Route
-                  path="/sharecount/:sharecountID"
-                  element={<Expenses />}
-                />
-                <Route
-                  path="/sharecount/:sharecountID/expense/:expenseID"
-                  element={<ExpensesDetails />}
-                />
-                <Route
-                  path="/sharecount/:sharecountID/expense-add"
-                  element={<ExpenseAdd />}
-                />
-                <Route
-                  path="/sharecount/:sharecountID/expense-edit/:expenseID"
-                  element={<ExpenseEdit />}
-                />
-              </Routes>
-            </Router>
-          </div>
+                    <Route
+                      path="/sharecount/:sharecountID"
+                      element={<Expenses />}
+                    />
+                    <Route
+                      path="/sharecount/:sharecountID/expense/:expenseID"
+                      element={<ExpensesDetails />}
+                    />
+                    <Route
+                      path="/sharecount/:sharecountID/expense-add"
+                      element={<ExpenseAdd />}
+                    />
+                    <Route
+                      path="/sharecount/:sharecountID/expense-edit/:expenseID"
+                      element={<ExpenseEdit />}
+                    />
+                  </Routes>
+                </Router>
+              </div>
+            </ExpensePositionContextProvider>
+          </SharecountPositionContextProvider>
         </SharecountsContextProvider>
       </AuthContextProvider>
     </ThemeProvider>
