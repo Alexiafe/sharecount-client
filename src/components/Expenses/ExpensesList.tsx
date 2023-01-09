@@ -48,7 +48,6 @@ const ExpensesList = (props: IPropsExpensesList) => {
     },
   });
 
-  const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
   const expensesGroupped: any = expenses.reduce((group: any, expense: any) => {
@@ -97,7 +96,7 @@ const ExpensesList = (props: IPropsExpensesList) => {
   }, [props.sharecount?.id]);
 
   const handleLoadMore = async () => {
-    console.log("handleLoadMore", page);
+    let page = Math.round(expenses.length / 10);
     if (isLoaded) {
       const response: IExpenseContext[] = await getAllExpenses(
         props.sharecount?.id!!,
@@ -120,7 +119,6 @@ const ExpensesList = (props: IPropsExpensesList) => {
             setSharecountsContext(newSharecountsContext);
           }
         }
-        setPage(page + 1);
       } else {
         setHasMore(false);
       }

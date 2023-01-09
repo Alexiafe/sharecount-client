@@ -21,7 +21,7 @@ import { useContext, useEffect, useState } from "react";
 // Other
 import { useInView } from "react-cool-inview";
 
-const SharecountsList = () => {
+const Sharecounts = () => {
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(true);
   const [sharecounts, setSharecounts] = useState<ISharecountContext[]>([]);
@@ -36,7 +36,6 @@ const SharecountsList = () => {
     },
   });
 
-  const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
@@ -63,7 +62,7 @@ const SharecountsList = () => {
   }, [userEmail, userLoading]);
 
   const handleLoadMore = async () => {
-    console.log("handleLoadMore", page);
+    let page = Math.round(sharecounts.length / 10);
     if (isLoaded) {
       const response: ISharecountContext[] = await getUserService(
         userEmail!,
@@ -77,7 +76,6 @@ const SharecountsList = () => {
           setSharecounts([...sharecounts, ...response]);
           setSharecountsContext([...sharecounts, ...response]);
         }
-        setPage(page + 1);
       } else {
         setHasMore(false);
       }
@@ -140,4 +138,4 @@ const SharecountsList = () => {
   }
 };
 
-export default SharecountsList;
+export default Sharecounts;

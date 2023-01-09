@@ -5,7 +5,7 @@ import { SharecountsContextProvider } from "./context/sharecounts.context";
 // Screen
 import Login from "./screen/Login";
 
-import SharecountsList from "./screen/SharecountsList";
+import Sharecounts from "./screen/Sharecounts";
 import SharecountEdit from "./screen/SharecountEdit";
 import SharecountAdd from "./screen/SharecountAdd";
 import SharecountConnect from "./screen/SharecountConnect";
@@ -54,7 +54,7 @@ const App = () => {
               <Routes>
                 <Route path="/login" element={<Login />} />
 
-                <Route path="/" element={<SharecountsList />} />
+                <Route path="/" element={<Sharecounts />} />
                 <Route
                   path="/sharecount-edit/:sharecountID"
                   element={<SharecountEdit />}
