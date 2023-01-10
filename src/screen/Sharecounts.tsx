@@ -112,6 +112,7 @@ const Sharecounts = () => {
   } else {
     return (
       <div style={{ paddingTop: "150px", paddingBottom: "120px" }}>
+        <div className="h-screen bg-primary fixed w-full"></div>
         <Header
           title={`Hi ${userSession.displayName!} !`}
           screen={"Home"}
