@@ -85,7 +85,7 @@ const SharecountEdit = () => {
           setIsLoaded(true);
         },
         (error) => {
-          console.log(error)
+          console.log(error);
           setError(error);
           setIsLoaded(true);
         }
@@ -115,7 +115,7 @@ const SharecountEdit = () => {
         setIsLoaded(true);
       },
       (error) => {
-        console.log(error)
+        console.log(error);
         setError(error);
         setIsLoaded(true);
       }
@@ -145,10 +145,14 @@ const SharecountEdit = () => {
 
     editSharecountService(newSharecount).then(
       (sharecount: ISharecountContext) => {
-        let currentSharecount: ISharecountContext = sharecountsContext.find(
-          (s) => s.id === parseInt(params.sharecountID!)
-        )!;
-        currentSharecount = sharecount;
+        if (sharecountsContext.find((s) => s.id === sharecount.id)) {
+          sharecountsContext.find((s) => s.id === sharecount.id)!.name =
+            sharecount.name;
+          sharecountsContext.find((s) => s.id === sharecount.id)!.currency =
+            sharecount.currency;
+          sharecountsContext.find((s) => s.id === sharecount.id)!.participants =
+            sharecount.participants;
+        }
         navigate(`/sharecount/${params.sharecountID}`);
         setIsLoaded(true);
       }

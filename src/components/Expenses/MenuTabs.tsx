@@ -84,7 +84,7 @@ const MenuTabs = (props: IPropsMenuTabs) => {
           <BalanceList sharecount={props.sharecount} />
         </TabPanel>
         <TabPanel value={value} index={2}>
-          <RefundList />
+          <RefundList sharecount={props.sharecount} />
         </TabPanel>
       </div>
     </div>

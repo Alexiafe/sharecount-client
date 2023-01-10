@@ -52,7 +52,7 @@ const ExpensesList = (props: IPropsExpensesList) => {
     },
   });
 
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(false);
 
   const expensesGroupped: any = expenses.reduce((group: any, expense: any) => {
     const { date } = expense;
@@ -110,6 +110,7 @@ const ExpensesList = (props: IPropsExpensesList) => {
   };
 
   const handleLoadMore = async () => {
+    setHasMore(true);
     let page = Math.round(expenses.length / 10);
     if (isLoaded) {
       const response: IExpenseContext[] = await getAllExpenses(
@@ -133,9 +134,8 @@ const ExpensesList = (props: IPropsExpensesList) => {
             setSharecountsContext(newSharecountsContext);
           }
         }
-      } else {
-        setHasMore(false);
       }
+      setHasMore(false);
     }
   };
 
@@ -202,7 +202,6 @@ const ExpensesList = (props: IPropsExpensesList) => {
             <p>Click the " + " button to create one</p>
           </div>
         )}
-
         <footer className="absolute bottom-0 right-0">
           <div className="pb-5 pr-5">
             <IconButton

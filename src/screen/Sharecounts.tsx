@@ -42,7 +42,7 @@ const Sharecounts = () => {
     },
   });
 
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(false);
 
   useEffect(() => {
     if (userEmail) {
@@ -78,6 +78,7 @@ const Sharecounts = () => {
   };
 
   const handleLoadMore = async () => {
+    setHasMore(true);
     let page = Math.round(sharecounts.length / 10);
     if (isLoaded) {
       const response: ISharecountContext[] = await getUserService(
@@ -92,9 +93,8 @@ const Sharecounts = () => {
           setSharecounts([...sharecounts, ...response]);
           setSharecountsContext([...sharecounts, ...response]);
         }
-      } else {
-        setHasMore(false);
       }
+      setHasMore(false);
     }
   };
 
