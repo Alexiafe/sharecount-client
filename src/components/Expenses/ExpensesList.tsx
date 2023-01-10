@@ -104,7 +104,7 @@ const ExpensesList = (props: IPropsExpensesList) => {
     setTimeout(function () {
       const element = document.getElementById(expenseIdContext);
       if (element) {
-        element.scrollIntoView({ behavior: "smooth", block: "center" });
+        element.scrollIntoView({ block: "center" });
       }
     }, 500);
   };

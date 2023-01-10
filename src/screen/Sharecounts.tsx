@@ -29,9 +29,7 @@ const Sharecounts = () => {
   const { sharecountsContext, setSharecountsContext } =
     useContext(SharecountsContext);
 
-  const { sharecountIdContext, sharecountPositionContext } = useContext(
-    SharecountPositionContext
-  );
+  const { sharecountPositionContext } = useContext(SharecountPositionContext);
 
   const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession.email;
@@ -70,10 +68,7 @@ const Sharecounts = () => {
 
   const scrollDown = () => {
     setTimeout(function () {
-      const element = document.getElementById(sharecountIdContext);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
+      window.scrollTo(0, sharecountPositionContext);
     }, 500);
   };
 

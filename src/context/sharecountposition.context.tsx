@@ -1,10 +1,8 @@
 import { createContext, useState } from "react";
 
 interface ISharecountPositionContext {
-  sharecountIdContext: string;
   sharecountPositionContext: number;
-  setSharecountIdContext: (id: string) => void;
-  setPositionContext: (position: number) => void;
+  setSharecountPositionContext: (position: number) => void;
 }
 
 const SharecountPositionContext = createContext(
@@ -12,16 +10,14 @@ const SharecountPositionContext = createContext(
 );
 
 export function SharecountPositionContextProvider({ children }: any) {
-  const [sharecountIdContext, setSharecountIdContext] = useState<string>("");
-  const [sharecountPositionContext, setPositionContext] = useState<number>(0);
+  const [sharecountPositionContext, setSharecountPositionContext] =
+    useState<number>(0);
 
   return (
     <SharecountPositionContext.Provider
       value={{
-        sharecountIdContext,
         sharecountPositionContext,
-        setSharecountIdContext,
-        setPositionContext,
+        setSharecountPositionContext,
       }}
     >
       {children}

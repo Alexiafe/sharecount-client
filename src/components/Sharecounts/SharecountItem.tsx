@@ -27,7 +27,7 @@ const SharecountItem = (props: IPropsSharecountItem) => {
   const navigate = useNavigate();
   const id = `id${props.sharecount.id.toString()}`;
 
-  const { setSharecountIdContext, setPositionContext } = useContext(
+  const { setSharecountPositionContext } = useContext(
     SharecountPositionContext
   );
 
@@ -76,12 +76,7 @@ const SharecountItem = (props: IPropsSharecountItem) => {
             </React.Fragment>
           }
           onClick={() => {
-            const element = document.getElementById(`${id}`);
-            const rect = element?.getBoundingClientRect();
-            if (rect) {
-              setSharecountIdContext(id);
-              setPositionContext(rect.top);
-            }
+            setSharecountPositionContext(window.pageYOffset);
             navigate(`/sharecount/${props.sharecount.id}`);
           }}
         />
