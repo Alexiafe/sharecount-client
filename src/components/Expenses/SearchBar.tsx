@@ -3,7 +3,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { InputAdornment, TextField } from "@mui/material";
 
 interface IPropsSearchBar {
-  onClick: (filter: string) => void;
+  onChange: (filter: string) => void;
 }
 
 const SearchBar = (props: IPropsSearchBar) => {
@@ -14,7 +14,7 @@ const SearchBar = (props: IPropsSearchBar) => {
         size="small"
         placeholder="Search"
         onChange={(e) => {
-          props.onClick(e.target.value);
+          props.onChange(e.target.value);
         }}
         sx={{
           "& fieldset": { border: "none" },

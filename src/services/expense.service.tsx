@@ -67,6 +67,24 @@ export const getAllExpenses = (sharecountID: number, page?: number) => {
     );
 };
 
+export const getFilteredExpenses = (sharecountID: number, filter?: string) => {
+  console.log("getFilteredExpenses", filter ? filter : "");
+  return fetch(
+    `${serverUrl}/filteredExpenses/${sharecountID}?filter=${
+      filter ? filter : ""
+    }`
+  )
+    .then((res) => res.json())
+    .then(
+      (expenses: IExpenseResponse[]) => {
+        return expenses.map((expense) => parseExpense(expense));
+      },
+      (error) => {
+        return error;
+      }
+    );
+};
+
 export const deleteExpenseService = (expenseID: number) => {
   console.log("deleteExpenseService");
   return fetch(`${serverUrl}/expense/${expenseID}`, {

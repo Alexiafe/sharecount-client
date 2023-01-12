@@ -15,6 +15,7 @@ import ExpenseItem from "./ExpenseItem";
 
 // Services
 import { getAllExpenses } from "../../services/expense.service";
+import { getFilteredExpenses } from "../../services/expense.service";
 
 // React
 import { useContext, useEffect, useState } from "react";
@@ -41,18 +42,14 @@ const ExpensesList = (props: IPropsExpensesList) => {
   const [expenses, setExpenses] = useState<IExpenseContext[]>(
     props.sharecount?.expenses || []
   );
-  const { expenseIdContext, expensePositionContext } = useContext(
-    ExpensePositionContext
-  );
-  const [filter, setFilter] = useState<string>("");
+  const { expenseIdContext } = useContext(ExpensePositionContext);
+  const [hasMore, setHasMore] = useState(true);
 
   const { observe } = useInView({
     onEnter: () => {
       handleLoadMore();
     },
   });
-
-  const [hasMore, setHasMore] = useState(false);
 
   const expensesGroupped: any = expenses.reduce((group: any, expense: any) => {
     const { date } = expense;
@@ -61,8 +58,24 @@ const ExpensesList = (props: IPropsExpensesList) => {
     return group;
   }, {});
 
-  const filterExpenses = (filter: string) => {
-    setFilter(filter);
+  const manageFilterChange = (filter: string) => {
+    if (filter.length > 0) {
+      getFilteredExpenses(props.sharecount?.id!, filter).then(
+        (response: IExpenseContext[]) => {
+          setExpenses(response);
+        },
+        (error: any) => {
+          console.log(error);
+        }
+      );
+      setHasMore(false);
+    } else {
+      let currentSharecount = sharecountsContext.find(
+        (s) => s.id === props.sharecount?.id!
+      );
+      setExpenses(currentSharecount?.expenses || []);
+      setHasMore(true);
+    }
   };
 
   useEffect(() => {
@@ -110,7 +123,6 @@ const ExpensesList = (props: IPropsExpensesList) => {
   };
 
   const handleLoadMore = async () => {
-    setHasMore(true);
     let page = Math.round(expenses.length / 10);
     if (isLoaded) {
       const response: IExpenseContext[] = await getAllExpenses(
@@ -134,8 +146,9 @@ const ExpensesList = (props: IPropsExpensesList) => {
             setSharecountsContext(newSharecountsContext);
           }
         }
+      } else {
+        setHasMore(false);
       }
-      setHasMore(false);
     }
   };
 
@@ -150,18 +163,16 @@ const ExpensesList = (props: IPropsExpensesList) => {
   } else {
     return (
       <div>
+        <SearchBar onChange={manageFilterChange}></SearchBar>
         {expenses.length ? (
           <div>
-            <SearchBar onClick={filterExpenses}></SearchBar>
             <div className="p-4">
               {Object.keys(expensesGroupped)
                 .sort()
                 .reverse()
                 .map((date: any) => (
                   <div key={date}>
-                    {expensesGroupped[date]?.filter((e: IExpenseContext) =>
-                      e.name.toLowerCase().includes(filter.toLowerCase())
-                    ).length ? (
+                    {expensesGroupped[date]?.length ? (
                       <div className="text-secondary">
                         {moment(date).isSame(moment(), "day")
                           ? "Today"
@@ -176,25 +187,25 @@ const ExpensesList = (props: IPropsExpensesList) => {
                       <div></div>
                     )}
                     <div>
-                      {expensesGroupped[date]
-                        ?.filter((e: IExpenseContext) =>
-                          e.name.toLowerCase().includes(filter.toLowerCase())
-                        )
-                        .map((e: IExpenseContext) => (
-                          <div key={e.id}>
-                            <ExpenseItem
-                              sharecount={props.sharecount}
-                              expense={e}
-                            ></ExpenseItem>
-                          </div>
-                        ))}
+                      {expensesGroupped[date].map((e: IExpenseContext) => (
+                        <div key={e.id}>
+                          <ExpenseItem
+                            sharecount={props.sharecount}
+                            expense={e}
+                          ></ExpenseItem>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 ))}
             </div>
-            <div ref={observe}>
-              {hasMore ? <Loader key={0}></Loader> : <div></div>}
-            </div>
+            {hasMore ? (
+              <div ref={observe}>
+                <Loader key={0}></Loader>
+              </div>
+            ) : (
+              <></>
+            )}
           </div>
         ) : (
           <div className="p-4 text-center">
