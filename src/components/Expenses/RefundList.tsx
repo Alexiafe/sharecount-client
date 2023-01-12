@@ -91,36 +91,48 @@ const RefundList = (props: IPropsExpensesList) => {
 
   return (
     <div className="p-4">
-      {myRefund.length ? (
-        <ul className="pb-4">
-          {myRefund.map((r: IRefund, idx: number) => (
-            <li key={idx}>
-              <MyRefundItem
-                sharecount={props.sharecount!}
-                refund={r}
-              ></MyRefundItem>
-            </li>
-          ))}
-        </ul>
+      {myRefund.length === 0 && refund.length === 0 ? (
+        <div className="text-center">
+          <p>No transfert yet.</p>
+        </div>
       ) : (
-        <div></div>
-      )}
-      {refund.length ? (
         <>
-          <div className="text-secondary">Other</div>
-          <ul>
-            {refund.map((r: IRefund, idx: number) => (
-              <li key={idx}>
-                <RefundItem
-                  sharecount={props.sharecount!}
-                  refund={r}
-                ></RefundItem>
-              </li>
-            ))}
-          </ul>
+          {myRefund.length ? (
+            <ul className="pb-4">
+              {myRefund.map((r: IRefund, idx: number) => (
+                <li key={idx}>
+                  <MyRefundItem
+                    sharecount={props.sharecount!}
+                    refund={r}
+                  ></MyRefundItem>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="text-center">
+              <p>No transfert for you yet.</p>
+            </div>
+          )}
+          {refund.length ? (
+            <>
+              <div className="text-secondary">Other</div>
+              <ul>
+                {refund.map((r: IRefund, idx: number) => (
+                  <li key={idx}>
+                    <RefundItem
+                      sharecount={props.sharecount!}
+                      refund={r}
+                    ></RefundItem>
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : (
+            <div className="text-center">
+              <p>No transfert yet.</p>
+            </div>
+          )}
         </>
-      ) : (
-        <div></div>
       )}
     </div>
   );

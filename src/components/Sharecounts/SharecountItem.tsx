@@ -37,6 +37,10 @@ const SharecountItem = (props: IPropsSharecountItem) => {
         sx={{
           bgcolor: "white",
           borderRadius: "15px",
+          ":hover": {
+            backgroundColor: "white",
+            borderRadius: "15px",
+          },
         }}
       >
         <ListItemText

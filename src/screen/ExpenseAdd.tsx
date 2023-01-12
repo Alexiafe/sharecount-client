@@ -56,7 +56,10 @@ const ExpenseAdd = () => {
     let currentSharecount = sharecountsContext.find(
       (s) => s.id === parseInt(params.sharecountID!)
     );
-    if (currentSharecount?.participants) {
+    if (
+      currentSharecount?.participants &&
+      currentSharecount?.participants?.length > 0
+    ) {
       setParticipants(currentSharecount.participants);
       setOwnerID(currentSharecount.participants[0].id);
       setSelectedParticipantsIDs(
@@ -67,7 +70,8 @@ const ExpenseAdd = () => {
       getSharecountService(parseInt(params.sharecountID!)).then(
         (sharecount: ISharecountContext) => {
           setParticipants(sharecount.participants!);
-          setOwnerID(sharecount.participants![0].id);
+          if (sharecount.participants!.length > 0)
+            setOwnerID(sharecount.participants![0].id);
           setSelectedParticipantsIDs(
             sharecount.participants!.map((p: IParticipantsContext) => p.id)
           );
