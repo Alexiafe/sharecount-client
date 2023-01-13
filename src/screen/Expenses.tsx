@@ -101,6 +101,7 @@ const Expenses = () => {
           className="fixed bottom-0 w-full"
           style={{
             height: "20px",
+            zIndex: 101,
           }}
         ></footer>
       </div>
