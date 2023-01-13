@@ -165,7 +165,7 @@ const ExpensesList = (props: IPropsExpensesList) => {
       <div>
         <SearchBar onChange={manageFilterChange}></SearchBar>
         {expenses.length ? (
-          <div>
+          <div className="relative w-full">
             <div className="p-4">
               {Object.keys(expensesGroupped)
                 .sort()
@@ -184,7 +184,7 @@ const ExpensesList = (props: IPropsExpensesList) => {
                           : moment(date).format("DD/MM/YYYY")}
                       </div>
                     ) : (
-                      <div></div>
+                      <></>
                     )}
                     <div>
                       {expensesGroupped[date].map((e: IExpenseContext) => (
@@ -213,7 +213,7 @@ const ExpensesList = (props: IPropsExpensesList) => {
             <p>Click the " + " button to create one</p>
           </div>
         )}
-        <footer className="absolute bottom-0 right-0">
+        <footer className="fixed bottom-0 right-0">
           <div className="pb-5 pr-5">
             <IconButton
               className="pb-5 pr-5"

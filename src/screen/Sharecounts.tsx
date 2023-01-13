@@ -127,11 +127,11 @@ const Sharecounts = () => {
               ))}
             </ul>
             <div ref={observe}>
-              {hasMore ? <Loader key={0} color="white"></Loader> : <div></div>}
+              {hasMore ? <Loader key={0} color="white"></Loader> : <></>}
             </div>
           </div>
         ) : (
-          <div className="p-4 text-center w-full text-white">
+          <div className="p-4 text-center text-white">
             <p>No sharecounts yet.</p>
             <p>Click the " + " button to create one</p>
           </div>

@@ -59,7 +59,7 @@ const MenuTabs = (props: IPropsMenuTabs) => {
   };
 
   return (
-    <div className="flex flex-1 overflow-auto h-full">
+    <div className="flex flex-1 h-full">
       <Box
         className="fixed bg-white w-full z-10"
         sx={{ borderBottom: 1, borderColor: "divider" }}

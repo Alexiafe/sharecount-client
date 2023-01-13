@@ -84,7 +84,7 @@ const Expenses = () => {
     return <NotLoggedIn></NotLoggedIn>;
   } else {
     return (
-      <div className="h-screen flex flex-col">
+      <div style={{ paddingTop: "150px" }}>
         <Header
           title={sharecount?.name}
           id={sharecount?.id}
@@ -92,10 +92,11 @@ const Expenses = () => {
           currency={sharecount?.currency}
           backButton={true}
           shareButton={true}
-          screen="Expenses"
+          screen="Home"
           onReturn={() => navigate(`/`)}
           onClick={edit}
         ></Header>
+        {/* <ExpensesList sharecount={sharecount}></ExpensesList> */}
         <MenuTabs sharecount={sharecount}></MenuTabs>
       </div>
     );
