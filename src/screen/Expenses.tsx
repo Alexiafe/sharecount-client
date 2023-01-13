@@ -84,7 +84,7 @@ const Expenses = () => {
     return <NotLoggedIn></NotLoggedIn>;
   } else {
     return (
-      <div style={{ paddingTop: "150px" }}>
+      <div style={{ paddingTop: "150px", paddingBottom: "20px" }}>
         <Header
           title={sharecount?.name}
           id={sharecount?.id}
@@ -96,8 +96,13 @@ const Expenses = () => {
           onReturn={() => navigate(`/`)}
           onClick={edit}
         ></Header>
-        {/* <ExpensesList sharecount={sharecount}></ExpensesList> */}
         <MenuTabs sharecount={sharecount}></MenuTabs>
+        <footer
+          className="fixed bottom-0 w-full"
+          style={{
+            height: "20px",
+          }}
+        ></footer>
       </div>
     );
   }
