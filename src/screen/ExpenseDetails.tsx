@@ -65,7 +65,7 @@ const ExpensesDetails = () => {
           setIsLoaded(true);
         },
         (error) => {
-          console.log(error)
+          console.log(error);
           setError(error);
           setIsLoaded(true);
         }
@@ -113,30 +113,25 @@ const ExpensesDetails = () => {
     return <NotLoggedIn></NotLoggedIn>;
   } else {
     return (
-      <div>
+      <div style={{ paddingTop: "170px", paddingBottom: "20px" }}>
         <Header
           title={header}
           id={Number(params.sharecountID)}
           expense_id={Number(params.expenseID)}
+          owner={expense?.owner?.name}
+          amount_total={expense?.amount_total}
+          currency={sharecount?.currency}
+          date={date}
+          user={sharecount?.user}
           backButton={true}
           screen="Details"
           onReturn={() => navigate(`/sharecount/${params.sharecountID}`)}
           onClick={edit}
         ></Header>
-        <div className="items-center p-4">
-          <div className="border-b border-grey-500 text-text">
-            <div className="justify-center h-20 flex items-center text-xl font-medium py-3">
-              {expense?.amount_total} {sharecount?.currency}
-            </div>
-            <div className="flex text-center py-3">
-              <div className="flex-1 text-left">
-                Paid by {expense?.owner?.name}
-              </div>
-              <div className="flex-1 text-right">{date}</div>
-            </div>
-          </div>
-          <div className="py-3 text-text">
-            For whom:<ul>{listExpenseParticipants}</ul>
+        <div className=" relative items-center p-4">
+          <div className="text-text">
+            For {expense?.partakers.length} participants:
+            <ul>{listExpenseParticipants}</ul>
           </div>
         </div>
       </div>

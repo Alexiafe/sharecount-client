@@ -11,7 +11,7 @@ import AuthContext from "../context/auth.context";
 import SharecountsContext from "../context/sharecounts.context";
 
 // Components
-import Header from "../components/Common/Header";
+import HeaderThin from "../components/Common/HeaderThin";
 import Loader from "../components/Common/Loader";
 import NotLoggedIn from "../components/Common/NotLoggedIn";
 import ExpenseInfoForm from "../components/Expenses/ExpenseInfoForm";
@@ -203,18 +203,18 @@ const ExpenseAdd = () => {
   if (!isLoaded || userLoading) {
     return (
       <div>
-        <Header title={header}></Header>
+        <HeaderThin title={header}></HeaderThin>
         <Loader></Loader>
       </div>
     );
   } else if (error) {
     return (
       <div>
-        <Header
+        <HeaderThin
           title={header}
-          backButton={true}
-          onReturn={() => navigate(`/sharecount/${params.sharecountID}`)}
-        ></Header>
+          cancelButton={true}
+          onCancel={() => navigate(`/sharecount/${params.sharecountID}`)}
+        ></HeaderThin>
         Please try again later
       </div>
     );
@@ -223,13 +223,13 @@ const ExpenseAdd = () => {
   } else {
     return (
       <div>
-        <Header
+        <HeaderThin
           title={header}
           cancelButton={true}
           saveButton={true}
-          onReturn={() => navigate(`/sharecount/${params.sharecountID}`)}
-          onClick={() => formik.handleSubmit()}
-        ></Header>
+          onCancel={() => navigate(`/sharecount/${params.sharecountID}`)}
+          onSave={() => formik.handleSubmit()}
+        ></HeaderThin>
         <div className="flex flex-col p-4">
           <ExpenseInfoForm
             formik={formik}

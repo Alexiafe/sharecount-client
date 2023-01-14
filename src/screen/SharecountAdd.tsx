@@ -6,7 +6,7 @@ import AuthContext from "../context/auth.context";
 import SharecountsContext from "../context/sharecounts.context";
 
 // Components
-import Header from "../components/Common/Header";
+import HeaderThin from "../components/Common/HeaderThin";
 import NotLoggedIn from "../components/Common/NotLoggedIn";
 import Loader from "../components/Common/Loader";
 import ParticipantsList from "../components/Sharecounts/ParticipantsList";
@@ -88,7 +88,7 @@ const SharecountAdd = () => {
   if (!isLoaded || userLoading) {
     return (
       <div>
-        <Header title={header}></Header>
+        <HeaderThin title={header}></HeaderThin>
         <Loader></Loader>
       </div>
     );
@@ -97,13 +97,13 @@ const SharecountAdd = () => {
   } else {
     return (
       <div>
-        <Header
+        <HeaderThin
           title={header}
           cancelButton={true}
           saveButton={true}
-          onReturn={() => navigate(`/`)}
-          onClick={() => formik.handleSubmit()}
-        ></Header>
+          onCancel={() => navigate(`/`)}
+          onSave={() => formik.handleSubmit()}
+        ></HeaderThin>
         <div className="flex flex-col p-4">
           <SharecountInfoForm
             formik={formik}

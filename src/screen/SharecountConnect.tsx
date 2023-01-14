@@ -11,7 +11,7 @@ import SharecountsContext from "../context/sharecounts.context";
 
 // Components
 import Loader from "../components/Common/Loader";
-import Header from "../components/Common/Header";
+import HeaderThin from "../components/Common/HeaderThin";
 import NotLoggedIn from "../components/Common/NotLoggedIn";
 
 // Services
@@ -65,7 +65,7 @@ const SharecountConnect = () => {
           setIsLoaded(true);
         },
         (error) => {
-          console.log(error)
+          console.log(error);
           setError(error);
           setIsLoaded(true);
         }
@@ -101,18 +101,18 @@ const SharecountConnect = () => {
   if (!isLoaded || userLoading) {
     return (
       <div>
-        <Header title={header}></Header>
+        <HeaderThin title={header}></HeaderThin>
         <Loader></Loader>
       </div>
     );
   } else if (error) {
     return (
       <div>
-        <Header
+        <HeaderThin
           title={header}
           cancelButton={true}
-          onReturn={() => navigate(`/`)}
-        ></Header>
+          onCancel={() => navigate(`/`)}
+        ></HeaderThin>
         Please try again later
       </div>
     );
@@ -121,7 +121,7 @@ const SharecountConnect = () => {
   } else {
     return (
       <div>
-        <Header title={header}></Header>
+        <HeaderThin title={header}></HeaderThin>
         <div className="p-4 flex flex-col">
           <FormControl>
             <FormLabel id="demo-radio-buttons-group-label">

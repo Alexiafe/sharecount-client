@@ -12,7 +12,7 @@ import AuthContext from "../context/auth.context";
 import SharecountsContext from "../context/sharecounts.context";
 
 // Components
-import Header from "../components/Common/Header";
+import HeaderThin from "../components/Common/HeaderThin";
 import Loader from "../components/Common/Loader";
 import NotLoggedIn from "../components/Common/NotLoggedIn";
 import ModalContent from "../components/Common/ModalContent";
@@ -267,22 +267,26 @@ const ExpenseEdit = () => {
   if (!isLoaded || userLoading) {
     return (
       <div>
-        <Header title={header} cancelButton={true} saveButton={true}></Header>
+        <HeaderThin
+          title={header}
+          cancelButton={true}
+          saveButton={true}
+        ></HeaderThin>
         <Loader></Loader>
       </div>
     );
   } else if (error) {
     return (
       <div>
-        <Header
+        <HeaderThin
           title={header}
-          backButton={true}
-          onReturn={() =>
+          cancelButton={true}
+          onCancel={() =>
             navigate(
               `/sharecount/${params.sharecountID}/expense/${params.expenseID}`
             )
           }
-        ></Header>
+        ></HeaderThin>
         Please try again later
       </div>
     );
@@ -291,17 +295,17 @@ const ExpenseEdit = () => {
   } else {
     return (
       <div className="h-screen flex flex-col">
-        <Header
+        <HeaderThin
           title={header}
           cancelButton={true}
           saveButton={true}
-          onReturn={() =>
+          onCancel={() =>
             navigate(
               `/sharecount/${params.sharecountID}/expense/${params.expenseID}`
             )
           }
-          onClick={() => formik.handleSubmit()}
-        ></Header>
+          onSave={() => formik.handleSubmit()}
+        ></HeaderThin>
         <div className="flex flex-1 flex-col p-4 overflow-auto">
           <ExpenseInfoForm
             formik={formik}

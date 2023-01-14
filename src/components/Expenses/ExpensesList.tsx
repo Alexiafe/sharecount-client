@@ -60,6 +60,7 @@ const ExpensesList = (props: IPropsExpensesList) => {
 
   const manageFilterChange = (filter: string) => {
     if (filter.length > 0) {
+      setHasMore(false);
       getFilteredExpenses(props.sharecount?.id!, filter).then(
         (response: IExpenseContext[]) => {
           setExpenses(response);
@@ -68,13 +69,12 @@ const ExpensesList = (props: IPropsExpensesList) => {
           console.log(error);
         }
       );
-      setHasMore(false);
     } else {
+      setHasMore(true);
       let currentSharecount = sharecountsContext.find(
         (s) => s.id === props.sharecount?.id!
       );
       setExpenses(currentSharecount?.expenses || []);
-      setHasMore(true);
     }
   };
 
@@ -86,29 +86,20 @@ const ExpensesList = (props: IPropsExpensesList) => {
       setExpenses(currentSharecount?.expenses);
       setIsLoaded(true);
     } else {
-      if (!expenses.length) {
-        getAllExpenses(props.sharecount?.id!).then(
-          (response: IExpenseContext[]) => {
-            setExpenses(response);
-            let newSharecountsContext = [...sharecountsContext];
-            let newExpenses = [...expenses, ...response];
-            if (
-              newSharecountsContext.find((s) => s.id === props.sharecount?.id)
-            ) {
-              newSharecountsContext.find(
-                (s) => s.id === props.sharecount?.id
-              )!.expenses = newExpenses;
-              setSharecountsContext(newSharecountsContext);
-            }
-            setIsLoaded(true);
-          },
-          (error: any) => {
-            console.log(error);
-            setError(error);
-            setIsLoaded(true);
-          }
-        );
-      }
+      getAllExpenses(props.sharecount?.id!).then(
+        (response: IExpenseContext[]) => {
+          setExpenses(response);
+          let newSharecount = props.sharecount!;
+          newSharecount.expenses = response;
+          setSharecountsContext([...sharecountsContext, newSharecount]);
+          setIsLoaded(true);
+        },
+        (error: any) => {
+          console.log(error);
+          setError(error);
+          setIsLoaded(true);
+        }
+      );
     }
     scrollDown();
   }, [props.sharecount?.id]);
@@ -130,6 +121,7 @@ const ExpensesList = (props: IPropsExpensesList) => {
         page
       );
       if (response.length) {
+        setHasMore(true);
         let alreadyExist = expenses.find(
           (expense) => expense.id === response[0].id
         );
@@ -146,9 +138,7 @@ const ExpensesList = (props: IPropsExpensesList) => {
             setSharecountsContext(newSharecountsContext);
           }
         }
-      } else {
-        setHasMore(false);
-      }
+      } else setHasMore(false);
     }
   };
 

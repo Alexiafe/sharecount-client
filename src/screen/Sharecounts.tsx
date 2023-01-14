@@ -40,7 +40,7 @@ const Sharecounts = () => {
     },
   });
 
-  const [hasMore, setHasMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
     if (userEmail) {
@@ -73,7 +73,6 @@ const Sharecounts = () => {
   };
 
   const handleLoadMore = async () => {
-    setHasMore(true);
     let page = Math.round(sharecounts.length / 10);
     if (isLoaded) {
       const response: ISharecountContext[] = await getUserService(
@@ -81,6 +80,7 @@ const Sharecounts = () => {
         page
       );
       if (response.length) {
+        setHasMore(true);
         let alreadyExist = sharecounts.find(
           (sharecount) => sharecount.id === response[0].id
         );
@@ -88,8 +88,7 @@ const Sharecounts = () => {
           setSharecounts([...sharecounts, ...response]);
           setSharecountsContext([...sharecounts, ...response]);
         }
-      }
-      setHasMore(false);
+      } else setHasMore(false);
     }
   };
 
@@ -111,7 +110,7 @@ const Sharecounts = () => {
     return <NotLoggedIn></NotLoggedIn>;
   } else {
     return (
-      <div style={{ paddingTop: "150px", paddingBottom: "120px" }}>
+      <div style={{ paddingTop: "170px", paddingBottom: "120px" }}>
         <div className="h-screen bg-primary fixed w-full"></div>
         <Header
           title={`Hi ${userSession.displayName!} !`}
@@ -126,9 +125,13 @@ const Sharecounts = () => {
                 </li>
               ))}
             </ul>
-            <div ref={observe}>
-              {hasMore ? <Loader key={0} color="white"></Loader> : <></>}
-            </div>
+            {hasMore ? (
+              <div ref={observe}>
+                <Loader key={0} color="white"></Loader>
+              </div>
+            ) : (
+              <></>
+            )}
           </div>
         ) : (
           <div className="p-4 text-center text-white">

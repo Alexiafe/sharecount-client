@@ -40,17 +40,7 @@ const Expenses = () => {
       getSharecountService(parseInt(params.sharecountID!)).then(
         (sharecount: ISharecountContext) => {
           setSharecount(sharecount);
-          let newSharecountsContext = [...sharecountsContext];
-          if (
-            newSharecountsContext.find(
-              (s) => s.id === parseInt(params.sharecountID!)
-            )
-          ) {
-            newSharecountsContext.find(
-              (s) => s.id === parseInt(params.sharecountID!)
-            )!.participants = sharecount.participants;
-            setSharecountsContext(newSharecountsContext);
-          }
+          setSharecountsContext([...sharecountsContext, sharecount]);
           setIsLoaded(true);
         },
         (error) => {
@@ -84,15 +74,16 @@ const Expenses = () => {
     return <NotLoggedIn></NotLoggedIn>;
   } else {
     return (
-      <div style={{ paddingTop: "150px", paddingBottom: "20px" }}>
+      <div style={{ paddingTop: "170px", paddingBottom: "20px" }}>
         <Header
           title={sharecount?.name}
           id={sharecount?.id}
           total={sharecount?.total}
           currency={sharecount?.currency}
+          participants={sharecount?.participants}
           backButton={true}
           shareButton={true}
-          screen="Home"
+          screen="Expenses"
           onReturn={() => navigate(`/`)}
           onClick={edit}
         ></Header>
