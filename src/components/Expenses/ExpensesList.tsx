@@ -160,7 +160,6 @@ const ExpensesList = (props: IPropsExpensesList) => {
   } else {
     return (
       <div>
-        hasmore: {hasMore ? "true" : "false"}
         <SearchBar onChange={manageFilterChange}></SearchBar>
         {expenses.length ? (
           <div className="relative w-full">
