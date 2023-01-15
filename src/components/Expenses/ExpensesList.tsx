@@ -159,10 +159,7 @@ const ExpensesList = (props: IPropsExpensesList) => {
     return <div>Please try again later</div>;
   } else {
     return (
-      <div
-        className="bg-white "
-        style={{ paddingTop: "48px", overflowY: "scroll" }}
-      >
+      <div style={{ paddingTop: "48px" }}>
         <SearchBar onChange={manageFilterChange}></SearchBar>
         {expenses.length ? (
           <div>

@@ -95,6 +95,7 @@ const Expenses = () => {
   } else {
     return (
       <div style={{ paddingTop: "170px" }}>
+        <div className="h-screen bg-white fixed w-full"></div>
         <Header
           title={sharecount?.name}
           id={sharecount?.id}
