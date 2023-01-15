@@ -2,7 +2,7 @@
 import { Button } from "@mui/material";
 
 // MUI
-import Header from "./Header";
+import HeaderThin from "./HeaderThin";
 
 // Firebase
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
@@ -11,7 +11,7 @@ import { auth } from "../../firebase-config";
 const NotLoggedIn = () => {
   return (
     <div>
-      <Header title="Sharecount"></Header>
+      <HeaderThin title="Sharecount"></HeaderThin>
       <div className="p-4 flex flex-col items-center text-text">
         <Button
           variant="contained"
