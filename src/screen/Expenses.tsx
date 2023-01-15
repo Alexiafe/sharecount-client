@@ -7,6 +7,7 @@ import SharecountsContext from "../context/sharecounts.context";
 
 // Components
 import Header from "../components/Common/Header";
+import HeaderThin from "../components/Common/HeaderThin";
 import NotLoggedIn from "../components/Common/NotLoggedIn";
 import Loader from "../components/Common/Loader";
 import MenuTabs from "../components/Expenses/MenuTabs";
@@ -81,8 +82,12 @@ const Expenses = () => {
   } else if (error) {
     return (
       <div>
-        <Header title={sharecount?.name}></Header>
-        Please try again later
+        <HeaderThin
+          title={sharecount?.name}
+          cancelButton={true}
+          onCancel={() => navigate(`/`)}
+        ></HeaderThin>
+        Please try again later Please try again later
       </div>
     );
   } else if (!userEmail) {
@@ -105,7 +110,7 @@ const Expenses = () => {
         ></Header>
         <MenuTabs sharecount={sharecount}></MenuTabs>
         <footer
-          className="fixed bottom-0 w-full"
+          className="fixed bg-primary bottom-0 w-full"
           style={{
             height: "20px",
             zIndex: 101,
