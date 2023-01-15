@@ -2,7 +2,7 @@
 import AuthContext from "../context/auth.context";
 
 // Components
-import Header from "../components/Common/Header";
+import HeaderThin from "../components/Common/HeaderThin";
 import MenuHome from "../components/Common/MenuHome";
 import Loader from "../components/Common/Loader";
 
@@ -23,14 +23,14 @@ const Login = () => {
   if (userLoading) {
     return (
       <div>
-        <Header title="Profile"></Header>
+        <HeaderThin title="Profile"></HeaderThin>
         <Loader></Loader>
       </div>
     );
   } else
     return (
-      <div className="h-screen flex flex-col">
-        <Header title="Profile"></Header>
+      <div>
+        <HeaderThin title="Profile"></HeaderThin>
         {userEmail ? (
           <div className="flex flex-col p-4 items-center text-text">
             You're logged in as {userEmail}
