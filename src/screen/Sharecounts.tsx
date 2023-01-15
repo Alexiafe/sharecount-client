@@ -4,7 +4,6 @@ import { ISharecountContext } from "../interfaces/interfaces";
 // Context
 import AuthContext from "../context/auth.context";
 import SharecountsContext from "../context/sharecounts.context";
-import SharecountPositionContext from "../context/sharecountposition.context";
 
 // Components
 import Loader from "../components/Common/Loader";
@@ -29,7 +28,6 @@ const Sharecounts = () => {
   const [hasMore, setHasMore] = useState(true);
   const { sharecountsContext, setSharecountsContext } =
     useContext(SharecountsContext);
-  const { sharecountPositionContext } = useContext(SharecountPositionContext);
   const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession.email;
 
@@ -59,15 +57,8 @@ const Sharecounts = () => {
           }
         );
       }
-      scrollDown();
     }
   }, [userEmail, userLoading]);
-
-  const scrollDown = () => {
-    setTimeout(function () {
-      window.scrollTo(0, sharecountPositionContext);
-    }, 500);
-  };
 
   const handleLoadMore = async () => {
     let page = Math.round(sharecounts.length / 10);
