@@ -61,6 +61,10 @@ const Sharecounts = () => {
   }, [userEmail, userLoading]);
 
   const handleLoadMore = async () => {
+    if (sharecounts.length < 10) {
+      setHasMore(false);
+      return;
+    }
     let page = Math.round(sharecounts.length / 10);
     if (isLoaded) {
       const sharecountsResponse: ISharecountContext[] = await getUserService(

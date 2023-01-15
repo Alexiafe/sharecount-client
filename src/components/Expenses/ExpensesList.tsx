@@ -119,6 +119,10 @@ const ExpensesList = (props: IPropsExpensesList) => {
   };
 
   const handleLoadMore = async () => {
+    if (expenses.length < 10) {
+      setHasMore(false);
+      return;
+    }
     let page = Math.round(expenses.length / 10);
     if (isLoaded) {
       const expensesResponse: IExpenseContext[] = await getAllExpensesService(
@@ -156,6 +160,7 @@ const ExpensesList = (props: IPropsExpensesList) => {
   } else {
     return (
       <div>
+        hasmore: {hasMore ? "true" : "false"}
         <SearchBar onChange={manageFilterChange}></SearchBar>
         {expenses.length ? (
           <div className="relative w-full">
