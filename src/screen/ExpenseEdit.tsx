@@ -83,8 +83,8 @@ const ExpenseEdit = () => {
       setIsLoaded(true);
     } else {
       getSharecountService(parseInt(params.sharecountID!)).then(
-        (sharecount: ISharecountContext) => {
-          setParticipants(sharecount.participants!);
+        (sharecountResponse: ISharecountContext) => {
+          setParticipants(sharecountResponse.participants!);
           setIsLoaded(true);
         },
         (error) => {
@@ -94,14 +94,14 @@ const ExpenseEdit = () => {
         }
       );
       getExpenseService(parseInt(params.expenseID!)).then(
-        (expense: IExpenseContext) => {
-          setOldAmount(expense.amount_total);
-          formik.setFieldValue("expenseName", expense.name);
-          formik.setFieldValue("expenseAmount", expense.amount_total);
-          setExpenseDate(moment(expense.date));
-          setOwnerID(expense.owner.id);
+        (expenseResponse: IExpenseContext) => {
+          setOldAmount(expenseResponse.amount_total);
+          formik.setFieldValue("expenseName", expenseResponse.name);
+          formik.setFieldValue("expenseAmount", expenseResponse.amount_total);
+          setExpenseDate(moment(expenseResponse.date));
+          setOwnerID(expenseResponse.owner.id);
           setSelectedParticipantsIDs(
-            expense.partakers.map((p: IPartakersContext) => p.id)
+            expenseResponse.partakers.map((p: IPartakersContext) => p.id)
           );
           setIsLoaded(true);
         },
@@ -124,7 +124,7 @@ const ExpenseEdit = () => {
   const deleteExpense = (expense_id: number) => {
     setIsLoaded(false);
     deleteExpenseService(expense_id).then(
-      (expense: IExpenseContext) => {
+      (expenseResponse: IExpenseContext) => {
         navigate(`/sharecount/${params.sharecountID}`);
         let currentSharecount = sharecountsContext.find(
           (s) => s.id === parseInt(params.sharecountID!)
@@ -132,8 +132,9 @@ const ExpenseEdit = () => {
         currentSharecount!.expenses = currentSharecount!.expenses!.filter(
           (e) => e.id !== expense_id
         );
-        currentSharecount!.total = expense.sharecount!.total;
-        currentSharecount!.participants = expense.sharecount!.participants;
+        currentSharecount!.total = expenseResponse.sharecount!.total;
+        currentSharecount!.participants =
+          expenseResponse.sharecount!.participants;
         let me = currentSharecount!.participants?.find(
           (p) => p?.name === currentSharecount!.user
         );
@@ -207,7 +208,7 @@ const ExpenseEdit = () => {
       }),
     };
 
-    editExpenseService(newExpense).then((expense: IExpenseContext) => {
+    editExpenseService(newExpense).then((expenseResponse: IExpenseContext) => {
       navigate(
         `/sharecount/${params.sharecountID}/expense/${params.expenseID}`
       );
@@ -215,11 +216,12 @@ const ExpenseEdit = () => {
         (s) => s.id === parseInt(params.sharecountID!)
       );
       currentSharecount!.expenses = currentSharecount!.expenses!.filter(
-        (e) => e.id !== expense.id
+        (e) => e.id !== expenseResponse.id
       );
-      currentSharecount?.expenses?.push(expense);
-      currentSharecount!.total = expense.sharecount!.total;
-      currentSharecount!.participants = expense.sharecount!.participants;
+      currentSharecount?.expenses?.push(expenseResponse);
+      currentSharecount!.total = expenseResponse.sharecount!.total;
+      currentSharecount!.participants =
+        expenseResponse.sharecount!.participants;
       let me = currentSharecount!.participants?.find(
         (p) => p?.name === currentSharecount!.user
       );

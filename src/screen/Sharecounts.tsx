@@ -26,11 +26,10 @@ const Sharecounts = () => {
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(true);
   const [sharecounts, setSharecounts] = useState<ISharecountContext[]>([]);
+  const [hasMore, setHasMore] = useState(true);
   const { sharecountsContext, setSharecountsContext } =
     useContext(SharecountsContext);
-
   const { sharecountPositionContext } = useContext(SharecountPositionContext);
-
   const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession.email;
 
@@ -40,8 +39,6 @@ const Sharecounts = () => {
     },
   });
 
-  const [hasMore, setHasMore] = useState(true);
-
   useEffect(() => {
     if (userEmail) {
       setIsLoaded(false);
@@ -50,9 +47,9 @@ const Sharecounts = () => {
         setIsLoaded(true);
       } else {
         getUserService(userEmail).then(
-          (sharecounts: ISharecountContext[]) => {
-            setSharecounts(sharecounts);
-            setSharecountsContext(sharecounts);
+          (sharecountsResponse: ISharecountContext[]) => {
+            setSharecounts(sharecountsResponse);
+            setSharecountsContext(sharecountsResponse);
             setIsLoaded(true);
           },
           (error) => {
@@ -75,18 +72,18 @@ const Sharecounts = () => {
   const handleLoadMore = async () => {
     let page = Math.round(sharecounts.length / 10);
     if (isLoaded) {
-      const response: ISharecountContext[] = await getUserService(
+      const sharecountsResponse: ISharecountContext[] = await getUserService(
         userEmail!,
         page
       );
-      if (response.length) {
+      if (sharecountsResponse.length) {
         setHasMore(true);
         let alreadyExist = sharecounts.find(
-          (sharecount) => sharecount.id === response[0].id
+          (sharecount) => sharecount.id === sharecountsResponse[0].id
         );
         if (!alreadyExist) {
-          setSharecounts([...sharecounts, ...response]);
-          setSharecountsContext([...sharecounts, ...response]);
+          setSharecounts([...sharecounts, ...sharecountsResponse]);
+          setSharecountsContext([...sharecounts, ...sharecountsResponse]);
         }
       } else setHasMore(false);
     }

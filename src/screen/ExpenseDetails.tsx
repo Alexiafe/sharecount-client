@@ -16,6 +16,7 @@ import NotLoggedIn from "../components/Common/NotLoggedIn";
 
 // Services
 import { getSharecountService } from "../services/sharecount.service";
+import { getExpenseService } from "../services/expense.service";
 
 // React
 import { useContext, useEffect, useState } from "react";
@@ -36,8 +37,7 @@ const ExpensesDetails = () => {
   const [expense, setExpense] = useState<IExpenseContext>();
   const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession?.email;
-  const { sharecountsContext, setSharecountsContext } =
-    useContext(SharecountsContext);
+  const { sharecountsContext } = useContext(SharecountsContext);
   const header = expense?.name;
   const date = moment(expense?.date).format("DD/MM/YYYY");
 
@@ -48,19 +48,32 @@ const ExpensesDetails = () => {
     let currentExpense = currentSharecount?.expenses?.find(
       (e) => e.id === parseInt(params.expenseID!)
     );
-    if (currentExpense) {
-      setSharecount(currentSharecount);
-      setExpense(currentExpense);
-      setIsLoaded(true);
+    if (currentSharecount) {
+      if (currentExpense) {
+        setSharecount(currentSharecount);
+        setExpense(currentExpense);
+        setIsLoaded(true);
+      } else {
+        getSharecountService(parseInt(params.sharecountID!)).then(
+          (sharecountResponse: ISharecountContext) => {
+            setSharecount(sharecountResponse);
+            getExpenseService(parseInt(params.expenseID!)).then(
+              (expenseResponse: IExpenseContext) => {
+                setExpense(expenseResponse);
+              }
+            );
+            setIsLoaded(true);
+          }
+        );
+      }
     } else {
       getSharecountService(parseInt(params.sharecountID!)).then(
-        (sharecount: ISharecountContext) => {
-          setSharecountsContext([...sharecountsContext, sharecount]);
-          setSharecount(sharecount);
-          setExpense(
-            sharecount?.expenses?.find(
-              (e) => e.id === parseInt(params.expenseID!)
-            )
+        (sharecountResponse: ISharecountContext) => {
+          setSharecount(sharecountResponse);
+          getExpenseService(parseInt(params.expenseID!)).then(
+            (expenseResponse: IExpenseContext) => {
+              setExpense(expenseResponse);
+            }
           );
           setIsLoaded(true);
         },

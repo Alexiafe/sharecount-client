@@ -14,8 +14,8 @@ import SearchBar from "./SearchBar";
 import ExpenseItem from "./ExpenseItem";
 
 // Services
-import { getAllExpenses } from "../../services/expense.service";
-import { getFilteredExpenses } from "../../services/expense.service";
+import { getAllExpensesService } from "../../services/expense.service";
+import { getFilteredExpensesService } from "../../services/expense.service";
 
 // React
 import { useContext, useEffect, useState } from "react";
@@ -37,8 +37,7 @@ const ExpensesList = (props: IPropsExpensesList) => {
   const navigate = useNavigate();
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const { sharecountsContext, setSharecountsContext } =
-    useContext(SharecountsContext);
+  const { sharecountsContext } = useContext(SharecountsContext);
   const [expenses, setExpenses] = useState<IExpenseContext[]>(
     props.sharecount?.expenses || []
   );
@@ -58,12 +57,50 @@ const ExpensesList = (props: IPropsExpensesList) => {
     return group;
   }, {});
 
+  useEffect(() => {
+    let currentSharecount = sharecountsContext.find(
+      (s) => s.id === props.sharecount?.id!
+    );
+    if (currentSharecount) {
+      if (currentSharecount.expenses) {
+        setExpenses(currentSharecount.expenses);
+        setIsLoaded(true);
+      } else {
+        getAllExpensesService(props.sharecount?.id!).then(
+          (expensesResponse: IExpenseContext[]) => {
+            setExpenses(expensesResponse);
+            currentSharecount!.expenses = expensesResponse;
+            setIsLoaded(true);
+          },
+          (error) => {
+            console.log(error);
+            setError(error);
+            setIsLoaded(true);
+          }
+        );
+      }
+    } else {
+      getAllExpensesService(props.sharecount?.id!).then(
+        (expensesResponse: IExpenseContext[]) => {
+          setExpenses(expensesResponse);
+          setIsLoaded(true);
+        },
+        (error) => {
+          console.log(error);
+          setError(error);
+          setIsLoaded(true);
+        }
+      );
+    }
+    scrollDown();
+  }, [props.sharecount?.id]);
+
   const manageFilterChange = (filter: string) => {
     if (filter.length > 0) {
       setHasMore(false);
-      getFilteredExpenses(props.sharecount?.id!, filter).then(
-        (response: IExpenseContext[]) => {
-          setExpenses(response);
+      getFilteredExpensesService(props.sharecount?.id!, filter).then(
+        (expensesResponse: IExpenseContext[]) => {
+          setExpenses(expensesResponse);
         },
         (error: any) => {
           console.log(error);
@@ -78,32 +115,6 @@ const ExpensesList = (props: IPropsExpensesList) => {
     }
   };
 
-  useEffect(() => {
-    let currentSharecount = sharecountsContext.find(
-      (s) => s.id === props.sharecount?.id!
-    );
-    if (currentSharecount?.expenses) {
-      setExpenses(currentSharecount?.expenses);
-      setIsLoaded(true);
-    } else {
-      getAllExpenses(props.sharecount?.id!).then(
-        (response: IExpenseContext[]) => {
-          setExpenses(response);
-          let newSharecount = props.sharecount!;
-          newSharecount.expenses = response;
-          setSharecountsContext([...sharecountsContext, newSharecount]);
-          setIsLoaded(true);
-        },
-        (error: any) => {
-          console.log(error);
-          setError(error);
-          setIsLoaded(true);
-        }
-      );
-    }
-    scrollDown();
-  }, [props.sharecount?.id]);
-
   const scrollDown = () => {
     setTimeout(function () {
       const element = document.getElementById(expenseIdContext);
@@ -116,26 +127,24 @@ const ExpensesList = (props: IPropsExpensesList) => {
   const handleLoadMore = async () => {
     let page = Math.round(expenses.length / 10);
     if (isLoaded) {
-      const response: IExpenseContext[] = await getAllExpenses(
+      const expensesResponse: IExpenseContext[] = await getAllExpensesService(
         props.sharecount?.id!!,
         page
       );
-      if (response.length) {
+      if (expensesResponse.length) {
         setHasMore(true);
-        let alreadyExist = expenses.find(
-          (expense) => expense.id === response[0].id
+        let currentExpense = expenses.find(
+          (expense) => expense.id === expensesResponse[0].id
         );
-        if (!alreadyExist) {
-          setExpenses([...expenses, ...response]);
-          let newSharecountsContext = [...sharecountsContext];
-          let newExpenses = [...expenses, ...response];
-          if (
-            newSharecountsContext.find((s) => s.id === props.sharecount?.id)
-          ) {
-            newSharecountsContext.find(
-              (s) => s.id === props.sharecount?.id
-            )!.expenses = newExpenses;
-            setSharecountsContext(newSharecountsContext);
+        if (!currentExpense) {
+          let newExpenses = [...expenses, ...expensesResponse];
+          setExpenses(newExpenses);
+
+          let currentSharecount = sharecountsContext.find(
+            (s) => s.id === props.sharecount?.id!
+          );
+          if (currentSharecount) {
+            currentSharecount.expenses = newExpenses;
           }
         }
       } else setHasMore(false);

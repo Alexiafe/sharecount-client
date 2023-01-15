@@ -24,8 +24,7 @@ const Expenses = () => {
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [sharecount, setSharecount] = useState<ISharecountContext>();
-  const { sharecountsContext, setSharecountsContext } =
-    useContext(SharecountsContext);
+  const { sharecountsContext } = useContext(SharecountsContext);
   const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession?.email;
 
@@ -33,14 +32,30 @@ const Expenses = () => {
     let currentSharecount = sharecountsContext.find(
       (s) => s.id === parseInt(params.sharecountID!)
     );
-    if (currentSharecount?.participants) {
-      setSharecount(currentSharecount);
-      setIsLoaded(true);
+
+    if (currentSharecount) {
+      if (currentSharecount.participants) {
+        setSharecount(currentSharecount);
+        setIsLoaded(true);
+      } else {
+        getSharecountService(parseInt(params.sharecountID!)).then(
+          (sharecountResponse: ISharecountContext) => {
+            setSharecount(sharecountResponse);
+            currentSharecount!.participants = sharecountResponse.participants;
+            currentSharecount!.expenses = sharecountResponse.expenses;
+            setIsLoaded(true);
+          },
+          (error) => {
+            console.log(error);
+            setError(error);
+            setIsLoaded(true);
+          }
+        );
+      }
     } else {
       getSharecountService(parseInt(params.sharecountID!)).then(
-        (sharecount: ISharecountContext) => {
-          setSharecount(sharecount);
-          setSharecountsContext([...sharecountsContext, sharecount]);
+        (sharecountResponse: ISharecountContext) => {
+          setSharecount(sharecountResponse);
           setIsLoaded(true);
         },
         (error) => {

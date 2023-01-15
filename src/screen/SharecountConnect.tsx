@@ -58,10 +58,10 @@ const SharecountConnect = () => {
       setIsLoaded(true);
     } else {
       getSharecountService(parseInt(params.sharecountID!)).then(
-        (sharecount: ISharecountContext) => {
-          currentSharecount = sharecount;
-          setSharecount(sharecount);
-          setParticipants(sharecount.participants!);
+        (sharecountResponse: ISharecountContext) => {
+          currentSharecount = sharecountResponse;
+          setSharecount(sharecountResponse);
+          setParticipants(sharecountResponse.participants!);
           setIsLoaded(true);
         },
         (error) => {
@@ -83,11 +83,11 @@ const SharecountConnect = () => {
     };
 
     editSharecountService(newSharecount).then(
-      (sharecount: ISharecountContext) => {
+      (sharecountResponse: ISharecountContext) => {
         let currentSharecount: ISharecountContext = sharecountsContext.find(
           (s) => s.id === parseInt(params.sharecountID!)
         )!;
-        currentSharecount = sharecount;
+        currentSharecount = sharecountResponse;
         navigate("/");
         setIsLoaded(true);
       }

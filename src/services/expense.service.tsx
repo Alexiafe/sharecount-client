@@ -53,7 +53,7 @@ export const getExpenseService = (expenseID: number) => {
     );
 };
 
-export const getAllExpenses = (sharecountID: number, page?: number) => {
+export const getAllExpensesService = (sharecountID: number, page?: number) => {
   console.log("getAllExpenses", page ? page : 0);
   return fetch(`${serverUrl}/expenses/${sharecountID}?page=${page ? page : 0}`)
     .then((res) => res.json())
@@ -67,7 +67,10 @@ export const getAllExpenses = (sharecountID: number, page?: number) => {
     );
 };
 
-export const getFilteredExpenses = (sharecountID: number, filter?: string) => {
+export const getFilteredExpensesService = (
+  sharecountID: number,
+  filter?: string
+) => {
   console.log("getFilteredExpenses", filter ? filter : "");
   return fetch(
     `${serverUrl}/filteredExpenses/${sharecountID}?filter=${

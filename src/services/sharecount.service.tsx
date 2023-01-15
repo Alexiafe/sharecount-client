@@ -96,7 +96,7 @@ export const editSharecountService = (sharecount: ISharecountForm) => {
     );
 };
 
-export const removeUserFromSharecount = (
+export const removeUserFromSharecountService = (
   userInSharecountData: IUserInSharecountDataForm
 ) => {
   console.log("removeUserFromSharecount");

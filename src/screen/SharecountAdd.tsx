@@ -44,10 +44,10 @@ const SharecountAdd = () => {
       participantsToAdd: participantsNameArray,
     };
     addSharecountService(newSharecount).then(
-      (sharecount: ISharecountContext) => {
-        sharecount.balance = 0;
-        setSharecountsContext([...sharecountsContext, sharecount]);
-        navigate(`/sharecount-connect/${sharecount.id}`);
+      (sharecountResponse: ISharecountContext) => {
+        sharecountResponse.balance = 0;
+        setSharecountsContext([...sharecountsContext, sharecountResponse]);
+        navigate(`/sharecount-connect/${sharecountResponse.id}`);
         setIsLoaded(true);
       }
     );

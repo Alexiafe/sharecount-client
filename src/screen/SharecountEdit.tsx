@@ -23,7 +23,7 @@ import {
   editSharecountService,
   getSharecountService,
 } from "../services/sharecount.service";
-import { removeUserFromSharecount } from "../services/sharecount.service";
+import { removeUserFromSharecountService } from "../services/sharecount.service";
 
 // React
 import { useContext, useEffect, useState } from "react";
@@ -71,11 +71,11 @@ const SharecountEdit = () => {
       setIsLoaded(true);
     } else {
       getSharecountService(parseInt(params.sharecountID!)).then(
-        (sharecount: ISharecountContext) => {
-          currentSharecount = sharecount;
-          formik.setFieldValue("sharecountName", sharecount.name);
-          formik.setFieldValue("currency", sharecount.currency);
-          let participantsName = sharecount.participants?.map(
+        (sharecountResponse: ISharecountContext) => {
+          currentSharecount = sharecountResponse;
+          formik.setFieldValue("sharecountName", sharecountResponse.name);
+          formik.setFieldValue("currency", sharecountResponse.currency);
+          let participantsName = sharecountResponse.participants?.map(
             (p: IParticipantsContext) => {
               return p.name;
             }
@@ -104,7 +104,7 @@ const SharecountEdit = () => {
       sharecount_id: sharecount_id,
       user_email: userEmail!,
     };
-    removeUserFromSharecount(userInSharecountData).then(
+    removeUserFromSharecountService(userInSharecountData).then(
       () => {
         navigate("/");
         setSharecountsContext(
@@ -144,14 +144,16 @@ const SharecountEdit = () => {
     };
 
     editSharecountService(newSharecount).then(
-      (sharecount: ISharecountContext) => {
-        if (sharecountsContext.find((s) => s.id === sharecount.id)) {
-          sharecountsContext.find((s) => s.id === sharecount.id)!.name =
-            sharecount.name;
-          sharecountsContext.find((s) => s.id === sharecount.id)!.currency =
-            sharecount.currency;
-          sharecountsContext.find((s) => s.id === sharecount.id)!.participants =
-            sharecount.participants;
+      (sharecountResponse: ISharecountContext) => {
+        if (sharecountsContext.find((s) => s.id === sharecountResponse.id)) {
+          sharecountsContext.find((s) => s.id === sharecountResponse.id)!.name =
+            sharecountResponse.name;
+          sharecountsContext.find(
+            (s) => s.id === sharecountResponse.id
+          )!.currency = sharecountResponse.currency;
+          sharecountsContext.find(
+            (s) => s.id === sharecountResponse.id
+          )!.participants = sharecountResponse.participants;
         }
         navigate(`/sharecount/${params.sharecountID}`);
         setIsLoaded(true);
@@ -194,7 +196,11 @@ const SharecountEdit = () => {
   if (!isLoaded || userLoading) {
     return (
       <div>
-        <HeaderThin title={header} cancelButton={true} saveButton={true}></HeaderThin>
+        <HeaderThin
+          title={header}
+          cancelButton={true}
+          saveButton={true}
+        ></HeaderThin>
         <Loader></Loader>
       </div>
     );

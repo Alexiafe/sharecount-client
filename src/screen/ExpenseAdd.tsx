@@ -68,12 +68,14 @@ const ExpenseAdd = () => {
       setIsLoaded(true);
     } else {
       getSharecountService(parseInt(params.sharecountID!)).then(
-        (sharecount: ISharecountContext) => {
-          setParticipants(sharecount.participants!);
-          if (sharecount.participants!.length > 0)
-            setOwnerID(sharecount.participants![0].id);
+        (sharecountResponse: ISharecountContext) => {
+          setParticipants(sharecountResponse.participants!);
+          if (sharecountResponse.participants!.length > 0)
+            setOwnerID(sharecountResponse.participants![0].id);
           setSelectedParticipantsIDs(
-            sharecount.participants!.map((p: IParticipantsContext) => p.id)
+            sharecountResponse.participants!.map(
+              (p: IParticipantsContext) => p.id
+            )
           );
           setIsLoaded(true);
         },
@@ -147,14 +149,15 @@ const ExpenseAdd = () => {
       }),
     };
 
-    addExpenseService(newExpense).then((expense: IExpenseContext) => {
+    addExpenseService(newExpense).then((expenseResponse: IExpenseContext) => {
       navigate(`/sharecount/${params.sharecountID}`);
       let currentSharecount = sharecountsContext.find(
         (s) => s.id === parseInt(params.sharecountID!)
       );
-      currentSharecount?.expenses?.push(expense);
-      currentSharecount!.total = expense.sharecount!.total;
-      currentSharecount!.participants = expense.sharecount!.participants;
+      currentSharecount?.expenses?.push(expenseResponse);
+      currentSharecount!.total = expenseResponse.sharecount!.total;
+      currentSharecount!.participants =
+        expenseResponse.sharecount!.participants;
       let me = currentSharecount!.participants?.find(
         (p) => p?.name === currentSharecount!.user
       );
