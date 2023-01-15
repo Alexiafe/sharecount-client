@@ -159,10 +159,10 @@ const ExpensesList = (props: IPropsExpensesList) => {
     return <div>Please try again later</div>;
   } else {
     return (
-      <div>
+      <div style={{ paddingTop: "48px" }}>
         <SearchBar onChange={manageFilterChange}></SearchBar>
         {expenses.length ? (
-          <div className="relative w-full">
+          <div>
             <div className="p-4">
               {Object.keys(expensesGroupped)
                 .sort()

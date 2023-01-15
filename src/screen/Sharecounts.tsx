@@ -109,8 +109,8 @@ const Sharecounts = () => {
           screen={"Home"}
         ></Header>
         {sharecounts.length ? (
-          <div className="bg-primary relative w-full">
-            <ul className="w-full">
+          <div className="bg-primary">
+            <ul>
               {sharecounts.map((s: ISharecountContext) => (
                 <li key={s.id} className="py-2 px-5">
                   <SharecountItem sharecount={s}></SharecountItem>

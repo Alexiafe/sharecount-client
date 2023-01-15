@@ -94,8 +94,7 @@ const Expenses = () => {
     return <NotLoggedIn></NotLoggedIn>;
   } else {
     return (
-      <div style={{ paddingTop: "170px", paddingBottom: "20px" }}>
-        <div className="h-screen bg-white fixed w-full"></div>
+      <div style={{ paddingTop: "170px" }}>
         <Header
           title={sharecount?.name}
           id={sharecount?.id}
@@ -109,18 +108,6 @@ const Expenses = () => {
           onClick={edit}
         ></Header>
         <MenuTabs sharecount={sharecount}></MenuTabs>
-        <footer
-          className="fixed bottom-0 w-full"
-          style={{
-            height: "20px",
-            zIndex: 101,
-          }}
-        >
-          <div
-            className="flex w-full bg-white text-center"
-            style={{ height: "20px" }}
-          ></div>
-        </footer>
       </div>
     );
   }
