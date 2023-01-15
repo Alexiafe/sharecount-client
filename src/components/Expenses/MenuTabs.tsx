@@ -59,7 +59,7 @@ const MenuTabs = (props: IPropsMenuTabs) => {
   };
 
   return (
-    <div className="relative flex flex-1">
+    <div className="bg-white relative flex flex-1">
       <Box
         className="fixed bg-white w-full z-10"
         sx={{ borderBottom: 1, borderColor: "divider" }}
@@ -76,7 +76,7 @@ const MenuTabs = (props: IPropsMenuTabs) => {
           <Tab label="Refund" {...a11yProps(2)} />
         </Tabs>
       </Box>
-      <div className="w-full mt-12">
+      <div className="relative w-full mt-12">
         <TabPanel value={value} index={0}>
           <ExpensesList sharecount={props.sharecount} />
         </TabPanel>
