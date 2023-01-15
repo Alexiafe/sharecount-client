@@ -6,12 +6,12 @@ import {
 
 // Context
 import SharecountsContext from "../../context/sharecounts.context";
-import ExpensePositionContext from "../../context/expenseposition.context";
 
 // Components
 import Loader from "../Common/Loader";
 import SearchBar from "./SearchBar";
 import ExpenseItem from "./ExpenseItem";
+import ExpenseDetailsModal from "./ExpenseDetailsModal";
 
 // Services
 import { getAllExpensesService } from "../../services/expense.service";
@@ -22,7 +22,7 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 // MUI
-import { IconButton } from "@mui/material";
+import { IconButton, Dialog } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 // Other
@@ -41,8 +41,10 @@ const ExpensesList = (props: IPropsExpensesList) => {
   const [expenses, setExpenses] = useState<IExpenseContext[]>(
     props.sharecount?.expenses || []
   );
-  const { expenseIdContext } = useContext(ExpensePositionContext);
   const [hasMore, setHasMore] = useState(true);
+  const [displayModal, setDisplayModal] = useState<boolean>(false);
+
+  const [currentExpense, setCurrentExpense] = useState<IExpenseContext>();
 
   const { observe } = useInView({
     onEnter: () => {
@@ -92,8 +94,9 @@ const ExpensesList = (props: IPropsExpensesList) => {
         }
       );
     }
-    scrollDown();
   }, [props.sharecount?.id]);
+
+  const handleCloseModal = () => setDisplayModal(false);
 
   const manageFilterChange = (filter: string) => {
     if (filter.length > 0) {
@@ -113,15 +116,6 @@ const ExpensesList = (props: IPropsExpensesList) => {
       );
       setExpenses(currentSharecount?.expenses || []);
     }
-  };
-
-  const scrollDown = () => {
-    setTimeout(function () {
-      const element = document.getElementById(expenseIdContext);
-      if (element) {
-        element.scrollIntoView({ block: "center" });
-      }
-    }, 500);
   };
 
   const handleLoadMore = async () => {
@@ -187,7 +181,13 @@ const ExpensesList = (props: IPropsExpensesList) => {
                     )}
                     <div>
                       {expensesGroupped[date].map((e: IExpenseContext) => (
-                        <div key={e.id}>
+                        <div
+                          key={e.id}
+                          onClick={() => {
+                            setDisplayModal(true);
+                            setCurrentExpense(e);
+                          }}
+                        >
                           <ExpenseItem
                             sharecount={props.sharecount}
                             expense={e}
@@ -226,6 +226,13 @@ const ExpensesList = (props: IPropsExpensesList) => {
             </IconButton>
           </div>
         </footer>
+        <Dialog fullScreen open={displayModal} onClose={handleCloseModal}>
+          <ExpenseDetailsModal
+            sharecount={props.sharecount}
+            expense={currentExpense}
+            onReturn={handleCloseModal}
+          ></ExpenseDetailsModal>
+        </Dialog>
       </div>
     );
   }
