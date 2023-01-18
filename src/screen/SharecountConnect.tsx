@@ -84,10 +84,9 @@ const SharecountConnect = () => {
 
     editSharecountService(newSharecount).then(
       (sharecountResponse: ISharecountContext) => {
-        let currentSharecount: ISharecountContext = sharecountsContext.find(
+        sharecountsContext.find(
           (s) => s.id === parseInt(params.sharecountID!)
-        )!;
-        currentSharecount = sharecountResponse;
+        )!.user = sharecountResponse.user;
         navigate("/");
         setIsLoaded(true);
       }
