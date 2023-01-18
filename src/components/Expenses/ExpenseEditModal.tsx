@@ -40,7 +40,7 @@ interface IPropsExpenseEditModal {
   onReturn?: () => void;
   onCloseAllModals?: () => void;
   onEditExpense?: (expense: IExpenseContext) => void;
-  onDeleteExpense?: (expense_id: number) => void;
+  onDeleteExpense?: (expense: IExpenseContext) => void;
 }
 
 const ExpenseEditModal = (props: IPropsExpenseEditModal) => {
@@ -87,7 +87,7 @@ const ExpenseEditModal = (props: IPropsExpenseEditModal) => {
     deleteExpenseService(expense_id).then(
       (expenseResponse: IExpenseContext) => {
         props.onCloseAllModals?.();
-        props.onDeleteExpense?.(expense_id);
+        props.onDeleteExpense?.(expenseResponse);
 
         setIsLoaded(true);
       }

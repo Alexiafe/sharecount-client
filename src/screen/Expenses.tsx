@@ -78,18 +78,18 @@ const Expenses = () => {
     setDisplayModalSharecountEdit(false);
 
   const handleAddExpense = (expense: IExpenseContext) => {
-    // TODO
+    // TODO Update sharecount
     console.log("handleAddExpense", expense);
   };
 
   const handleEditExpense = (expense: IExpenseContext) => {
-    // TODO
+    // TODO Update sharecount
     console.log("handleEditExpense", expense);
   };
 
-  const handleDeleteExpense = (expense_id: number) => {
-    // TODO
-    console.log("handleDeleteExpense", expense_id);
+  const handleDeleteExpense = (expense: IExpenseContext) => {
+    // TODO Update sharecount
+    console.log("handleDeleteExpense", expense);
   };
 
   if (!isLoaded || userLoading) {

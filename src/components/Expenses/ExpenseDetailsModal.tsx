@@ -23,7 +23,7 @@ interface IPropsExpenseDetailsModal {
   expense?: IExpenseContext;
   onReturn?: () => void;
   onEditExpense?: (expense: IExpenseContext) => void;
-  onDeleteExpense?: (expense_id: number) => void;
+  onDeleteExpense?: (expense: IExpenseContext) => void;
 }
 
 const ExpenseDetailsModal = (props: IPropsExpenseDetailsModal) => {

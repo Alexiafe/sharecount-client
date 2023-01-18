@@ -33,13 +33,14 @@ interface IPropsExpensesList {
   sharecount?: ISharecountContext;
   onAddExpense?: (expense: IExpenseContext) => void;
   onEditExpense?: (expense: IExpenseContext) => void;
-  onDeleteExpense?: (expense_id: number) => void;
+  onDeleteExpense?: (expense: IExpenseContext) => void;
 }
 
 const ExpensesList = (props: IPropsExpensesList) => {
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const { sharecountsContext } = useContext(SharecountsContext);
+  const { sharecountsContext, setSharecountsContext } =
+    useContext(SharecountsContext);
   const [expenses, setExpenses] = useState<IExpenseContext[]>(
     props.sharecount?.expenses || []
   );
@@ -108,6 +109,38 @@ const ExpensesList = (props: IPropsExpensesList) => {
 
   const handleAddExpense = (expense: IExpenseContext) => {
     props.onAddExpense?.(expense);
+    let newExpenses = [expense, ...expenses];
+    // Update expenses list
+    setExpenses(newExpenses);
+    // Update context
+    sharecountsContext.find((s) => s.id === props.sharecount?.id!)!.expenses =
+      newExpenses;
+    setDisplayModalExpenseAdd(false);
+  };
+
+  const handleEditExpense = (expense: IExpenseContext) => {
+    props.onEditExpense?.(expense);
+    // Update expenses list
+    expenses.find((e) => e.id === expense.id)!.name = expense.name;
+    expenses.find((e) => e.id === expense.id)!.amount_total =
+      expense.amount_total;
+    expenses.find((e) => e.id === expense.id)!.owner = expense.owner;
+    expenses.find((e) => e.id === expense.id)!.partakers = expense.partakers;
+    // Update context
+    sharecountsContext.find((s) => s.id === props.sharecount?.id!)!.expenses =
+      expenses;
+
+    setDisplayModalExpenseAdd(false);
+  };
+
+  const handleDeleteExpense = (expense: IExpenseContext) => {
+    props.onDeleteExpense?.(expense);
+    let newExpenses = expenses.filter((e) => e.id !== expense.id);
+    // Update expenses list
+    setExpenses(newExpenses);
+    // Update context
+    sharecountsContext.find((s) => s.id === props.sharecount?.id!)!.expenses =
+      newExpenses;
     setDisplayModalExpenseAdd(false);
   };
 
@@ -250,8 +283,8 @@ const ExpensesList = (props: IPropsExpensesList) => {
             sharecount={props.sharecount}
             expense={currentExpense}
             onReturn={handleCloseModalExpenseDetails}
-            onEditExpense={props.onEditExpense}
-            onDeleteExpense={props.onDeleteExpense}
+            onEditExpense={handleEditExpense}
+            onDeleteExpense={handleDeleteExpense}
           ></ExpenseDetailsModal>
         </Dialog>
         <Dialog

@@ -56,7 +56,7 @@ interface IPropsMenuTabs {
   sharecount?: ISharecountContext;
   onAddExpense?: (expense: IExpenseContext) => void;
   onEditExpense?: (expense: IExpenseContext) => void;
-  onDeleteExpense?: (expense_id: number) => void;
+  onDeleteExpense?: (expense: IExpenseContext) => void;
 }
 
 const MenuTabs = (props: IPropsMenuTabs) => {
