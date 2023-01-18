@@ -1,19 +1,20 @@
 // Interfaces
-import { ISharecountContext, ISharecountForm } from "../interfaces/interfaces";
+import {
+  ISharecountContext,
+  ISharecountForm,
+} from "../../interfaces/interfaces";
 
 // Context
-import AuthContext from "../context/auth.context";
-import SharecountsContext from "../context/sharecounts.context";
+import SharecountsContext from "../../context/sharecounts.context";
 
 // Components
-import HeaderThin from "../components/Common/HeaderThin";
-import NotLoggedIn from "../components/Common/NotLoggedIn";
-import Loader from "../components/Common/Loader";
-import ParticipantsList from "../components/Sharecounts/ParticipantsList";
-import SharecountInfoForm from "../components/Sharecounts/SharecountInfoForm";
+import HeaderThin from "../Common/HeaderThin";
+import Loader from "../Common/Loader";
+import ParticipantsList from "./ParticipantsList";
+import SharecountInfoForm from "./SharecountInfoForm";
 
 // Services
-import { addSharecountService } from "../services/sharecount.service";
+import { addSharecountService } from "../../services/sharecount.service";
 
 // React
 import { useContext, useState } from "react";
@@ -23,15 +24,17 @@ import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
 
-const SharecountAdd = () => {
+interface IPropsExpenseDetailsModal {
+  onReturn?: () => void;
+}
+
+const SharecountAddModal = (props: IPropsExpenseDetailsModal) => {
   const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState<boolean>(true);
   const [participantsNameArray, setParticipantsNameArray] = useState<string[]>(
     []
   );
   const [participantError, setParticipantError] = useState<string>("");
-  const { userSession, userLoading } = useContext(AuthContext);
-  const userEmail = userSession.email;
   const { sharecountsContext, setSharecountsContext } =
     useContext(SharecountsContext);
   const header = `New sharecount`;
@@ -85,15 +88,13 @@ const SharecountAdd = () => {
     },
   });
 
-  if (!isLoaded || userLoading) {
+  if (!isLoaded) {
     return (
       <div>
         <HeaderThin title={header}></HeaderThin>
         <Loader></Loader>
       </div>
     );
-  } else if (!userEmail) {
-    return <NotLoggedIn></NotLoggedIn>;
   } else {
     return (
       <div>
@@ -101,7 +102,7 @@ const SharecountAdd = () => {
           title={header}
           cancelButton={true}
           saveButton={true}
-          onCancel={() => navigate(`/`)}
+          onCancel={() => props.onReturn?.()}
           onSave={() => formik.handleSubmit()}
         ></HeaderThin>
         <div className="flex flex-col p-4">
@@ -125,4 +126,4 @@ const SharecountAdd = () => {
   }
 };
 
-export default SharecountAdd;
+export default SharecountAddModal;

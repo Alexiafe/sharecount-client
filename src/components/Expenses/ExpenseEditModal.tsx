@@ -5,31 +5,26 @@ import {
   IExpenseContext,
   IPartakersContext,
   IExpenseForm,
-} from "../interfaces/interfaces";
+} from "../../interfaces/interfaces";
 
 // Context
-import AuthContext from "../context/auth.context";
-import SharecountsContext from "../context/sharecounts.context";
+import SharecountsContext from "../../context/sharecounts.context";
 
 // Components
-import HeaderThin from "../components/Common/HeaderThin";
-import Loader from "../components/Common/Loader";
-import NotLoggedIn from "../components/Common/NotLoggedIn";
-import ModalContent from "../components/Common/ModalContent";
-import ExpenseInfoForm from "../components/Expenses/ExpenseInfoForm";
-import PartakersList from "../components/Expenses/PartakersList";
+import HeaderThin from "../Common/HeaderThin";
+import Loader from "../Common/Loader";
+import ModalContent from "../Common/ModalContent";
+import ExpenseInfoForm from "./ExpenseInfoForm";
+import PartakersList from "./PartakersList";
 
 // Servives
 import {
   deleteExpenseService,
   editExpenseService,
-  getExpenseService,
-} from "../services/expense.service";
-import { getSharecountService } from "../services/sharecount.service";
+} from "../../services/expense.service";
 
 // React
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 
 // MUI
 import { Button, Modal } from "@mui/material";
@@ -39,11 +34,17 @@ import moment from "moment";
 import { useFormik } from "formik";
 import * as yup from "yup";
 
-const ExpenseEdit = () => {
-  const navigate = useNavigate();
-  const params = useParams();
-  const [error, setError] = useState<any>(null);
-  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+interface IPropsExpenseEditModal {
+  sharecount?: ISharecountContext;
+  expense?: IExpenseContext;
+  onReturn?: () => void;
+  onCloseAllModals?: () => void;
+  onEditExpense?: (expense: IExpenseContext) => void;
+  onDeleteExpense?: (expense_id: number) => void;
+}
+
+const ExpenseEditModal = (props: IPropsExpenseEditModal) => {
+  const [isLoaded, setIsLoaded] = useState<boolean>(true);
   const [expenseDate, setExpenseDate] = useState<moment.Moment | null>(
     moment()
   );
@@ -57,67 +58,27 @@ const ExpenseEdit = () => {
   const [errorMissingPartakers, setErrorMissingPartakers] =
     useState<string>("");
   const [displayModal, setDisplayModal] = useState<boolean>(false);
-  const { userSession, userLoading } = useContext(AuthContext);
-  const userEmail = userSession?.email;
-  const { sharecountsContext, setSharecountsContext } =
-    useContext(SharecountsContext);
+  const { sharecountsContext } = useContext(SharecountsContext);
   const header = `Edit expense`;
 
   useEffect(() => {
-    let currentSharecount = sharecountsContext.find(
-      (s) => s.id === parseInt(params.sharecountID!)
-    );
-    let currentExpense = currentSharecount?.expenses?.find(
-      (e) => e.id === parseInt(params.expenseID!)
-    );
-    if (currentSharecount?.participants && currentExpense) {
-      setParticipants(currentSharecount.participants!);
-      setOldAmount(currentExpense.amount_total);
-      formik.setFieldValue("expenseName", currentExpense.name);
-      formik.setFieldValue("expenseAmount", currentExpense.amount_total);
-      setExpenseDate(moment(currentExpense.date));
-      setOwnerID(currentExpense.owner.id);
+    if (props.sharecount?.participants && props.expense) {
+      setParticipants(props.sharecount.participants!);
+      setOldAmount(props.expense.amount_total);
+      formik.setFieldValue("expenseName", props.expense.name);
+      formik.setFieldValue("expenseAmount", props.expense.amount_total);
+      setExpenseDate(moment(props.expense.date));
+      setOwnerID(props.expense.owner.id);
       setSelectedParticipantsIDs(
-        currentExpense.partakers.map((p: IPartakersContext) => p.id)
-      );
-      setIsLoaded(true);
-    } else {
-      getSharecountService(parseInt(params.sharecountID!)).then(
-        (sharecountResponse: ISharecountContext) => {
-          setParticipants(sharecountResponse.participants!);
-          setIsLoaded(true);
-        },
-        (error) => {
-          console.log(error);
-          setError(error);
-          setIsLoaded(true);
-        }
-      );
-      getExpenseService(parseInt(params.expenseID!)).then(
-        (expenseResponse: IExpenseContext) => {
-          setOldAmount(expenseResponse.amount_total);
-          formik.setFieldValue("expenseName", expenseResponse.name);
-          formik.setFieldValue("expenseAmount", expenseResponse.amount_total);
-          setExpenseDate(moment(expenseResponse.date));
-          setOwnerID(expenseResponse.owner.id);
-          setSelectedParticipantsIDs(
-            expenseResponse.partakers.map((p: IPartakersContext) => p.id)
-          );
-          setIsLoaded(true);
-        },
-        (error) => {
-          console.log(error);
-          setError(error);
-          setIsLoaded(true);
-        }
+        props.expense.partakers.map((p: IPartakersContext) => p.id)
       );
     }
-  }, [params.expenseID, params.sharecountID]);
+  }, [props]);
 
   const handleCloseModal = () => setDisplayModal(false);
 
   const confirmDelete = () => {
-    deleteExpense(Number(params.expenseID));
+    deleteExpense(props.expense?.id!);
     setDisplayModal(false);
   };
 
@@ -125,26 +86,9 @@ const ExpenseEdit = () => {
     setIsLoaded(false);
     deleteExpenseService(expense_id).then(
       (expenseResponse: IExpenseContext) => {
-        navigate(`/sharecount/${params.sharecountID}`);
-        let currentSharecount = sharecountsContext.find(
-          (s) => s.id === parseInt(params.sharecountID!)
-        );
-        currentSharecount!.expenses = currentSharecount!.expenses!.filter(
-          (e) => e.id !== expense_id
-        );
-        currentSharecount!.total = expenseResponse.sharecount!.total;
-        currentSharecount!.participants =
-          expenseResponse.sharecount!.participants;
-        let me = currentSharecount!.participants?.find(
-          (p) => p?.name === currentSharecount!.user
-        );
-        currentSharecount!.balance = me!.balance;
+        props.onCloseAllModals?.();
+        props.onDeleteExpense?.(expense_id);
 
-        setIsLoaded(true);
-      },
-      (error) => {
-        console.log(error);
-        setError(error);
         setIsLoaded(true);
       }
     );
@@ -190,42 +134,26 @@ const ExpenseEdit = () => {
     }
   };
 
-  const save = (expenseNew: { expenseName: string; expenseAmount: string }) => {
+  const save = (expense: { expenseName: string; expenseAmount: string }) => {
     setIsLoaded(false);
-
     const newExpense: IExpenseForm = {
-      id: parseInt(params.expenseID!),
-      name: expenseNew.expenseName,
-      amount_total: parseInt(expenseNew.expenseAmount),
+      id: props.expense?.id!,
+      name: expense.expenseName,
+      amount_total: parseInt(expense.expenseAmount),
       date: moment(expenseDate).format(),
       owner_id: ownerID,
       partakers: selectedParticipantsIDs.map((p: number) => {
         return {
           participant_id: p,
           amount:
-            parseInt(expenseNew.expenseAmount) / selectedParticipantsIDs.length,
+            parseInt(expense.expenseAmount) / selectedParticipantsIDs.length,
         };
       }),
     };
 
     editExpenseService(newExpense).then((expenseResponse: IExpenseContext) => {
-      navigate(
-        `/sharecount/${params.sharecountID}/expense/${params.expenseID}`
-      );
-      let currentSharecount = sharecountsContext.find(
-        (s) => s.id === parseInt(params.sharecountID!)
-      );
-      currentSharecount!.expenses = currentSharecount!.expenses!.filter(
-        (e) => e.id !== expenseResponse.id
-      );
-      currentSharecount?.expenses?.push(expenseResponse);
-      currentSharecount!.total = expenseResponse.sharecount!.total;
-      currentSharecount!.participants =
-        expenseResponse.sharecount!.participants;
-      let me = currentSharecount!.participants?.find(
-        (p) => p?.name === currentSharecount!.user
-      );
-      currentSharecount!.balance = me!.balance;
+      props.onReturn?.();
+      props.onEditExpense?.(expenseResponse);
       setIsLoaded(true);
     });
   };
@@ -266,34 +194,13 @@ const ExpenseEdit = () => {
     },
   });
 
-  if (!isLoaded || userLoading) {
+  if (!isLoaded) {
     return (
       <div>
-        <HeaderThin
-          title={header}
-          cancelButton={true}
-          saveButton={true}
-        ></HeaderThin>
+        <HeaderThin title={header}></HeaderThin>
         <Loader></Loader>
       </div>
     );
-  } else if (error) {
-    return (
-      <div>
-        <HeaderThin
-          title={header}
-          cancelButton={true}
-          onCancel={() =>
-            navigate(
-              `/sharecount/${params.sharecountID}/expense/${params.expenseID}`
-            )
-          }
-        ></HeaderThin>
-        Please try again later
-      </div>
-    );
-  } else if (!userEmail) {
-    return <NotLoggedIn></NotLoggedIn>;
   } else {
     return (
       <div className="h-screen flex flex-col">
@@ -301,11 +208,7 @@ const ExpenseEdit = () => {
           title={header}
           cancelButton={true}
           saveButton={true}
-          onCancel={() =>
-            navigate(
-              `/sharecount/${params.sharecountID}/expense/${params.expenseID}`
-            )
-          }
+          onCancel={() => props.onReturn?.()}
           onSave={() => formik.handleSubmit()}
         ></HeaderThin>
         <div className="flex flex-1 flex-col p-4 overflow-auto">
@@ -352,4 +255,4 @@ const ExpenseEdit = () => {
   }
 };
 
-export default ExpenseEdit;
+export default ExpenseEditModal;

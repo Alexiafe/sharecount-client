@@ -1,5 +1,5 @@
 // Interfaces
-import { ISharecountContext } from "../interfaces/interfaces";
+import { IExpenseContext, ISharecountContext } from "../interfaces/interfaces";
 
 // Context
 import AuthContext from "../context/auth.context";
@@ -11,6 +11,7 @@ import HeaderThin from "../components/Common/HeaderThin";
 import NotLoggedIn from "../components/Common/NotLoggedIn";
 import Loader from "../components/Common/Loader";
 import MenuTabs from "../components/Expenses/MenuTabs";
+import SharecountEditModal from "../components/Sharecounts/SharecountEditModal";
 
 // Services
 import { getSharecountService } from "../services/sharecount.service";
@@ -18,6 +19,9 @@ import { getSharecountService } from "../services/sharecount.service";
 // React
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+
+// MUI
+import { Dialog } from "@mui/material";
 
 const Expenses = () => {
   const navigate = useNavigate();
@@ -29,11 +33,13 @@ const Expenses = () => {
   const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession?.email;
 
+  const [displayModalSharecountEdit, setDisplayModalSharecountEdit] =
+    useState<boolean>(false);
+
   useEffect(() => {
     let currentSharecount = sharecountsContext.find(
       (s) => s.id === parseInt(params.sharecountID!)
     );
-
     if (currentSharecount) {
       if (currentSharecount.participants) {
         setSharecount(currentSharecount);
@@ -68,8 +74,22 @@ const Expenses = () => {
     }
   }, [params.sharecountID]);
 
-  const edit = () => {
-    navigate(`/sharecount-edit/${params.sharecountID}`);
+  const handleCloseModalSharecountEdit = () =>
+    setDisplayModalSharecountEdit(false);
+
+  const handleAddExpense = (expense: IExpenseContext) => {
+    // TODO
+    console.log("handleAddExpense", expense);
+  };
+
+  const handleEditExpense = (expense: IExpenseContext) => {
+    // TODO
+    console.log("handleEditExpense", expense);
+  };
+
+  const handleDeleteExpense = (expense_id: number) => {
+    // TODO
+    console.log("handleDeleteExpense", expense_id);
   };
 
   if (!isLoaded || userLoading) {
@@ -85,7 +105,7 @@ const Expenses = () => {
         <HeaderThin
           title={sharecount?.name}
           cancelButton={true}
-          onCancel={() => navigate(`/`)}
+          onCancel={() => navigate(-1)}
         ></HeaderThin>
         Please try again later Please try again later
       </div>
@@ -106,9 +126,26 @@ const Expenses = () => {
           shareButton={true}
           screen="Expenses"
           onReturn={() => navigate(-1)}
-          onClick={edit}
+          onTitleClick={() => {
+            setDisplayModalSharecountEdit(true);
+          }}
         ></Header>
-        <MenuTabs sharecount={sharecount}></MenuTabs>
+        <MenuTabs
+          sharecount={sharecount}
+          onAddExpense={handleAddExpense}
+          onEditExpense={handleEditExpense}
+          onDeleteExpense={handleDeleteExpense}
+        ></MenuTabs>
+        <Dialog
+          fullScreen
+          open={displayModalSharecountEdit}
+          onClose={handleCloseModalSharecountEdit}
+        >
+          <SharecountEditModal
+            sharecount={sharecount}
+            onReturn={handleCloseModalSharecountEdit}
+          ></SharecountEditModal>
+        </Dialog>
       </div>
     );
   }

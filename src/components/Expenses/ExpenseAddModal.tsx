@@ -4,37 +4,37 @@ import {
   IExpenseContext,
   IParticipantsContext,
   IExpenseForm,
-} from "../interfaces/interfaces";
+} from "../../interfaces/interfaces";
 
 // Context
-import AuthContext from "../context/auth.context";
-import SharecountsContext from "../context/sharecounts.context";
+import SharecountsContext from "../../context/sharecounts.context";
 
 // Components
-import HeaderThin from "../components/Common/HeaderThin";
-import Loader from "../components/Common/Loader";
-import NotLoggedIn from "../components/Common/NotLoggedIn";
-import ExpenseInfoForm from "../components/Expenses/ExpenseInfoForm";
-import PartakersList from "../components/Expenses/PartakersList";
+import HeaderThin from "../Common/HeaderThin";
+import Loader from "../Common/Loader";
+import ExpenseInfoForm from "./ExpenseInfoForm";
+import PartakersList from "./PartakersList";
 
 // Services
-import { getSharecountService } from "../services/sharecount.service";
-import { addExpenseService } from "../services/expense.service";
+import { addExpenseService } from "../../services/expense.service";
 
 // React
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 
 // Other
 import moment from "moment";
 import { useFormik } from "formik";
 import * as yup from "yup";
 
-const ExpenseAdd = () => {
-  const navigate = useNavigate();
-  const params = useParams();
-  const [error, setError] = useState<any>(null);
-  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+interface IPropsExpenseAddModal {
+  sharecount?: ISharecountContext;
+  expense?: IExpenseContext;
+  onReturn?: () => void;
+  onAddExpense?: (expense: IExpenseContext) => void;
+}
+
+const ExpenseAddModal = (props: IPropsExpenseAddModal) => {
+  const [isLoaded, setIsLoaded] = useState<boolean>(true);
   const [expenseDate, setExpenseDate] = useState<moment.Moment | null>(
     moment()
   );
@@ -46,47 +46,21 @@ const ExpenseAdd = () => {
   const [selectAll, setSelectAll] = useState<boolean>(true);
   const [errorMissingPartakers, setErrorMissingPartakers] =
     useState<string>("");
-  const { userSession, userLoading } = useContext(AuthContext);
-  const userEmail = userSession?.email;
-  const { sharecountsContext, setSharecountsContext } =
-    useContext(SharecountsContext);
+  const { sharecountsContext } = useContext(SharecountsContext);
   const header = `New expense`;
 
   useEffect(() => {
-    let currentSharecount = sharecountsContext.find(
-      (s) => s.id === parseInt(params.sharecountID!)
-    );
     if (
-      currentSharecount?.participants &&
-      currentSharecount?.participants?.length > 0
+      props.sharecount?.participants &&
+      props.sharecount?.participants?.length > 0
     ) {
-      setParticipants(currentSharecount.participants);
-      setOwnerID(currentSharecount.participants[0].id);
+      setParticipants(props.sharecount.participants);
+      setOwnerID(props.sharecount.participants[0].id);
       setSelectedParticipantsIDs(
-        currentSharecount.participants.map((p: IParticipantsContext) => p.id)
-      );
-      setIsLoaded(true);
-    } else {
-      getSharecountService(parseInt(params.sharecountID!)).then(
-        (sharecountResponse: ISharecountContext) => {
-          setParticipants(sharecountResponse.participants!);
-          if (sharecountResponse.participants!.length > 0)
-            setOwnerID(sharecountResponse.participants![0].id);
-          setSelectedParticipantsIDs(
-            sharecountResponse.participants!.map(
-              (p: IParticipantsContext) => p.id
-            )
-          );
-          setIsLoaded(true);
-        },
-        (error) => {
-          console.log(error);
-          setError(error);
-          setIsLoaded(true);
-        }
+        props.sharecount.participants.map((p: IParticipantsContext) => p.id)
       );
     }
-  }, [params.sharecountID]);
+  }, [props]);
 
   const handleDateChange = (newDate: moment.Moment | null) => {
     setExpenseDate(newDate);
@@ -130,7 +104,6 @@ const ExpenseAdd = () => {
 
   const save = (expense: { expenseName: string; expenseAmount: string }) => {
     setIsLoaded(false);
-
     const newExpense: IExpenseForm = {
       name: expense.expenseName,
       amount_total: parseInt(expense.expenseAmount),
@@ -138,7 +111,7 @@ const ExpenseAdd = () => {
         ?.utcOffset(0)
         .set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
         .format(),
-      sharecount_id: parseInt(params.sharecountID!),
+      sharecount_id: props.sharecount?.id,
       owner_id: ownerID,
       partakers: selectedParticipantsIDs.map((p: number) => {
         return {
@@ -150,19 +123,7 @@ const ExpenseAdd = () => {
     };
 
     addExpenseService(newExpense).then((expenseResponse: IExpenseContext) => {
-      navigate(`/sharecount/${params.sharecountID}`);
-      let currentSharecount = sharecountsContext.find(
-        (s) => s.id === parseInt(params.sharecountID!)
-      );
-      currentSharecount?.expenses?.push(expenseResponse);
-      currentSharecount!.total = expenseResponse.sharecount!.total;
-      currentSharecount!.participants =
-        expenseResponse.sharecount!.participants;
-      let me = currentSharecount!.participants?.find(
-        (p) => p?.name === currentSharecount!.user
-      );
-      currentSharecount!.balance = me!.balance;
-
+      props.onAddExpense?.(expenseResponse);
       setIsLoaded(true);
     });
   };
@@ -203,26 +164,13 @@ const ExpenseAdd = () => {
     },
   });
 
-  if (!isLoaded || userLoading) {
+  if (!isLoaded) {
     return (
       <div>
         <HeaderThin title={header}></HeaderThin>
         <Loader></Loader>
       </div>
     );
-  } else if (error) {
-    return (
-      <div>
-        <HeaderThin
-          title={header}
-          cancelButton={true}
-          onCancel={() => navigate(`/sharecount/${params.sharecountID}`)}
-        ></HeaderThin>
-        Please try again later
-      </div>
-    );
-  } else if (!userEmail) {
-    return <NotLoggedIn></NotLoggedIn>;
   } else {
     return (
       <div>
@@ -230,7 +178,7 @@ const ExpenseAdd = () => {
           title={header}
           cancelButton={true}
           saveButton={true}
-          onCancel={() => navigate(`/sharecount/${params.sharecountID}`)}
+          onCancel={() => props.onReturn?.()}
           onSave={() => formik.handleSubmit()}
         ></HeaderThin>
         <div className="flex flex-col p-4">
@@ -259,4 +207,4 @@ const ExpenseAdd = () => {
   }
 };
 
-export default ExpenseAdd;
+export default ExpenseAddModal;

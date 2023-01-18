@@ -20,7 +20,7 @@ const BalanceList = (props: IPropsBalanceList) => {
   });
 
   return (
-    <ul>
+    <ul className="relative" style={{ paddingTop: "48px" }}>
       {participants?.map((p: IParticipantsContext) => (
         <li key={p.id}>
           <List disablePadding>

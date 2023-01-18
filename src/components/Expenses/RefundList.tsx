@@ -90,15 +90,15 @@ const RefundList = (props: IPropsExpensesList) => {
   };
 
   return (
-    <div className="p-4">
+    <div className="relative p-4" style={{ paddingTop: "48px" }}>
       {myRefund.length === 0 && refund.length === 0 ? (
-        <div className="text-center">
+        <div className="p-4 text-center">
           <p>No transfert yet.</p>
         </div>
       ) : (
         <>
           {myRefund.length ? (
-            <ul className="pb-4">
+            <ul className="p-4">
               {myRefund.map((r: IRefund, idx: number) => (
                 <li key={idx}>
                   <MyRefundItem
@@ -109,13 +109,13 @@ const RefundList = (props: IPropsExpensesList) => {
               ))}
             </ul>
           ) : (
-            <div className="text-center">
+            <div className="p-4 text-center">
               <p>No transfert for you yet.</p>
             </div>
           )}
           {refund.length ? (
             <>
-              <div className="text-secondary">Other</div>
+              <div className=" p-4 text-secondary">Other</div>
               <ul>
                 {refund.map((r: IRefund, idx: number) => (
                   <li key={idx}>
@@ -128,9 +128,7 @@ const RefundList = (props: IPropsExpensesList) => {
               </ul>
             </>
           ) : (
-            <div className="text-center">
-              <p>No transfert yet.</p>
-            </div>
+            <></>
           )}
         </>
       )}

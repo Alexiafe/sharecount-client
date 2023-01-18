@@ -12,6 +12,7 @@ import Loader from "../Common/Loader";
 import SearchBar from "./SearchBar";
 import ExpenseItem from "./ExpenseItem";
 import ExpenseDetailsModal from "./ExpenseDetailsModal";
+import ExpenseAddModal from "./ExpenseAddModal";
 
 // Services
 import { getAllExpensesService } from "../../services/expense.service";
@@ -19,7 +20,6 @@ import { getFilteredExpensesService } from "../../services/expense.service";
 
 // React
 import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 // MUI
 import { IconButton, Dialog } from "@mui/material";
@@ -31,10 +31,12 @@ import { useInView } from "react-cool-inview";
 
 interface IPropsExpensesList {
   sharecount?: ISharecountContext;
+  onAddExpense?: (expense: IExpenseContext) => void;
+  onEditExpense?: (expense: IExpenseContext) => void;
+  onDeleteExpense?: (expense_id: number) => void;
 }
 
 const ExpensesList = (props: IPropsExpensesList) => {
-  const navigate = useNavigate();
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const { sharecountsContext } = useContext(SharecountsContext);
@@ -42,7 +44,10 @@ const ExpensesList = (props: IPropsExpensesList) => {
     props.sharecount?.expenses || []
   );
   const [hasMore, setHasMore] = useState(true);
-  const [displayModal, setDisplayModal] = useState<boolean>(false);
+  const [displayModalExpenseDetails, setDisplayModalExpenseDetails] =
+    useState<boolean>(false);
+  const [displayModalExpenseAdd, setDisplayModalExpenseAdd] =
+    useState<boolean>(false);
 
   const [currentExpense, setCurrentExpense] = useState<IExpenseContext>();
 
@@ -94,9 +99,17 @@ const ExpensesList = (props: IPropsExpensesList) => {
         }
       );
     }
-  }, [props.sharecount?.id]);
+  }, [props]);
 
-  const handleCloseModal = () => setDisplayModal(false);
+  const handleCloseModalExpenseDetails = () =>
+    setDisplayModalExpenseDetails(false);
+
+  const handleCloseModalExpenseAdd = () => setDisplayModalExpenseAdd(false);
+
+  const handleAddExpense = (expense: IExpenseContext) => {
+    props.onAddExpense?.(expense);
+    setDisplayModalExpenseAdd(false);
+  };
 
   const manageFilterChange = (filter: string) => {
     if (filter.length > 0) {
@@ -188,7 +201,7 @@ const ExpensesList = (props: IPropsExpensesList) => {
                         <div
                           key={e.id}
                           onClick={() => {
-                            setDisplayModal(true);
+                            setDisplayModalExpenseDetails(true);
                             setCurrentExpense(e);
                           }}
                         >
@@ -222,20 +235,36 @@ const ExpensesList = (props: IPropsExpensesList) => {
               className="pb-5 pr-5"
               size="large"
               color="secondary"
-              onClick={() =>
-                navigate(`/sharecount/${props.sharecount?.id!}/expense-add`)
-              }
+              onClick={() => setDisplayModalExpenseAdd(true)}
             >
               <AddCircleIcon sx={{ fontSize: 65 }} />
             </IconButton>
           </div>
         </footer>
-        <Dialog fullScreen open={displayModal} onClose={handleCloseModal}>
+        <Dialog
+          fullScreen
+          open={displayModalExpenseDetails}
+          onClose={handleCloseModalExpenseDetails}
+        >
           <ExpenseDetailsModal
             sharecount={props.sharecount}
             expense={currentExpense}
-            onReturn={handleCloseModal}
+            onReturn={handleCloseModalExpenseDetails}
+            onEditExpense={props.onEditExpense}
+            onDeleteExpense={props.onDeleteExpense}
           ></ExpenseDetailsModal>
+        </Dialog>
+        <Dialog
+          fullScreen
+          open={displayModalExpenseAdd}
+          onClose={handleCloseModalExpenseAdd}
+        >
+          <ExpenseAddModal
+            sharecount={props.sharecount}
+            expense={currentExpense}
+            onReturn={handleCloseModalExpenseAdd}
+            onAddExpense={handleAddExpense}
+          ></ExpenseAddModal>
         </Dialog>
       </div>
     );

@@ -6,13 +6,9 @@ import { SharecountsContextProvider } from "./context/sharecounts.context";
 import Login from "./screen/Login";
 
 import Sharecounts from "./screen/Sharecounts";
-import SharecountEdit from "./screen/SharecountEdit";
-import SharecountAdd from "./screen/SharecountAdd";
 import SharecountConnect from "./screen/SharecountConnect";
 
 import Expenses from "./screen/Expenses";
-import ExpenseAdd from "./screen/ExpenseAdd";
-import ExpenseEdit from "./screen/ExpenseEdit";
 
 // React
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -55,11 +51,6 @@ const App = () => {
 
                 <Route path="/" element={<Sharecounts />} />
                 <Route
-                  path="/sharecount-edit/:sharecountID"
-                  element={<SharecountEdit />}
-                />
-                <Route path="/sharecount-add" element={<SharecountAdd />} />
-                <Route
                   path="/sharecount-connect/:sharecountID"
                   element={<SharecountConnect />}
                 />
@@ -67,14 +58,6 @@ const App = () => {
                 <Route
                   path="/sharecount/:sharecountID"
                   element={<Expenses />}
-                />
-                <Route
-                  path="/sharecount/:sharecountID/expense-add"
-                  element={<ExpenseAdd />}
-                />
-                <Route
-                  path="/sharecount/:sharecountID/expense-edit/:expenseID"
-                  element={<ExpenseEdit />}
                 />
               </Routes>
             </Router>

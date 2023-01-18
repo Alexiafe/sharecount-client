@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 interface IPropsMenuHome {
   screen?: string;
+  onAddClick?: () => void;
 }
 
 const MenuHome = (props: IPropsMenuHome) => {
@@ -30,7 +31,7 @@ const MenuHome = (props: IPropsMenuHome) => {
         </div>
         <div
           className="flex-1 self-center"
-          onClick={() => navigate("/sharecount-add")}
+          onClick={() => props.onAddClick?.()}
         >
           <IconButton>
             <AddCircleIcon className="text-text" sx={{ fontSize: 55 }} />

@@ -7,12 +7,13 @@ import {
 
 // Components
 import Header from "../Common/Header";
+import ExpenseEditModal from "./ExpenseEditModal";
 
 // React
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 // MUI
-import { List, ListItem, ListItemText } from "@mui/material";
+import { List, ListItem, ListItemText, Dialog } from "@mui/material";
 
 // Other
 import moment from "moment";
@@ -21,18 +22,20 @@ interface IPropsExpenseDetailsModal {
   sharecount?: ISharecountContext;
   expense?: IExpenseContext;
   onReturn?: () => void;
+  onEditExpense?: (expense: IExpenseContext) => void;
+  onDeleteExpense?: (expense_id: number) => void;
 }
 
 const ExpenseDetailsModal = (props: IPropsExpenseDetailsModal) => {
-  const navigate = useNavigate();
   const expense = props.expense;
   const sharecount = props.sharecount;
   const header = expense?.name;
   const date = moment(expense?.date).format("DD/MM/YYYY");
 
-  const edit = () => {
-    navigate(`/sharecount/${sharecount!.id}/expense-edit/${expense!.id}`);
-  };
+  const [displayModalExpenseEdit, setDisplayModalExpenseEdit] =
+    useState<boolean>(false);
+
+  const handleCloseModalExpenseEdit = () => setDisplayModalExpenseEdit(false);
 
   const listExpenseParticipants = expense?.partakers.map(
     (p: IPartakersContext) => (
@@ -64,7 +67,9 @@ const ExpenseDetailsModal = (props: IPropsExpenseDetailsModal) => {
         backButton={true}
         screen="Details"
         onReturn={() => props.onReturn?.()}
-        onClick={edit}
+        onTitleClick={() => {
+          setDisplayModalExpenseEdit(true);
+        }}
       ></Header>
       <div className=" relative items-center p-4">
         <div className="text-text">
@@ -72,6 +77,20 @@ const ExpenseDetailsModal = (props: IPropsExpenseDetailsModal) => {
           <ul>{listExpenseParticipants}</ul>
         </div>
       </div>
+      <Dialog
+        fullScreen
+        open={displayModalExpenseEdit}
+        onClose={handleCloseModalExpenseEdit}
+      >
+        <ExpenseEditModal
+          sharecount={props.sharecount}
+          expense={props.expense}
+          onReturn={handleCloseModalExpenseEdit}
+          onCloseAllModals={props.onReturn}
+          onEditExpense={props.onEditExpense}
+          onDeleteExpense={props.onDeleteExpense}
+        ></ExpenseEditModal>
+      </Dialog>
     </div>
   );
 };

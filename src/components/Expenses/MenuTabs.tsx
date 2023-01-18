@@ -1,3 +1,9 @@
+// Interfaces
+import {
+  IExpenseContext,
+  ISharecountContext,
+} from "../../interfaces/interfaces";
+
 // Components
 import BalanceList from "./BalanceList";
 import ExpensesList from "./ExpensesList";
@@ -8,7 +14,6 @@ import { useState } from "react";
 
 // MUI
 import { Tab, Tabs, Typography, Box } from "@mui/material";
-import { ISharecountContext } from "../../interfaces/interfaces";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -49,6 +54,9 @@ function a11yProps(index: number) {
 
 interface IPropsMenuTabs {
   sharecount?: ISharecountContext;
+  onAddExpense?: (expense: IExpenseContext) => void;
+  onEditExpense?: (expense: IExpenseContext) => void;
+  onDeleteExpense?: (expense_id: number) => void;
 }
 
 const MenuTabs = (props: IPropsMenuTabs) => {
@@ -78,7 +86,12 @@ const MenuTabs = (props: IPropsMenuTabs) => {
       </Box>
       <div>
         <TabPanel value={value} index={0}>
-          <ExpensesList sharecount={props.sharecount} />
+          <ExpensesList
+            sharecount={props.sharecount}
+            onAddExpense={props.onAddExpense}
+            onEditExpense={props.onEditExpense}
+            onDeleteExpense={props.onDeleteExpense}
+          />
         </TabPanel>
         <TabPanel value={value} index={1}>
           <BalanceList sharecount={props.sharecount} />

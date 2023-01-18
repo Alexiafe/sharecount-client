@@ -2,9 +2,6 @@
 import { clientUrl } from "../../constants/config";
 import { IParticipantsContext } from "../../interfaces/interfaces";
 
-// React
-import { useNavigate } from "react-router-dom";
-
 // MUI
 import { IconButton } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
@@ -24,13 +21,12 @@ interface IPropsHeader {
   screen?: string;
   backButton?: boolean;
   shareButton?: boolean;
-  onClick?: () => void;
+  onTitleClick?: () => void;
   onReturn?: () => void;
 }
 
 const Header = (props: IPropsHeader) => {
   const title = props.title;
-  const navigate = useNavigate();
 
   const buttons = (
     <div className="flex justify-between">
@@ -72,12 +68,7 @@ const Header = (props: IPropsHeader) => {
 
   const expensesText = (
     <>
-      <div
-        className="flex flex-col"
-        onClick={() => {
-          navigate(`/sharecount-edit/${props.id}`);
-        }}
-      >
+      <div className="flex flex-col" onClick={() => props.onTitleClick?.()}>
         <div className="self-center text-2xl font-bold">{props.title}</div>
         <div className="self-center pt-1 italic font-semibold">
           Total: {props.total} {props.currency}
@@ -91,12 +82,7 @@ const Header = (props: IPropsHeader) => {
 
   const expenseDetailsText = (
     <>
-      <div
-        className="flex flex-col"
-        onClick={() => {
-          navigate(`/sharecount/${props.id}/expense-edit/${props.expense_id}`);
-        }}
-      >
+      <div className="flex flex-col" onClick={() => props.onTitleClick?.()}>
         <div className="self-center text-2xl font-bold">{props.title}</div>
         <div className="self-center pt-1 italic font-semibold">
           {props.amount_total} {props.currency}

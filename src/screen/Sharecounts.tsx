@@ -11,12 +11,16 @@ import MenuHome from "../components/Common/MenuHome";
 import NotLoggedIn from "../components/Common/NotLoggedIn";
 import Header from "../components/Common/Header";
 import SharecountItem from "../components/Sharecounts/SharecountItem";
+import SharecountAddModal from "../components/Sharecounts/SharecountAddModal";
 
 // Services
 import { getUserService } from "../services/user.service";
 
 // React
 import { useContext, useEffect, useState } from "react";
+
+// MUI
+import { Dialog } from "@mui/material";
 
 // Other
 import { useInView } from "react-cool-inview";
@@ -30,6 +34,9 @@ const Sharecounts = () => {
     useContext(SharecountsContext);
   const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession.email;
+
+  const [displayModalSharecountAdd, setDisplayModalSharecountAdd] =
+    useState<boolean>(false);
 
   const { observe } = useInView({
     onEnter: () => {
@@ -83,6 +90,9 @@ const Sharecounts = () => {
       } else setHasMore(false);
     }
   };
+
+  const handleCloseModalSharecountAdd = () =>
+    setDisplayModalSharecountAdd(false);
 
   if (!isLoaded || userLoading) {
     return (
@@ -138,8 +148,20 @@ const Sharecounts = () => {
             zIndex: 101,
           }}
         >
-          <MenuHome screen="home"></MenuHome>
+          <MenuHome
+            onAddClick={() => setDisplayModalSharecountAdd(true)}
+            screen="home"
+          ></MenuHome>
         </footer>
+        <Dialog
+          fullScreen
+          open={displayModalSharecountAdd}
+          onClose={handleCloseModalSharecountAdd}
+        >
+          <SharecountAddModal
+            onReturn={handleCloseModalSharecountAdd}
+          ></SharecountAddModal>
+        </Dialog>
       </div>
     );
   }

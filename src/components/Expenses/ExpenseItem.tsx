@@ -58,11 +58,6 @@ const ExpenseItem = (props: IPropsExpenseItem) => {
           secondaryTypographyProps={{
             variant: "subtitle1",
           }}
-          onClick={() =>
-            navigate(
-              `/sharecount/${props.sharecount?.id}/expense/${props.expense.id}`
-            )
-          }
         />
       </ListItemButton>
     </List>
