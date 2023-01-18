@@ -126,7 +126,7 @@ const Sharecounts = () => {
             )}
           </div>
         ) : (
-          <div className="p-4 text-center text-white">
+          <div className="relative p-4 text-center text-white">
             <p>No sharecounts yet.</p>
             <p>Click the " + " button to create one</p>
           </div>
