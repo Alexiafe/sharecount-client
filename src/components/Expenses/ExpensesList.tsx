@@ -197,7 +197,7 @@ const ExpensesList = (props: IPropsExpensesList) => {
 
   if (!isLoaded) {
     return (
-      <div>
+      <div className="relative" style={{ paddingTop: "48px" }}>
         <Loader></Loader>
       </div>
     );

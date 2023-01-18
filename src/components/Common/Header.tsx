@@ -74,7 +74,10 @@ const Header = (props: IPropsHeader) => {
           Total: {props.total} {props.currency}
         </div>
         <div className="self-center pt-3 text-sm">
-          {props.participants?.map((p) => p.name).join(", ")}
+          {props.participants
+            ?.map((p) => p.name)
+            .sort()
+            .join(", ")}
         </div>
       </div>
     </>

@@ -96,7 +96,9 @@ const Expenses = () => {
     return (
       <div>
         <Header title={sharecount?.name}></Header>
-        <Loader></Loader>
+        <div style={{ paddingTop: "220px" }}>
+          <Loader></Loader>
+        </div>
       </div>
     );
   } else if (error) {
