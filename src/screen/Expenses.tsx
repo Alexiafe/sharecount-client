@@ -78,18 +78,45 @@ const Expenses = () => {
     setDisplayModalSharecountEdit(false);
 
   const handleAddExpense = (expense: IExpenseContext) => {
-    // TODO Update sharecount
-    console.log("handleAddExpense", expense);
+    // Update sharecount
+    setSharecount(expense.sharecount);
+    // Update context
+    sharecountsContext.find((s) => s.id === sharecount?.id!)!.total =
+      expense.sharecount?.total!;
+    sharecountsContext.find((s) => s.id === sharecount?.id!)!.participants =
+      expense.sharecount?.participants!;
+    sharecountsContext.find((s) => s.id === sharecount?.id!)!.balance =
+      expense.sharecount!.participants!.find(
+        (p) => p?.name === sharecount!.user
+      )!.balance!;
   };
 
   const handleEditExpense = (expense: IExpenseContext) => {
-    // TODO Update sharecount
-    console.log("handleEditExpense", expense);
+    // Update sharecount
+    setSharecount(expense.sharecount);
+    // Update context
+    sharecountsContext.find((s) => s.id === sharecount?.id!)!.total =
+      expense.sharecount?.total!;
+    sharecountsContext.find((s) => s.id === sharecount?.id!)!.participants =
+      expense.sharecount?.participants!;
+    sharecountsContext.find((s) => s.id === sharecount?.id!)!.balance =
+      expense.sharecount!.participants!.find(
+        (p) => p?.name === sharecount!.user
+      )!.balance!;
   };
 
   const handleDeleteExpense = (expense: IExpenseContext) => {
-    // TODO Update sharecount
-    console.log("handleDeleteExpense", expense);
+    // Update sharecount
+    setSharecount(expense.sharecount);
+    // Update context
+    sharecountsContext.find((s) => s.id === sharecount?.id!)!.total =
+      expense.sharecount?.total!;
+    sharecountsContext.find((s) => s.id === sharecount?.id!)!.participants =
+      expense.sharecount?.participants!;
+    sharecountsContext.find((s) => s.id === sharecount?.id!)!.balance =
+      expense.sharecount!.participants!.find(
+        (p) => p?.name === sharecount!.user
+      )!.balance!;
   };
 
   if (!isLoaded || userLoading) {
