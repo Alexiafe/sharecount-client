@@ -87,7 +87,9 @@ const Expenses = () => {
       expense.sharecount?.participants!;
     sharecountsContext.find((s) => s.id === sharecount?.id!)!.balance =
       expense.sharecount!.participants!.find(
-        (p) => p?.name === sharecount!.user
+        (p) =>
+          p?.name ===
+          sharecountsContext.find((s) => s.id === sharecount?.id!)?.user
       )!.balance!;
   };
 
@@ -101,7 +103,9 @@ const Expenses = () => {
       expense.sharecount?.participants!;
     sharecountsContext.find((s) => s.id === sharecount?.id!)!.balance =
       expense.sharecount!.participants!.find(
-        (p) => p?.name === sharecount!.user
+        (p) =>
+          p?.name ===
+          sharecountsContext.find((s) => s.id === sharecount?.id!)?.user
       )!.balance!;
   };
 
