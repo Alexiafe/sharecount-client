@@ -18,6 +18,7 @@ const parseSharecount = (sharecount: ISharecountResponse) => {
     total: sharecount.total,
     user: sharecount.userInSharecount![0]?.participant?.name,
     balance: sharecount.userInSharecount![0]?.participant?.balance,
+    updated_at: sharecount.updated_at,
     participants: sharecount.participants?.map((p: IParticipantResponse) => ({
       id: p.id,
       name: p.name,

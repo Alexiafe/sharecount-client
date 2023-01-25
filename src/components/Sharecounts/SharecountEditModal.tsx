@@ -36,6 +36,7 @@ import * as yup from "yup";
 interface IPropsSharecountAddModal {
   sharecount?: ISharecountContext;
   onReturn?: () => void;
+  onSave?: (sharecount: ISharecountContext) => void;
 }
 
 const SharecountEditModal = (props: IPropsSharecountAddModal) => {
@@ -51,7 +52,7 @@ const SharecountEditModal = (props: IPropsSharecountAddModal) => {
     string[]
   >([]);
   const [displayModal, setDisplayModal] = useState<boolean>(false);
-  const { userSession, userLoading } = useContext(AuthContext);
+  const { userSession } = useContext(AuthContext);
   const userEmail = userSession?.email;
   const { sharecountsContext, setSharecountsContext } =
     useContext(SharecountsContext);
@@ -122,17 +123,8 @@ const SharecountEditModal = (props: IPropsSharecountAddModal) => {
 
     editSharecountService(newSharecount).then(
       (sharecountResponse: ISharecountContext) => {
+        props.onSave?.(sharecountResponse);
         props.onReturn?.();
-        if (sharecountsContext.find((s) => s.id === sharecountResponse.id)) {
-          sharecountsContext.find((s) => s.id === sharecountResponse.id)!.name =
-            sharecountResponse.name;
-          sharecountsContext.find(
-            (s) => s.id === sharecountResponse.id
-          )!.currency = sharecountResponse.currency;
-          sharecountsContext.find(
-            (s) => s.id === sharecountResponse.id
-          )!.participants = sharecountResponse.participants;
-        }
         setIsLoaded(true);
       }
     );

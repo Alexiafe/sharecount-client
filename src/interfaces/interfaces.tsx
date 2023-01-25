@@ -10,6 +10,7 @@ export interface ISharecountContext {
   balance: number;
   participants?: IParticipantsContext[]; // getSharecountService
   expenses?: IExpenseContext[]; // getSharecountService
+  updated_at: Date;
 }
 
 export interface IParticipantsContext {

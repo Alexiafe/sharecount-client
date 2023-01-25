@@ -20,6 +20,7 @@ const parseExpense = (expense: IExpenseResponse) => {
       total: expense.sharecount?.total,
       user: "",
       balance: 0,
+      updated_at: expense.sharecount?.updated_at,
       participants: expense.sharecount?.participants?.map((p) => ({
         id: p.id,
         name: p.name,

@@ -121,11 +121,21 @@ const Sharecounts = () => {
         {sharecounts.length ? (
           <div className="bg-primary">
             <ul>
-              {sharecounts.map((s: ISharecountContext) => (
-                <li key={s.id} className="py-2 px-5">
-                  <SharecountItem sharecount={s}></SharecountItem>
-                </li>
-              ))}
+              {sharecounts
+                .sort((a, b) => {
+                  if (a.updated_at < b.updated_at) {
+                    return 1;
+                  }
+                  if (a.updated_at > b.updated_at) {
+                    return -1;
+                  }
+                  return 0;
+                })
+                .map((s: ISharecountContext) => (
+                  <li key={s.id} className="py-2 px-5">
+                    <SharecountItem sharecount={s}></SharecountItem>
+                  </li>
+                ))}
             </ul>
             {hasMore ? (
               <div ref={observe}>

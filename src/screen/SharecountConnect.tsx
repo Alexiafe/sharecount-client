@@ -143,13 +143,15 @@ const SharecountConnect = () => {
               ))}
             </RadioGroup>
           </FormControl>
-          <Button
-            variant="contained"
-            sx={{ width: 200, margin: 2 }}
-            onClick={() => save()}
-          >
-            Save
-          </Button>
+          <div className="p-4 flex flex-col items-center">
+            <Button
+              variant="contained"
+              sx={{ width: 200, margin: 2 }}
+              onClick={() => save()}
+            >
+              Save
+            </Button>
+          </div>
         </div>
       </div>
     );

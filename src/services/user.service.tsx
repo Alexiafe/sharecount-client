@@ -14,6 +14,7 @@ const parseUser = (user: IUserResponse) => {
       total: u.sharecount.total,
       user: u.participant.name,
       balance: u.participant.balance,
+      updated_at: u.sharecount.updated_at,
     })
   );
   return parsedSharecounts;

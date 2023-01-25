@@ -77,6 +77,24 @@ const Expenses = () => {
   const handleCloseModalSharecountEdit = () =>
     setDisplayModalSharecountEdit(false);
 
+  const handleSaveSharecount = (sharecountResponse: ISharecountContext) => {
+    setSharecount(sharecountResponse);
+
+    // Update context
+    if (sharecountsContext.find((s) => s.id === sharecountResponse.id)) {
+      sharecountsContext.find((s) => s.id === sharecountResponse.id)!.name =
+        sharecountResponse.name;
+      sharecountsContext.find((s) => s.id === sharecountResponse.id)!.currency =
+        sharecountResponse.currency;
+      sharecountsContext.find(
+        (s) => s.id === sharecountResponse.id
+      )!.participants = sharecountResponse.participants;
+      sharecountsContext.find(
+        (s) => s.id === sharecountResponse.id
+      )!.updated_at = sharecountResponse.updated_at;
+    }
+  };
+
   const handleAddExpense = (expense: IExpenseContext) => {
     // Update sharecount
     setSharecount(expense.sharecount);
@@ -177,6 +195,7 @@ const Expenses = () => {
           <SharecountEditModal
             sharecount={sharecount}
             onReturn={handleCloseModalSharecountEdit}
+            onSave={handleSaveSharecount}
           ></SharecountEditModal>
         </Dialog>
       </div>

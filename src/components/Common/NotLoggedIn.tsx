@@ -12,7 +12,7 @@ const NotLoggedIn = () => {
   return (
     <div>
       <HeaderThin title="Sharecount"></HeaderThin>
-      <div className="p-4 flex flex-col items-center text-text">
+      <div className="p-4 flex flex-col items-center">
         <Button
           variant="contained"
           sx={{ width: 200, margin: 2 }}
