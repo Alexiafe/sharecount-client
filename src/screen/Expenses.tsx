@@ -4,6 +4,7 @@ import { IExpenseContext, ISharecountContext } from "../interfaces/interfaces";
 // Context
 import AuthContext from "../context/auth.context";
 import SharecountsContext from "../context/sharecounts.context";
+import UserContext from "../context/user.context";
 
 // Components
 import Header from "../components/Common/Header";
@@ -29,6 +30,7 @@ const Expenses = () => {
   const [error, setError] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [sharecount, setSharecount] = useState<ISharecountContext>();
+  const { userContext } = useContext(UserContext);
   const { sharecountsContext } = useContext(SharecountsContext);
   const { userSession, userLoading } = useContext(AuthContext);
   const userEmail = userSession?.email;
@@ -105,9 +107,7 @@ const Expenses = () => {
       expense.sharecount?.participants!;
     sharecountsContext.find((s) => s.id === sharecount?.id!)!.balance =
       expense.sharecount!.participants!.find(
-        (p) =>
-          p?.name ===
-          sharecountsContext.find((s) => s.id === sharecount?.id!)?.user
+        (p) => p?.name === userContext
       )!.balance!;
   };
 
@@ -121,9 +121,7 @@ const Expenses = () => {
       expense.sharecount?.participants!;
     sharecountsContext.find((s) => s.id === sharecount?.id!)!.balance =
       expense.sharecount!.participants!.find(
-        (p) =>
-          p?.name ===
-          sharecountsContext.find((s) => s.id === sharecount?.id!)?.user
+        (p) => p?.name === userContext
       )!.balance!;
   };
 
@@ -137,7 +135,7 @@ const Expenses = () => {
       expense.sharecount?.participants!;
     sharecountsContext.find((s) => s.id === sharecount?.id!)!.balance =
       expense.sharecount!.participants!.find(
-        (p) => p?.name === sharecount!.user
+        (p) => p?.name === userContext
       )!.balance!;
   };
 

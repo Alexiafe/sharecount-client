@@ -4,12 +4,15 @@ import {
   ISharecountContext,
 } from "../../interfaces/interfaces";
 
+// Context
+import UserContext from "../../context/user.context";
+
 // Components
 import RefundItem from "./RefundItem";
 import MyRefundItem from "./MyRefundItem";
 
 // React
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 
 interface IPropsExpensesList {
   sharecount?: ISharecountContext;
@@ -30,62 +33,59 @@ const RefundList = (props: IPropsExpensesList) => {
   const [refund, setRefund] = useState<any[]>([]);
   const [myRefund, setMyRefund] = useState<any[]>([]);
 
+  const { userContext } = useContext(UserContext);
+
   useEffect(() => {
-    setRefund(determineTransfers(JSON.parse(JSON.stringify(participants)))[0]);
-    setMyRefund(
-      determineTransfers(JSON.parse(JSON.stringify(participants)))[1]
-    );
+    setRefund(minimizeCashFlow(JSON.parse(JSON.stringify(participants)))[0]);
+    setMyRefund(minimizeCashFlow(JSON.parse(JSON.stringify(participants)))[1]);
   }, [props]);
 
-  const determineTransfers = (participants: IParticipantsContext[]) => {
-    // Initialize an empty list of transfers
-    let transfers = [];
-    let myTransfers = [];
-
-    let totalBalance = 0;
-    // calculate the total balance
-    for (let i = 0; i < participants.length; i++) {
-      totalBalance += participants[i].balance;
-    }
-
-    // Average balance is the total balance divided by number of participants
-    let averageBalance = totalBalance / participants.length;
-
-    // Iterate through the participants2
-    for (let i = 0; i < participants.length; i++) {
-      const participant = participants[i];
-
-      if (participant.balance > averageBalance) {
-        let transferAmount = participant.balance - averageBalance;
-        let fromParticipant;
-        for (let j = 0; j < participants.length; j++) {
-          if (participants[j].balance < averageBalance && i !== j) {
-            fromParticipant = participants[j];
-            break;
-          }
-        }
-        if (fromParticipant) {
-          if (
-            fromParticipant.name === props.sharecount!.user ||
-            participant.name === props.sharecount!.user
-          ) {
-            myTransfers.push({
-              from: fromParticipant.name,
-              to: participant.name,
-              amount: transferAmount,
+  const minimizeCashFlow = (users: IParticipantsContext[]) => {
+    // Create a copy of the input array
+    var copy = [...users];
+    // Sort the copy by ascending balance
+    copy.sort((a, b) => a.balance - b.balance);
+    // Initialize an empty output array
+    var output = [];
+    // Iterate through the copy
+    for (var i = 0; i < copy.length; i++) {
+      // If the current user's balance is less than 0
+      if (copy[i].balance < 0) {
+        // Iterate through the rest of the copy
+        for (var j = i + 1; j < copy.length; j++) {
+          // If the next user's balance is greater than 0
+          if (copy[j].balance > 0) {
+            // Calculate the amount to transfer
+            var amount = Math.min(Math.abs(copy[i].balance), copy[j].balance);
+            // Push a transfer object to the output array
+            output.push({
+              from: copy[i].name,
+              to: copy[j].name,
+              amount: amount,
             });
-          } else {
-            transfers.push({
-              from: fromParticipant.name,
-              to: participant.name,
-              amount: transferAmount,
-            });
+            // Subtract the transferred amount from the user's balances
+            copy[i].balance += amount;
+            copy[j].balance -= amount;
+            // If the current user's balance is now 0, break out of the inner loop
+            if (copy[i].balance === 0) {
+              break;
+            }
           }
-          participant.balance -= transferAmount;
-          fromParticipant.balance += transferAmount;
         }
       }
     }
+
+    // Classify output
+    let transfers: any = [];
+    let myTransfers: any = [];
+
+    output.forEach((e) => {
+      if (e.from === userContext || e.to === userContext) {
+        myTransfers.push(e);
+      } else {
+        transfers.push(e);
+      }
+    });
     return [transfers, myTransfers];
   };
 
@@ -100,7 +100,7 @@ const RefundList = (props: IPropsExpensesList) => {
           {myRefund.length ? (
             <ul className="p-4">
               {myRefund.map((r: IRefund, idx: number) => (
-                <li key={idx}>
+                <li className="pt-2" key={idx}>
                   <MyRefundItem
                     sharecount={props.sharecount!}
                     refund={r}

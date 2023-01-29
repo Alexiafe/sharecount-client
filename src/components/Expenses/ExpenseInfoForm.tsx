@@ -89,11 +89,21 @@ const ExpenseInfoForm = (props: IPropsExpenseInfoForm) => {
           value={props.ownerID || 0}
           onChange={props.onHandleOwnerChange}
         >
-          {props.participants.map((p) => (
-            <MenuItem key={p.id} value={p.id}>
-              {p.name}
-            </MenuItem>
-          ))}
+          {props.participants
+            .sort((a, b) => {
+              if (a.name < b.name) {
+                return -1;
+              }
+              if (a.name > b.name) {
+                return 1;
+              }
+              return 0;
+            })
+            .map((p) => (
+              <MenuItem key={p.id} value={p.id}>
+                {p.name}
+              </MenuItem>
+            ))}
         </TextField>
       </div>
     </div>

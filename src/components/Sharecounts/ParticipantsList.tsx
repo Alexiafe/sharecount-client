@@ -44,12 +44,12 @@ const ParticipantsList = (props: IPropsParticipantsList) => {
 
   return (
     <div className="py-2 text-text">
-      Participants:
+      Participants :
       {props.participantsNameArray.length === 0 && (
         <div className="text-xs text-red-600">{props.participantError}</div>
       )}
       <ul>
-        {props.participantsNameArray.map((p: string) => (
+        {props.participantsNameArray.sort().map((p: string) => (
           <li key={p}>
             <List disablePadding>
               <ListItem>

@@ -1,9 +1,11 @@
 // Interfaces
 import { IExpenseContext } from "../../interfaces/interfaces";
 
+// Context
+import UserContext from "../../context/user.context";
+
 // React
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useContext } from "react";
 
 // MUI
 import { List, ListItemButton, ListItemText, Typography } from "@mui/material";
@@ -20,8 +22,9 @@ interface IPropsExpenseItem {
 }
 
 const ExpenseItem = (props: IPropsExpenseItem) => {
-  const navigate = useNavigate();
   const id = `id${props.expense.id.toString()}`;
+
+  const { userContext } = useContext(UserContext);
 
   return (
     <List disablePadding id={id}>
@@ -41,8 +44,8 @@ const ExpenseItem = (props: IPropsExpenseItem) => {
                 {`
                 ${props.expense.owner.name}
                 ${
-                  props.expense.owner.name === props.sharecount?.user
-                    ? "(me)"
+                  props.expense.owner.name === userContext
+                    ? " (me) "
                     : ""
                 }`}
               </Typography>

@@ -2,6 +2,12 @@
 import { clientUrl } from "../../constants/config";
 import { IParticipantsContext } from "../../interfaces/interfaces";
 
+// Context
+import UserContext from "../../context/user.context";
+
+// React
+import { useContext } from "react";
+
 // MUI
 import { IconButton } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
@@ -17,7 +23,6 @@ interface IPropsHeader {
   owner?: string;
   amount_total?: number;
   date?: string;
-  user?: string;
   screen?: string;
   backButton?: boolean;
   shareButton?: boolean;
@@ -27,6 +32,8 @@ interface IPropsHeader {
 
 const Header = (props: IPropsHeader) => {
   const title = props.title;
+
+  const { userContext } = useContext(UserContext);
 
   const buttons = (
     <div className="flex justify-between">
@@ -93,7 +100,7 @@ const Header = (props: IPropsHeader) => {
         <div className="flex text-center pt-3 text-sm">
           <div className="flex-1 text-left">
             Paid by {props.owner}
-            {props.owner === props.user ? "(me)" : ""}
+            {props.owner === userContext ? " (me) " : ""}
           </div>
           <div className="flex-1 text-right">{props.date}</div>
         </div>

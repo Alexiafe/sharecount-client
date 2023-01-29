@@ -5,12 +5,15 @@ import {
   IPartakersContext,
 } from "../../interfaces/interfaces";
 
+// Context
+import UserContext from "../../context/user.context";
+
 // Components
 import Header from "../Common/Header";
 import ExpenseEditModal from "./ExpenseEditModal";
 
 // React
-import { useState } from "react";
+import { useState, useContext } from "react";
 
 // MUI
 import { List, ListItem, ListItemText, Dialog } from "@mui/material";
@@ -32,17 +35,32 @@ const ExpenseDetailsModal = (props: IPropsExpenseDetailsModal) => {
   const header = expense?.name;
   const date = moment(expense?.date).format("DD/MM/YYYY");
 
+  const { userContext } = useContext(UserContext);
+
   const [displayModalExpenseEdit, setDisplayModalExpenseEdit] =
     useState<boolean>(false);
 
   const handleCloseModalExpenseEdit = () => setDisplayModalExpenseEdit(false);
 
-  const listExpenseParticipants = expense?.partakers.map(
-    (p: IPartakersContext) => (
+  const listExpenseParticipants = expense?.partakers
+    .sort((a, b) => {
+      if (a.name < b.name) {
+        return -1;
+      }
+      if (a.name > b.name) {
+        return 1;
+      }
+      return 0;
+    })
+    .map((p: IPartakersContext) => (
       <li key={p.id}>
         <List disablePadding>
           <ListItem>
-            <ListItemText primary={p.name} />
+            <ListItemText
+              primary={`
+                ${p.name}
+                ${p.name === userContext ? " (me) " : ""}`}
+            />
             <ListItemText
               style={{ textAlign: "right" }}
               primary={`${p.amount.toFixed(2)} ${sharecount?.currency}`}
@@ -50,8 +68,7 @@ const ExpenseDetailsModal = (props: IPropsExpenseDetailsModal) => {
           </ListItem>
         </List>
       </li>
-    )
-  );
+    ));
 
   return (
     <div style={{ paddingTop: "170px", paddingBottom: "20px" }}>
@@ -63,7 +80,6 @@ const ExpenseDetailsModal = (props: IPropsExpenseDetailsModal) => {
         amount_total={expense?.amount_total}
         currency={sharecount?.currency}
         date={date}
-        user={sharecount?.user}
         backButton={true}
         screen="Details"
         onReturn={() => props.onReturn?.()}
@@ -73,7 +89,7 @@ const ExpenseDetailsModal = (props: IPropsExpenseDetailsModal) => {
       ></Header>
       <div className=" relative items-center p-4">
         <div className="text-text">
-          For {expense?.partakers.length} participants:
+          For {expense?.partakers.length} participants :
           <ul>{listExpenseParticipants}</ul>
         </div>
       </div>

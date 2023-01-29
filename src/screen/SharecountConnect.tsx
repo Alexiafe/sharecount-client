@@ -133,14 +133,24 @@ const SharecountConnect = () => {
               value={value}
               onChange={handleChange}
             >
-              {participants.map((p: IParticipantsContext) => (
-                <FormControlLabel
-                  key={p.id}
-                  value={p.id}
-                  control={<Radio />}
-                  label={p.name}
-                />
-              ))}
+              {participants
+                .sort((a, b) => {
+                  if (a.name < b.name) {
+                    return -1;
+                  }
+                  if (a.name > b.name) {
+                    return 1;
+                  }
+                  return 0;
+                })
+                .map((p: IParticipantsContext) => (
+                  <FormControlLabel
+                    key={p.id}
+                    value={p.id}
+                    control={<Radio />}
+                    label={p.name}
+                  />
+                ))}
             </RadioGroup>
           </FormControl>
           <div className="p-4 flex flex-col items-center">

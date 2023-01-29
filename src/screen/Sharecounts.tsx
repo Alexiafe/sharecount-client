@@ -4,6 +4,7 @@ import { ISharecountContext } from "../interfaces/interfaces";
 // Context
 import AuthContext from "../context/auth.context";
 import SharecountsContext from "../context/sharecounts.context";
+import UserContext from "../context/user.context";
 
 // Components
 import Loader from "../components/Common/Loader";
@@ -33,6 +34,7 @@ const Sharecounts = () => {
   const { sharecountsContext, setSharecountsContext } =
     useContext(SharecountsContext);
   const { userSession, userLoading } = useContext(AuthContext);
+  const { userContext, setUserContext } = useContext(UserContext);
   const userEmail = userSession.email;
 
   const [displayModalSharecountAdd, setDisplayModalSharecountAdd] =
@@ -49,12 +51,14 @@ const Sharecounts = () => {
       setIsLoaded(false);
       if (sharecountsContext.length) {
         setSharecounts(sharecountsContext);
+        setUserContext(sharecountsContext[0].user);
         setIsLoaded(true);
       } else {
         getUserService(userEmail).then(
           (sharecountsResponse: ISharecountContext[]) => {
             setSharecounts(sharecountsResponse);
             setSharecountsContext(sharecountsResponse);
+            setUserContext(sharecountsResponse[0].user);
             setIsLoaded(true);
           },
           (error) => {

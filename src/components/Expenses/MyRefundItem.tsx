@@ -1,5 +1,8 @@
+// Context
+import UserContext from "../../context/user.context";
+
 // React
-import React from "react";
+import React, { useContext } from "react";
 
 // MUI
 import { List, ListItemButton, ListItemText, Typography } from "@mui/material";
@@ -17,6 +20,8 @@ interface IPropsRefundItem {
 }
 
 const MyRefundItem = (props: IPropsRefundItem) => {
+  const { userContext } = useContext(UserContext);
+
   return (
     <List disablePadding>
       <ListItemButton
@@ -32,13 +37,13 @@ const MyRefundItem = (props: IPropsRefundItem) => {
               <Typography component="span">
                 {`
                 ${props.refund.from}
-                ${props.refund.from === props.sharecount?.user ? "(me)" : ""}`}
+                ${props.refund.from === userContext ? " (me) " : ""}`}
               </Typography>
               owes
               <Typography component="span">
                 {`
                 ${props.refund.to}
-                ${props.refund.to === props.sharecount?.user ? "(me)" : ""}`}
+                ${props.refund.to === userContext ? " (me) " : ""}`}
               </Typography>
             </React.Fragment>
           }
