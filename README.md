@@ -8,7 +8,7 @@ This is the app's client-side code in Typescript.
 
 [Sharecount App](https://sharecount-client.herokuapp.com/)
 
-<div>
+<div align="center">
     <img src="public/screenshots/Sharecounts.PNG" width="200"/>
     <img src="public/screenshots/Expenses.PNG" width="200"/>
     <img src="public/screenshots/Balance.PNG" width="200"/>
