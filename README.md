@@ -16,9 +16,9 @@ This is the app's client-side code in Typescript.
 
 
 ## Built With
-- [React](https://reactjs.org/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Material-UI](https://mui.com/)
+- [React](https://reactjs.org/) (v18.2.0)
+- [Tailwind CSS](https://tailwindcss.com/) (v3.1.8)
+- [Material-UI](https://mui.com/) (v5.10.1)
 
 
 ## Installation
